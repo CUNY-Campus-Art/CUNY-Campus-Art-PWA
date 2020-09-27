@@ -1,0 +1,7 @@
+{
+  "name": "cuny-gallery",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
