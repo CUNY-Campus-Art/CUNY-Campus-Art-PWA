@@ -7,13 +7,19 @@ import {
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
-  IonTabs
+  IonTabs,
+  IonHeader,
+  IonToolbar,
+  IonButton,
+  IonTitle, IonGrid, IonRow, IonCol
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
+
+import Home from './pages/Home';
 import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import ScanQR from './pages/ScanQR';
+import Information from './pages/Information';
+import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -36,27 +42,52 @@ import './theme/variables.css';
 
 const App: React.FC = () => (
   <IonApp>
+    <IonHeader>
+        <IonToolbar>
+          <IonButton slot="start">
+            <IonIcon icon={menu} />
+            {/* <IonLabel>Menu</IonLabel> */}
+          </IonButton>
+          <IonGrid>
+          <IonRow>
+            <IonCol offset="4"> 
+          <IonTitle className="CUNY-title">CUNY Gallery</IonTitle>
+          </IonCol>
+          </IonRow>
+          </IonGrid>
+        </IonToolbar>
+      </IonHeader>
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route path="/tab1" component={Tab1} exact={true} />
+          <Route path="/Home" component={Home} exact={true} />
           <Route path="/tab2" component={Tab2} exact={true} />
-          <Route path="/tab3" component={Tab3} />
-          <Route path="/" render={() => <Redirect to="/tab1" />} exact={true} />
+          <Route path="/ScanQR" component={ScanQR} exact={true}/>
+          <Route path="/Information" component={Information} exact={true}/>
+          <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
+          <IonTabButton tab="Home" href="/Home">
+            <IonIcon icon={home} />
+            <IonLabel>Home</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
+            <IonIcon icon={images} />
+            <IonLabel>Gallery</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon icon={square} />
-            <IonLabel>Tab 3</IonLabel>
+          <IonTabButton tab="ScaQR" href="/ScanQR">
+            <IonIcon icon={qrCodeOutline} />
+            <IonLabel>Scan</IonLabel>
           </IonTabButton>
+          <IonTabButton tab="Information" href="/Information">
+            <IonIcon icon={informationCircle} />
+            <IonLabel>Information</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="Profile" href="/Profile">
+            <IonIcon icon={person} />
+            <IonLabel>Profile</IonLabel>
+          </IonTabButton>
+          
         </IonTabBar>
       </IonTabs>
     </IonReactRouter>
