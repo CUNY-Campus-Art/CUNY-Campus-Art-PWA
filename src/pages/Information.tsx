@@ -21,6 +21,7 @@ import "./Information.css";
 
 import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
 
+// controls the initial image shown and the speed at which it changes
 const slideOpts = {
   initialSlide: 0,
   speed: 400,

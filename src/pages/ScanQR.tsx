@@ -37,6 +37,9 @@ const ScanQR: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
+
+        {/* to do: link to camera */}
+        
         <IonFab vertical="bottom" horizontal="center" slot="fixed">
           <IonFabButton >
             <IonIcon icon={camera}></IonIcon>
