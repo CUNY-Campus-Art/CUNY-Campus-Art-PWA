@@ -8,9 +8,9 @@ To run this locally on your machine you will need to have the following installe
 
 > `npm install -g @ionic/cli native-run cordova-res`
 
-After cloning this repo you will need to initialize it with ionic : 
+After cloning this repo you will need to install all packages needed : 
 
->`ionic init`
+>`npm install`
 
 Then you can run it locally using the following command:
 > `ionic serve`
