@@ -21,6 +21,14 @@ The initial upload of application is based on the tabs template from ionic using
 
 I mostly worked in the App.tsx, Information.tsx, and ScanQR.tsx files. 
 * <strong>App.tsx </strong> : you will find the routes to the tabs associated with the app, including home, gallery, scan, information, and profile, which are subject to change.
+
 * <strong> Information.tsx </strong> : This is the code for the information tab, which will include the information for the artwork. Currently it holds static dummy data, I will be looking into connecting to the API/database to show data.
+
+<img src="InfoA.png" width="300"/>
+<img src="InfoB.png" width="300"/>
+
 * <strong>ScanQR.tsx</strong> : This will be the tab where users can scan QR codes. Currently it just holds the text instructing user to scan QR code. Looking into implementing opening of camera in this tab.
+
+<img src="ScanQR.png" width="300"/>
+
 
