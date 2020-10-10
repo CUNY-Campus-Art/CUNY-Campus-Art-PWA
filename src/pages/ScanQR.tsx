@@ -10,12 +10,12 @@ import {
   IonIcon,
   IonCard,
   IonCardContent,
-  IonCardHeader, 
+  IonCardHeader,
   IonCardTitle
 } from "@ionic/react";
 import "./ScanQR.css";
 import { camera } from "ionicons/icons";
-
+import QRScanner from "../components/QRScanner"
 
 const ScanQR: React.FC = () => {
   return (
@@ -26,7 +26,7 @@ const ScanQR: React.FC = () => {
             <IonTitle size="large">Scan</IonTitle>
           </IonToolbar>
         </IonHeader>
-        
+
 
           <IonCard class="ion-text-center">
             <IonCardHeader>
@@ -37,9 +37,9 @@ const ScanQR: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
-
+          <QRScanner name="QR Scanner" />
         {/* to do: link to camera */}
-        
+
         <IonFab vertical="bottom" horizontal="center" slot="fixed">
           <IonFabButton >
             <IonIcon icon={camera}></IonIcon>
