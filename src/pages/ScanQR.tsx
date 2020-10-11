@@ -1,4 +1,5 @@
 import React from "react";
+import { connect, ConnectedProps } from 'react-redux'
 import {
   IonContent,
   IonHeader,
@@ -17,7 +18,30 @@ import "./ScanQR.css";
 import { camera, folder, stop, scan} from "ionicons/icons";
 import QRScanner from "../components/QRScanner"
 
-const ScanQR: React.FC = () => {
+
+import {RootState} from '../store'
+
+/* use the props currentArtDisplay and allArtDisplays to access state */
+const mapState = (state: RootState) => ({
+  currentArtDisplay: state.artDisplay.currentArtDisplay,
+  allArtDisplays: state.artDisplay.allArtDisplays
+})
+
+const mapDispatch = {
+  // toggleOn: () => ({ type: 'TOGGLE_IS_ON' })
+}
+
+const connector = connect(mapState, mapDispatch)
+
+// The inferred type will look like:
+// {isOn: boolean, toggleOn: () => void}
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
+}
+
+const ScanQR = (props: Props) => {
   return (
     <IonPage>
       <IonContent>
@@ -47,4 +71,4 @@ const ScanQR: React.FC = () => {
   );
 };
 
-export default ScanQR;
+export default connector(ScanQR)

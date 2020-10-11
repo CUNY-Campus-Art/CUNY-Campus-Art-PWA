@@ -22,15 +22,6 @@ export const exampleMiddleware: Middleware<
   // code here
 }
 
-// interface RootState {
-//   isOn: boolean
-// }
-
-// // TS infers type: (state: RootState) => boolean
-// const selectIsOn = (state: RootState) => state.isOn
-
-// // TS infers `isOn` is boolean
-// const isOn = useSelector(selectIsOn)
 
 const middleware = composeWithDevTools(applyMiddleware(
   ReduxThunk,

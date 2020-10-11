@@ -20,8 +20,8 @@ import {
 } from "@ionic/react";
 import "./Information.css";
 import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
-import {RootState} from '../store'
 
+import {RootState} from '../store'
 
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay
@@ -40,8 +40,6 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type Props = PropsFromRedux & {
   // backgroundColor: string
 }
-
-
 
 // controls the initial image shown and the speed at which it changes
 const slideOpts = {

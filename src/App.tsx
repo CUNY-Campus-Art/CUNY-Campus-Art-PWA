@@ -16,7 +16,7 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 
 import Home from './pages/Home';
-import Tab2 from './pages/Tab2';
+import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
@@ -61,7 +61,7 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/Home" component={Home} exact={true} />
-          <Route path="/tab2" component={Tab2} exact={true} />
+          <Route path="/tab2" component={Gallery} exact={true} />
           <Route path="/ScanQR" component={ScanQR} exact={true}/>
           <Route path="/Information" component={Information} exact={true}/>
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />

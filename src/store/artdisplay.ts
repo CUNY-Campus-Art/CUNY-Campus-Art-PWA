@@ -42,6 +42,7 @@ export interface ArtDisplaysState {
 // ACTION TYPES
 export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
+export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
 
 // ACTION CREATORS
 interface AddArtDisplayAction {
@@ -54,7 +55,13 @@ interface GotScannedArtDisplayAction {
   payload: ArtDisplay
 }
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction
+interface GotAllArtDisplaysAction {
+  type: typeof GET_ALL_ART_DISPLAYS
+  payload: ArtDisplay
+}
+
+
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction
 
 // TypeScript infers that this function is returning SendMessageAction
 export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes {
@@ -64,14 +71,24 @@ export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes 
   }
 }
 
-export function gotScannedArtDisplay(scannedArtDisplay: ArtDisplay): ArtDisplayActionTypes {
+// export function gotScannedArtDisplay(scannedArtDisplay: ArtDisplay): ArtDisplayActionTypes {
+//   return {
+//     type:  GET_ALL_ART_DISPLAYS,
+//     payload: scannedArtDisplay
+//   }
+// }
+
+//Invoked after fetching all art displays from database
+export function gotAllArtDisplays(artDisplays: ArtDisplaysState): ArtDisplayActionTypes {
   return {
     type: ADD_ART_DISPLAY,
-    payload: scannedArtDisplay
+    payload: artDisplays
   }
 }
 
 // THUNK CREATORS
+const strapiUrl = "http://18.208.253.205:1337";
+
 export const fetchScannedArtDisplay= (qrCodeURL: string): ThunkAction<void, RootState, unknown, Action<string>> => async dispatch => {
   try {
     const artDisplay = await axios.get(qrCodeURL)
@@ -81,6 +98,14 @@ export const fetchScannedArtDisplay= (qrCodeURL: string): ThunkAction<void, Root
     console.error(error)
   }
 }
+
+/* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
+export const fetchAllArtworks = () => async (dispatch: any) => {
+  const { data } = await axios.get(strapiUrl+'/artworks');
+  console.log("fetchAllArtworks", data);
+  dispatch(gotAllArtDisplays(data))
+  return data;
+};
 
 /****** SETTING UP INITIAL STATE ***********/
 const defaultCurrentArtDisplay = {
@@ -111,6 +136,9 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
     case GET_SCANNED_ART_DISPLAY:
       return {currentArtDisplay: action.payload, allArtDisplays: [...state.allArtDisplays, action.payload]}
+    case ADD_ART_DISPLAYS:
+      return { ...state, allArtDisplays: [...state.allArtDisplays, ...action.payload]
+      }
     default:
       return state
   }
