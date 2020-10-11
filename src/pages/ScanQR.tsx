@@ -5,9 +5,9 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonFab,
-  IonFabButton,
-  IonIcon,
+  // IonFab,
+  // IonFabButton,
+  // IonIcon,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -41,23 +41,7 @@ const ScanQR: React.FC = () => {
         {/* to do: link to camera */}
 
 
-        <IonFab vertical="bottom" horizontal="start" slot="fixed">
-          <IonFabButton color="secondary" >
-            <IonIcon icon={folder}></IonIcon>
-          </IonFabButton>
-        </IonFab>
 
-        <IonFab vertical="bottom" horizontal="center" slot="fixed">
-          <IonFabButton >
-            <IonIcon icon={scan}></IonIcon>
-          </IonFabButton>
-        </IonFab>
-
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton color="danger" >
-            <IonIcon color='light' icon={stop}></IonIcon>
-          </IonFabButton>
-        </IonFab>
       </IonContent>
     </IonPage>
   );

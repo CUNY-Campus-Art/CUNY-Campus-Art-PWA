@@ -50,7 +50,7 @@ const App: React.FC = () => (
           </IonButton>
           <IonGrid>
           <IonRow>
-            <IonCol offset="4"> 
+            <IonCol offset="4">
           <IonTitle className="CUNY-title">CUNY Gallery</IonTitle>
           </IonCol>
           </IonRow>
@@ -87,7 +87,7 @@ const App: React.FC = () => (
             <IonIcon icon={person} />
             <IonLabel>Profile</IonLabel>
           </IonTabButton>
-          
+
         </IonTabBar>
       </IonTabs>
     </IonReactRouter>

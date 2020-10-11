@@ -1,7 +1,11 @@
 import React, { createRef } from 'react';
-import { IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/react';
+import { IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonFab, IonFabButton, IonIcon } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
+
+import {
+  // camera, folder, scan,
+  stop} from "ionicons/icons";
 
 interface ContainerProps {
   name: string;
@@ -175,9 +179,28 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         <input id="file-input" type="file" accept="image/*;capture=camera" hidden onChange={this.handleFile} />
 
         {/* --Trigger the file input-- */}
-        <IonButton id="camera" shape="round" onClick={this.uploadImage} color="primary">Upload Image</IonButton>  - or -
+        <IonButton id="camera" shape="round" onClick={this.uploadImage} color="primary">Upload Image</IonButton>
+
+        {/* <IonFab vertical="bottom" horizontal="start" slot="fixed">
+          <IonFabButton id="camera" color="secondary" onClick={this.uploadImage}>
+            <IonIcon icon={folder}></IonIcon>
+          </IonFabButton>
+        </IonFab> */}
+
+
+
+         - or -
         <IonButton id="qr-scanner" shape="round" onClick={this.startScan} color="primary">Start Scan</IonButton> <br />
-        <IonButton id="refresh" shape="round" onClick={this.refresh} color="warning">Reset</IonButton>
+
+{/*
+        <IonFab vertical="bottom" horizontal="center" slot="fixed" >
+          <IonFabButton id="scan-button" onClick={this.startScan}>
+            <IonIcon icon={scan}></IonIcon>
+          </IonFabButton>
+        </IonFab> */}
+
+
+        <IonButton id="refresh-button" shape="round" onClick={this.refresh} color="warning">Reset</IonButton>
 
         {/* --Shows our camera stream-- */}
         {/* <video width="50%" ref={this.video} autoPlay={true}/> */}
@@ -187,7 +210,14 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         <canvas hidden ref={this.canvas}></canvas>
 
         {/* --Stop our scanner preview if active-- */}
-        {this.state.scanActive ? <IonButton shape="round" onClick={this.stopScan} color="danger">Stop Scan</IonButton> : null}
+        {/* {this.state.scanActive ? <IonButton shape="round" onClick={this.stopScan} color="danger">Stop Scan</IonButton> : null} */}
+
+        {this.state.scanActive ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton id='stop-button' color="danger" onClick={this.stopScan} >
+            <IonIcon color='light' icon={stop}></IonIcon>
+          </IonFabButton>
+        </IonFab>: null}
+
 
         {/* --Display scanner result-- */}
         <IonCard>
@@ -196,6 +226,13 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
           </IonCardHeader>
           <IonCardContent>{this.state.scanResult}</IonCardContent>
         </IonCard>
+
+
+
+
+
+
+
       </div>
 
     );
