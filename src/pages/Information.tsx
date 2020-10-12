@@ -1,4 +1,5 @@
 import React from "react";
+import { connect, ConnectedProps } from 'react-redux'
 import {
   IonContent,
   IonHeader,
@@ -18,8 +19,27 @@ import {
   IonSlides,
 } from "@ionic/react";
 import "./Information.css";
-
 import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
+
+import {RootState} from '../store'
+
+const mapState = (state: RootState) => ({
+  currentArtDisplay: state.artDisplay.currentArtDisplay
+})
+
+const mapDispatch = {
+  // toggleOn: () => ({ type: 'TOGGLE_IS_ON' })
+}
+
+const connector = connect(mapState, mapDispatch)
+
+// The inferred type will look like:
+// {isOn: boolean, toggleOn: () => void}
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
+}
 
 // controls the initial image shown and the speed at which it changes
 const slideOpts = {
@@ -27,32 +47,35 @@ const slideOpts = {
   speed: 400,
 };
 
-const Information: React.FC = () => {
+const Information = (props: Props) => {
+
+  let currentArtDisplay = props.currentArtDisplay;
+  console.log(currentArtDisplay);
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle >Name of Artwork</IonTitle>
+          <IonTitle >Artwork Information</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonCard>
           <IonCardHeader>
-          <IonCardSubtitle>Frederic Thery</IonCardSubtitle>
-            <IonCardTitle >New York City, 2020</IonCardTitle>
+          <IonCardSubtitle>{currentArtDisplay.artist}</IonCardSubtitle>
+          <IonCardTitle >{`${currentArtDisplay.title}, ${currentArtDisplay.year}`}</IonCardTitle>
           </IonCardHeader>
 
           <IonCardContent>
             <IonSlides pager={true} options={slideOpts}>
               <IonSlide>
-                <img src="https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1"/>
+                <img src={currentArtDisplay.primary_image? currentArtDisplay.primary_image.url: ''} alt={currentArtDisplay.primary_image.alt} />
               </IonSlide>
-              <IonSlide>
-                <img src="https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A" alt="gallery 2"/>
-              </IonSlide>
-              <IonSlide>
-                <img src="https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A" alt="gallery 3"/>
-              </IonSlide>
+
+                {/* If there are other images post them to slideshow as well*/}
+                {currentArtDisplay.other_images ? currentArtDisplay.other_images.map(image => <IonSlide>
+                <img src={image.url} alt={image.alt}/>
+              </IonSlide>): ''}
             </IonSlides>
           </IonCardContent>
         </IonCard>
@@ -67,16 +90,7 @@ const Information: React.FC = () => {
           </IonItem>
 
           <IonCardContent>
-            Inspired by a painter father, Frédéric was interested from a very
-            early age in drawing and painting. He studied fine arts at the
-            University of Aix-en-Provence. After graduation, he moved to
-            southern Spain where he discovered various crafts: leather work,
-            silk painting, jewellery making…By g in contact with these artisans
-            he learned to make leather accessories (belts, bags) and
-            experimented with cold enamel work (producing the same aesthetic
-            effect as enamel, but without firing). He attended a workshop on
-            porcelain painting to learn this technique and soon he experienced
-            the urge to paint on canvas.
+              {currentArtDisplay.description}
           </IonCardContent>
         </IonCard>
 
@@ -92,4 +106,9 @@ const Information: React.FC = () => {
   );
 };
 
-export default Information;
+
+
+
+
+
+export default connector(Information)
