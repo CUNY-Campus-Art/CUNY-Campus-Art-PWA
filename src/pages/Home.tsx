@@ -5,20 +5,20 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonTabButton,
-  IonLabel,
-  IonIcon,
-  IonButton
+  // IonTabButton,
+  // IonLabel,
+  // IonIcon,
+  // IonButton
 } from "@ionic/react";
 import ExploreContainer from "../components/ExploreContainer";
 import "./Home.css";
-import { menuOutline } from "ionicons/icons";
+//import { menuOutline } from "ionicons/icons";
 
 
 const Home: React.FC = () => {
   return (
     <IonPage>
-      
+
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
