@@ -15,13 +15,6 @@ const rootReducer = combineReducers({
 
 /*  Type Checking Middlewares */
 export type RootState = ReturnType<typeof rootReducer>
-export const exampleMiddleware: Middleware<
-  {}, // legacy type parameter added to satisfy interface signature
-  RootState
-> = store => next => action => {
-  // code here
-}
-
 
 const middleware = composeWithDevTools(applyMiddleware(
   ReduxThunk,

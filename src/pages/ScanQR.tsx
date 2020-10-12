@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Redirect, Route } from 'react-router-dom';
 import { NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
@@ -9,18 +9,20 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  // IonFab,
-  // IonFabButton,
-  // IonIcon,
+  IonFab,
+  IonFabButton,
+  IonIcon,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardTitle
 } from "@ionic/react";
 import "./ScanQR.css";
-import { camera, folder, stop, scan } from "ionicons/icons";
+import { camera, folder, stop, scan, timeSharp } from "ionicons/icons";
 import QRScanner from "../components/QRScanner"
 
+//For Camera Button:
+import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 import { RootState } from '../store'
 import { fetchScannedArtDisplay } from '../store/artdisplay'
@@ -47,6 +49,7 @@ type Props = PropsFromRedux & {
 }
 
 const ScanQR = (props: Props) => {
+  const { photos, takePhoto } = usePhotoGallery();
 
   // To redirect to Information with forward animation
   const { navigate } = useContext(NavContext);
@@ -57,11 +60,25 @@ const ScanQR = (props: Props) => {
 
   // Will be called from inside QR Scanner when it extracts information from the QR Code.
   // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting  to the information tab
+
+  let [scanResult, setScanResult] = useState('');
+
   let scanResultParent = async (qrCodeText: string) => {
-    console.log('qrcodeResult', qrCodeText)
-    await props.getScannedArtDisplay(qrCodeText)
+    scanResult = qrCodeText
+    setScanResult(scanResult) //updates local state
+    console.log('scan result: ', scanResult)
+    await props.getScannedArtDisplay(scanResult)
     redirect()
   };
+
+  // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
+  // Checks whether scan state in child QRScanner component is active
+  let [scanState, setScanState] = useState(0);
+
+  let scanStateParent = (state: any) => {
+      setScanState(state)
+  }
+
 
   return (
     <IonPage>
@@ -72,12 +89,6 @@ const ScanQR = (props: Props) => {
           </IonToolbar>
         </IonHeader>
 
-        {/* Redirects page to information after QR code is processed */}
-        {/* <Route
-        exact
-        path="/ScanQR"
-        render={props => redirect ? <Information />: ''} /> */}
-
         <IonCard class="ion-text-center">
           <IonCardHeader>
             <IonCardTitle >Scan a QR Code</IonCardTitle>
@@ -85,12 +96,18 @@ const ScanQR = (props: Props) => {
           <IonCardContent>
             <img src={require("../assets/images/QR-code-scan-loop-once.gif")} alt="Scan QR" />
           </IonCardContent>
+
+      <IonCardTitle>Scan Result: {scanResult}</IonCardTitle>
         </IonCard>
 
-        <QRScanner name="QR Scanner" scanResultParent={scanResultParent} />
+        <QRScanner name="QR Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+        
         {/* to do: link to camera */}
-
-
+        {!scanState ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton onClick={() => takePhoto()} color="tertiary">
+            <IonIcon icon={camera}></IonIcon>
+          </IonFabButton>
+        </IonFab>:''}
 
       </IonContent>
     </IonPage>

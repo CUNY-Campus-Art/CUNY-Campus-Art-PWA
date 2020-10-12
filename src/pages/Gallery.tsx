@@ -49,7 +49,6 @@ type Props = PropsFromRedux & {
 
 const Gallery = (props: Props) => {
   useEffect(() => { props.getAllArtworks(); }, []);
-  const { photos, takePhoto } = usePhotoGallery();
   const allArtDisplays = props.allArtDisplays
   const pastArtDisplays = props.pastArtDisplays
   const changeCurrentArtDisplay = props.changeCurrentArtDisplay
@@ -80,11 +79,6 @@ const Gallery = (props: Props) => {
       </IonHeader>
       <IonContent fullscreen>
 
-        <IonFab vertical="bottom" horizontal="center" slot="fixed">
-          <IonFabButton onClick={() => takePhoto()}>
-            <IonIcon icon={camera}></IonIcon>
-          </IonFabButton>
-        </IonFab>
 
         {/* <IonGrid>
           <IonRow>
@@ -99,9 +93,12 @@ const Gallery = (props: Props) => {
         <IonGrid>
           <IonRow>
             {pastArtDisplays.map((artDisplay, index) => (
-              <IonCol size="3" key={index}>
+              <IonCol size="4" key={index}>
                 <IonCard>
-                  <IonImg onClick={() => selectAnArtwork(index)} src={artDisplay.primary_image ? artDisplay.primary_image.url : ''} />
+                  <IonImg
+                  onClick={() => selectAnArtwork(index)}
+                  src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
+                  alt={artDisplay.primary_image  ? artDisplay.primary_image.alternative: ''}/>
                   <IonCardTitle>{artDisplay.title}</IonCardTitle>
                   <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
                 </IonCard>
@@ -116,7 +113,7 @@ const Gallery = (props: Props) => {
           </IonToolbar>
         </IonHeader>
 
-        <IonTitle size="large">Take a Picture</IonTitle>
+        {/* <IonTitle size="large">Take a Picture</IonTitle> */}
 
       </IonContent>
     </IonPage>

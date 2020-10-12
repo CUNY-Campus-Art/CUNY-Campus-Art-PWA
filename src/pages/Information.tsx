@@ -69,12 +69,12 @@ const Information = (props: Props) => {
           <IonCardContent>
             <IonSlides pager={true} options={slideOpts}>
               <IonSlide>
-                <img src={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.url : ''} alt={currentArtDisplay.primary_image.alt} />
+                <img src={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.url : ''} alt={currentArtDisplay.primary_image.alternative} />
               </IonSlide>
 
               {/* If there are other images post them to slideshow as well*/}
               {currentArtDisplay.other_images ? currentArtDisplay.other_images.map(image => <IonSlide>
-                <img src={image.url} alt={image.alt} />
+                <img src={image.url} alt={image.alternative} />
               </IonSlide>) : ''}
             </IonSlides>
           </IonCardContent>
