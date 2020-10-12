@@ -4,7 +4,7 @@ import { createStore, combineReducers, Middleware, applyMiddleware } from 'redux
 import { composeWithDevTools } from 'redux-devtools-extension'
 import ReduxThunk from 'redux-thunk'
 import * as promiseMiddleware from 'redux-promise';
-import {createLogger} from 'redux-logger'
+import { createLogger } from 'redux-logger'
 
 
 import artDisplay from './artdisplay'
@@ -25,7 +25,7 @@ export const exampleMiddleware: Middleware<
 
 const middleware = composeWithDevTools(applyMiddleware(
   ReduxThunk,
-  createLogger({collapsed: true})
+  createLogger({ collapsed: true })
 ))
 
 const store = createStore(rootReducer, middleware)

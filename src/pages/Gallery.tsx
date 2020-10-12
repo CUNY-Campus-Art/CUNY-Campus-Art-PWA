@@ -1,7 +1,7 @@
-import React, {useEffect, useCallback, useContext} from "react";
+import React, { useEffect, useCallback, useContext } from "react";
 import { connect, ConnectedProps } from 'react-redux'
-import {NavContext} from '@ionic/react';
-import { camera} from "ionicons/icons";
+import { NavContext } from '@ionic/react';
+import { camera } from "ionicons/icons";
 import {
   IonContent,
   IonHeader,
@@ -22,7 +22,7 @@ import {
 import "./Gallery.css";
 import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
-import {RootState} from '../store'
+import { RootState } from '../store'
 import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay } from '../store/artdisplay'
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
@@ -33,15 +33,14 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: any) => ({
+  changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getAllArtworks: () => dispatch(fetchAllArtworks()),
-  getPastArtworks: () => dispatch(fetchPastArtworks ()),
-  changeCurrentArtDisplay:( artwork : ArtDisplay) => changeCurrentArtDisplay(artwork)
+  getPastArtworks: () => dispatch(fetchPastArtworks()),
 })
 
 const connector = connect(mapState, mapDispatch)
 
-// The inferred type will look like:
-// {isOn: boolean, toggleOn: () => void}
+
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 type Props = PropsFromRedux & {
@@ -49,22 +48,26 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
-  useEffect(() => {props.getAllArtworks();}, []);
+  useEffect(() => { props.getAllArtworks(); }, []);
   const { photos, takePhoto } = usePhotoGallery();
   const allArtDisplays = props.allArtDisplays
   const pastArtDisplays = props.pastArtDisplays
+  const changeCurrentArtDisplay = props.changeCurrentArtDisplay
 
-    // To redirect to Information with forward animation
-    const {navigate} = useContext(NavContext);
-    const redirect = useCallback(
-      () => navigate('/Information', 'forward'),
-      [navigate]
-    );
+  // To redirect to Information with forward animation
+  const { navigate } = useContext(NavContext);
+  const redirect = useCallback(
+    () => navigate('/Information', 'forward'),
+    [navigate]
+  );
 
-  //This function allows user to press artwork, updates currentArtDislay, and redirects user to Information tab
-  const selectAnArtwork = async (index: number) => {
-      await props.changeCurrentArtDisplay(allArtDisplays[index])
-      redirect()
+  //When user to clicks artwork, updates currentArtDislay, and redirects user to Information tab
+  const selectAnArtwork = (index: number) => {
+
+    let currentArtDisplayItem: ArtDisplay = pastArtDisplays[index]
+    console.log(typeof currentArtDisplayItem, "check link")
+    props.changeCurrentArtDisplay(currentArtDisplayItem)
+    redirect()
   }
 
 
@@ -95,12 +98,12 @@ const Gallery = (props: Props) => {
 
         <IonGrid>
           <IonRow>
-            {pastArtDisplays.map((artDisplay,index) =>(
+            {pastArtDisplays.map((artDisplay, index) => (
               <IonCol size="3" key={index}>
                 <IonCard>
-                <IonImg onClick={()=>selectAnArtwork(index)} src={artDisplay.primary_image? artDisplay.primary_image.url: ''} />
-                <IonCardTitle>{artDisplay.title}</IonCardTitle>
-                <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
+                  <IonImg onClick={() => selectAnArtwork(index)} src={artDisplay.primary_image ? artDisplay.primary_image.url : ''} />
+                  <IonCardTitle>{artDisplay.title}</IonCardTitle>
+                  <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
                 </IonCard>
               </IonCol>
             ))}

@@ -5,7 +5,8 @@ import jsQR from 'jsqr';
 
 import {
   // camera, folder, scan,
-  stop} from "ionicons/icons";
+  stop
+} from "ionicons/icons";
 
 interface ContainerProps {
   name: string;
@@ -113,11 +114,13 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       console.log(code);
       if (code) {
         console.log(this.props.scanResultParent, "ScanResultParent")
+        this.videoElement.setAttribute('playsinline', false);
+        this.stream.getTracks()[0].stop();
         this.setState({
           scanActive: false,
           scanResult: code.data
         });
-          this.props.scanResultParent(code.data);
+        this.props.scanResultParent(code.data);
         //this.showQrToast();
       } else {
         if (this.state.scanActive)
@@ -160,7 +163,9 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       });
 
       if (code) {
-        //scanResultParent tries to update state of overall app
+        //when a result is found, video stops, and scanResult Parent is called. scanResultParent tries to update state of overall app,
+        // this.videoElement.setAttribute('playsinline', false);
+        // this.stream.getTracks()[0].stop();
         this.props.scanResultParent(code.data);
         this.setState({ scanResult: code.data });
         // this.showQrToast();
@@ -197,7 +202,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
          - or -
         <IonButton id="qr-scanner" shape="round" onClick={this.startScan} color="primary">Start Scan</IonButton> <br />
 
-{/*
+        {/*
         <IonFab vertical="bottom" horizontal="center" slot="fixed" >
           <IonFabButton id="scan-button" onClick={this.startScan}>
             <IonIcon icon={scan}></IonIcon>
@@ -221,7 +226,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
           <IonFabButton id='stop-button' color="danger" onClick={this.stopScan} >
             <IonIcon color='light' icon={stop}></IonIcon>
           </IonFabButton>
-        </IonFab>: null}
+        </IonFab> : null}
 
 
         {/* --Display scanner result-- */}
