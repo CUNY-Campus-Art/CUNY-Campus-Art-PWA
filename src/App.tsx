@@ -19,6 +19,7 @@ import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
+import Profile from './pages/Profile';
 import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
@@ -44,13 +45,12 @@ const App: React.FC = () => (
   <IonApp>
     <IonHeader>
         <IonToolbar>
-          <IonButton slot="start">
+          {/* <IonButton slot="start">
             <IonIcon icon={menu} />
-            {/* <IonLabel>Menu</IonLabel> */}
-          </IonButton>
+          </IonButton> */}
           <IonGrid>
           <IonRow>
-            <IonCol offset="4">
+            <IonCol className="ion-text-center">
           <IonTitle className="CUNY-title">CUNY Gallery</IonTitle>
           </IonCol>
           </IonRow>
@@ -64,6 +64,7 @@ const App: React.FC = () => (
           <Route path="/Gallery" component={Gallery} exact={true} />
           <Route path="/ScanQR" component={ScanQR} exact={true}/>
           <Route path="/Information" component={Information} exact={true}/>
+          <Route path="/Profile" component={Profile} exact={true}/>
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
