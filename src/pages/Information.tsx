@@ -62,20 +62,19 @@ const Information = (props: Props) => {
       <IonContent>
         <IonCard>
           <IonCardHeader>
-          <IonCardSubtitle>{currentArtDisplay.nameOfArtist}</IonCardSubtitle>
-          <IonCardTitle >{`${currentArtDisplay.titleOfArtwork}, ${currentArtDisplay.year}`}</IonCardTitle>
+          <IonCardSubtitle>{currentArtDisplay.artist}</IonCardSubtitle>
+          <IonCardTitle >{`${currentArtDisplay.title}, ${currentArtDisplay.year}`}</IonCardTitle>
           </IonCardHeader>
 
-          {/* Make this section dynamic */}
           <IonCardContent>
             <IonSlides pager={true} options={slideOpts}>
               <IonSlide>
-                <img src={currentArtDisplay.primaryImage.src} alt={currentArtDisplay.primaryImage.alt} />
+                <img src={currentArtDisplay.primary_image? currentArtDisplay.primary_image.url: ''} alt={currentArtDisplay.primary_image.alt} />
               </IonSlide>
 
                 {/* If there are other images post them to slideshow as well*/}
-                {currentArtDisplay.otherImages ? currentArtDisplay.otherImages.map(image => <IonSlide>
-                <img src={image.src} alt={image.alt}/>
+                {currentArtDisplay.other_images ? currentArtDisplay.other_images.map(image => <IonSlide>
+                <img src={image.url} alt={image.alt}/>
               </IonSlide>): ''}
             </IonSlides>
           </IonCardContent>
@@ -90,7 +89,6 @@ const Information = (props: Props) => {
             </IonButton>
           </IonItem>
 
-         {/* Make this section dynamic */}
           <IonCardContent>
               {currentArtDisplay.description}
           </IonCardContent>

@@ -61,7 +61,7 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/Home" component={Home} exact={true} />
-          <Route path="/tab2" component={Gallery} exact={true} />
+          <Route path="/Gallery" component={Gallery} exact={true} />
           <Route path="/ScanQR" component={ScanQR} exact={true}/>
           <Route path="/Information" component={Information} exact={true}/>
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
@@ -71,11 +71,11 @@ const App: React.FC = () => (
             <IonIcon icon={home} />
             <IonLabel>Home</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
+          <IonTabButton tab="Gallery" href="/Gallery">
             <IonIcon icon={images} />
             <IonLabel>Gallery</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="ScaQR" href="/ScanQR">
+          <IonTabButton tab="ScanQR" href="/ScanQR">
             <IonIcon icon={qrCodeOutline} />
             <IonLabel>Scan</IonLabel>
           </IonTabButton>

@@ -7,24 +7,25 @@ import { RootState } from './index'
 /************ Type Checking State ************/
 
 interface Image {
-  src: string,
+  url: string,
   alt: string
 }
 
 export interface ArtDisplay {
   id: string
-  titleOfArtwork: string
-  nameOfArtist: string
-  year: string
-  campus: string
-  primaryImage: Image
-  otherImages: Image[]
+  title: string
+  artist: string
   description: string
-  qrCodeURL: string
+  primary_image: Image
+  other_images: Image[]
+  year: string
+  qr_code: string
+  campus: string
 }
 
 export interface ArtDisplaysState {
   currentArtDisplay: ArtDisplay
+  pastArtDisplays: ArtDisplay[]
   allArtDisplays: ArtDisplay []
 }
 
@@ -43,6 +44,7 @@ export interface ArtDisplaysState {
 export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
+export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
 
 // ACTION CREATORS
 interface AddArtDisplayAction {
@@ -55,13 +57,19 @@ interface GotScannedArtDisplayAction {
   payload: ArtDisplay
 }
 
+//this would ideally pull from database, but for now will rely on localStorage until this history can be connected to User History. That is why I kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
+interface GotPastArtDisplaysAction {
+  type: typeof GET_PAST_ART_DISPLAYS,
+  payload: ArtDisplay[]
+}
+
 interface GotAllArtDisplaysAction {
   type: typeof GET_ALL_ART_DISPLAYS
-  payload: ArtDisplay
+  payload: ArtDisplay []
 }
 
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction |GotPastArtDisplaysAction
 
 // TypeScript infers that this function is returning SendMessageAction
 export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes {
@@ -71,73 +79,108 @@ export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes 
   }
 }
 
-// export function gotScannedArtDisplay(scannedArtDisplay: ArtDisplay): ArtDisplayActionTypes {
-//   return {
-//     type:  GET_ALL_ART_DISPLAYS,
-//     payload: scannedArtDisplay
-//   }
-// }
-
-//Invoked after fetching all art displays from database
-export function gotAllArtDisplays(artDisplays: ArtDisplaysState): ArtDisplayActionTypes {
+export function gotScannedArtDisplay(scannedArtDisplay: ArtDisplay): ArtDisplayActionTypes {
   return {
-    type: ADD_ART_DISPLAY,
+    type:  GET_SCANNED_ART_DISPLAY,
+    payload: scannedArtDisplay
+  }
+}
+
+//Right now, will rely on local storage. Ideally supposed to be Invoked after fetching all uesr's past art displays from database
+export function gotPastArtDisplays
+(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
+  return {
+    type: GET_PAST_ART_DISPLAYS,
+    payload: artDisplays
+  }
+}
+//Invoked after fetching all art displays from database
+export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
+  return {
+    type: GET_ALL_ART_DISPLAYS,
     payload: artDisplays
   }
 }
 
-// THUNK CREATORS
+/*** THUNK CREATORS ****/
 const strapiUrl = "http://18.208.253.205:1337";
 
-export const fetchScannedArtDisplay= (qrCodeURL: string): ThunkAction<void, RootState, unknown, Action<string>> => async dispatch => {
-  try {
-    const artDisplay = await axios.get(qrCodeURL)
-    dispatch(gotScannedArtDisplay(artDisplay.data))
+// export const fetchScannedArtDisplay= (qrCodeText: string): ThunkAction<void, RootState, unknown, Action<string>> => async dispatch => {
+//   try {
+//     let artDisplay = await axios.get(qrCodeText)
+//     dispatch(gotScannedArtDisplay(artDisplay.data))
 
-  } catch (error) {
-    console.error(error)
-  }
-}
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
+
+//Right now, will rely on local storage. Ideally supposed to be Invoked after fetching all uesr's past art displays from database
+
+export const fetchPastArtworks = () => async (dispatch: any) => {
+  // let data = ''
+  // dispatch(gotPastArtDisplays(data))
+  // return data;
+};
+
+export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
+  const { data } = await axios.get(strapiUrl+'/artworks/'+qrCodeText);
+  console.log("getArtworkById", data);
+  dispatch(gotScannedArtDisplay(data))
+  return data;
+};
 
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
 export const fetchAllArtworks = () => async (dispatch: any) => {
   const { data } = await axios.get(strapiUrl+'/artworks');
-  console.log("fetchAllArtworks", data);
-  dispatch(gotAllArtDisplays(data))
+  //filters out any empty artworks from the database
+  const artDisplays = data.filter((artwork : ArtDisplay )=> artwork.title && artwork.artist);
+  console.log("fetchAllArtworks", artDisplays);
+  dispatch(gotAllArtDisplays(artDisplays))
   return data;
 };
 
 /****** SETTING UP INITIAL STATE ***********/
 const defaultCurrentArtDisplay = {
   id: 'default',
-  titleOfArtwork: 'New York City',
-  nameOfArtist: 'Frédéric Thery',
+  title: 'New York City',
+  artist: 'Frédéric Thery',
   year: '2020',
-  campus: 'New York City',
-  primaryImage: {src: 'https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1', alt: `Porte St Denis`},
-  otherImages: [
-    {src: "https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A", alt: "Petit marché"},
-    {src: "https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A", alt: "Porte St Denis"}
+  campus: 'Brooklyn College',
+  primary_image: {url: 'https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1', alt: `Porte St Denis`},
+  other_images: [
+    {url: "https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A", alt: "Petit marché"},
+    {url: "https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A", alt: "Porte St Denis"}
 
 ],
   description: 'Inspired by a painter father, Frédéric was interested from a very early age in drawing and painting. He studied fine arts at the University of Aix-en-Provence. After graduation, he moved to southern Spain where he discovered various crafts: leather work, silk painting, jewellery making…By g in contact with these artisans he learned to make leather accessories (belts, bags) and experimented with cold enamel work (producing the same aesthetic effect as enamel, but without firing). He attended a workshop on porcelain painting to learn this technique and soon he experienced the urge to paint on canvas.',
-  qrCodeURL: ''
+  qr_code: '',
 }
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
+  pastArtDisplays:[defaultCurrentArtDisplay],
   allArtDisplays: [defaultCurrentArtDisplay]
 }
 
 /*********** TYPE CHECKING REDUCERS **********/
 
-
-
 export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
     case GET_SCANNED_ART_DISPLAY:
-      return {currentArtDisplay: action.payload, allArtDisplays: [...state.allArtDisplays, action.payload]}
-    case ADD_ART_DISPLAYS:
-      return { ...state, allArtDisplays: [...state.allArtDisplays, ...action.payload]
+      //checks to see if artwork is already in history
+      //duplicate items are not added
+      //updates pastArtDisplay
+      //will soon remove updating allArtDisplays as that is meant to be a definitive source
+      return {...state,
+        currentArtDisplay: action.payload,
+        pastArtDisplays: state.pastArtDisplays.some(artwork =>artwork.id === action.payload.id ) ? [...state.pastArtDisplays]: [...state.pastArtDisplays, action.payload],
+        allArtDisplays: state.allArtDisplays.some(artwork =>artwork.id === action.payload.id ) ? [...state.allArtDisplays]: [...state.allArtDisplays, action.payload]}
+    case GET_PAST_ART_DISPLAYS:
+      return {...state, pastArtDisplays: [...state.pastArtDisplays, ...action.payload]}
+    case GET_ALL_ART_DISPLAYS:
+      return {...state, allArtDisplays: [...state.allArtDisplays, ...action.payload]}
+    case ADD_ART_DISPLAY:
+      return { ...state, allArtDisplays: [...state.allArtDisplays, action.payload]
       }
     default:
       return state

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { camera} from "ionicons/icons";
 import {
@@ -22,16 +22,19 @@ import "./Gallery.css";
 import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 import {RootState} from '../store'
-import { fetchAllArtworks } from '../store/artdisplay'
+import { fetchAllArtworks, fetchPastArtworks } from '../store/artdisplay'
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
+  pastArtDisplays: state.artDisplay.pastArtDisplays,
   allArtDisplays: state.artDisplay.allArtDisplays
 })
 
 const mapDispatch = (dispatch: any) => ({
-  getAllArtworks: () => dispatch(fetchAllArtworks())
+  getAllArtworks: () => dispatch(fetchAllArtworks()),
+  getPastArtworks: () => dispatch(fetchPastArtworks ())
+
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -45,9 +48,11 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
+  useEffect(() => {props.getAllArtworks();}, []);
   const { photos, takePhoto } = usePhotoGallery();
-  // props.getAllArtworks();
   const allArtDisplays = props.allArtDisplays
+  const pastArtDisplays = props.pastArtDisplays
+  console.log(pastArtDisplays, "gallery!!")
   return (
     <IonPage>
       <IonHeader>
@@ -75,12 +80,12 @@ const Gallery = (props: Props) => {
 
         <IonGrid>
           <IonRow>
-            {allArtDisplays.map((artDisplay,index) =>(
+            {pastArtDisplays.map((artDisplay,index) =>(
               <IonCol size="3" key={index}>
                 <IonCard>
-                <IonImg src={artDisplay.primaryImage.src} />
-                <IonCardTitle>{artDisplay.titleOfArtwork}</IonCardTitle>
-                <IonCardSubtitle>{artDisplay.nameOfArtist}</IonCardSubtitle>
+                <IonImg src={artDisplay.primary_image? artDisplay.primary_image.url: ''} />
+                <IonCardTitle>{artDisplay.title}</IonCardTitle>
+                <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
                 </IonCard>
               </IonCol>
             ))}
@@ -89,7 +94,7 @@ const Gallery = (props: Props) => {
 
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Tab 2</IonTitle>
+            <IonTitle size="large">Gallery</IonTitle>
           </IonToolbar>
         </IonHeader>
 

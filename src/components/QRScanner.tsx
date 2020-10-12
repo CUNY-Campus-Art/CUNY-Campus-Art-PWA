@@ -9,6 +9,7 @@ import {
 
 interface ContainerProps {
   name: string;
+  scanResultParent: (qrcode: any) => void;
 }
 
 interface ContainerState {
@@ -111,10 +112,12 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       });
       console.log(code);
       if (code) {
+        console.log(this.props.scanResultParent, "ScanResultParent")
         this.setState({
           scanActive: false,
           scanResult: code.data
         });
+          this.props.scanResultParent(code.data);
         //this.showQrToast();
       } else {
         if (this.state.scanActive)
@@ -157,6 +160,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       });
 
       if (code) {
+        //scanResultParent tries to update state of overall app
+        this.props.scanResultParent(code.data);
         this.setState({ scanResult: code.data });
         // this.showQrToast();
       }
