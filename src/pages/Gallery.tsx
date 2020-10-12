@@ -1,6 +1,7 @@
-import React, {useEffect} from "react";
+import React, { useEffect, useCallback, useContext } from "react";
 import { connect, ConnectedProps } from 'react-redux'
-import { camera} from "ionicons/icons";
+import { NavContext } from '@ionic/react';
+import { camera } from "ionicons/icons";
 import {
   IonContent,
   IonHeader,
@@ -21,8 +22,8 @@ import {
 import "./Gallery.css";
 import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
-import {RootState} from '../store'
-import { fetchAllArtworks, fetchPastArtworks } from '../store/artdisplay'
+import { RootState } from '../store'
+import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay } from '../store/artdisplay'
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
@@ -32,15 +33,14 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: any) => ({
+  changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getAllArtworks: () => dispatch(fetchAllArtworks()),
-  getPastArtworks: () => dispatch(fetchPastArtworks ())
-
+  getPastArtworks: () => dispatch(fetchPastArtworks()),
 })
 
 const connector = connect(mapState, mapDispatch)
 
-// The inferred type will look like:
-// {isOn: boolean, toggleOn: () => void}
+
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 type Props = PropsFromRedux & {
@@ -48,11 +48,28 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
-  useEffect(() => {props.getAllArtworks();}, []);
-  const { photos, takePhoto } = usePhotoGallery();
+  useEffect(() => { props.getAllArtworks(); }, []);
   const allArtDisplays = props.allArtDisplays
   const pastArtDisplays = props.pastArtDisplays
-  console.log(pastArtDisplays, "gallery!!")
+  const changeCurrentArtDisplay = props.changeCurrentArtDisplay
+
+  // To redirect to Information with forward animation
+  const { navigate } = useContext(NavContext);
+  const redirect = useCallback(
+    () => navigate('/Information', 'forward'),
+    [navigate]
+  );
+
+  //When user to clicks artwork, updates currentArtDislay, and redirects user to Information tab
+  const selectAnArtwork = (index: number) => {
+
+    let currentArtDisplayItem: ArtDisplay = pastArtDisplays[index]
+    console.log(typeof currentArtDisplayItem, "check link")
+    props.changeCurrentArtDisplay(currentArtDisplayItem)
+    redirect()
+  }
+
+
   return (
     <IonPage>
       <IonHeader>
@@ -62,11 +79,6 @@ const Gallery = (props: Props) => {
       </IonHeader>
       <IonContent fullscreen>
 
-        <IonFab vertical="bottom" horizontal="center" slot="fixed">
-          <IonFabButton onClick={() => takePhoto()}>
-            <IonIcon icon={camera}></IonIcon>
-          </IonFabButton>
-        </IonFab>
 
         {/* <IonGrid>
           <IonRow>
@@ -80,12 +92,15 @@ const Gallery = (props: Props) => {
 
         <IonGrid>
           <IonRow>
-            {pastArtDisplays.map((artDisplay,index) =>(
-              <IonCol size="3" key={index}>
+            {pastArtDisplays.map((artDisplay, index) => (
+              <IonCol size="4" key={index}>
                 <IonCard>
-                <IonImg src={artDisplay.primary_image? artDisplay.primary_image.url: ''} />
-                <IonCardTitle>{artDisplay.title}</IonCardTitle>
-                <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
+                  <IonImg
+                  onClick={() => selectAnArtwork(index)}
+                  src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
+                  alt={artDisplay.primary_image  ? artDisplay.primary_image.alternative: ''}/>
+                  <IonCardTitle>{artDisplay.title}</IonCardTitle>
+                  <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
                 </IonCard>
               </IonCol>
             ))}
@@ -98,7 +113,7 @@ const Gallery = (props: Props) => {
           </IonToolbar>
         </IonHeader>
 
-        <IonTitle size="large">Take a Picture</IonTitle>
+        {/* <IonTitle size="large">Take a Picture</IonTitle> */}
 
       </IonContent>
     </IonPage>
