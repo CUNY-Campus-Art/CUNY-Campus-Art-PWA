@@ -16,7 +16,7 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 
 import Home from './pages/Home';
-import Tab2 from './pages/Tab2';
+import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
@@ -50,7 +50,7 @@ const App: React.FC = () => (
           </IonButton>
           <IonGrid>
           <IonRow>
-            <IonCol offset="4"> 
+            <IonCol offset="4">
           <IonTitle className="CUNY-title">CUNY Gallery</IonTitle>
           </IonCol>
           </IonRow>
@@ -61,7 +61,7 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/Home" component={Home} exact={true} />
-          <Route path="/tab2" component={Tab2} exact={true} />
+          <Route path="/Gallery" component={Gallery} exact={true} />
           <Route path="/ScanQR" component={ScanQR} exact={true}/>
           <Route path="/Information" component={Information} exact={true}/>
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
@@ -71,11 +71,11 @@ const App: React.FC = () => (
             <IonIcon icon={home} />
             <IonLabel>Home</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
+          <IonTabButton tab="Gallery" href="/Gallery">
             <IonIcon icon={images} />
             <IonLabel>Gallery</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="ScaQR" href="/ScanQR">
+          <IonTabButton tab="ScanQR" href="/ScanQR">
             <IonIcon icon={qrCodeOutline} />
             <IonLabel>Scan</IonLabel>
           </IonTabButton>
@@ -87,7 +87,7 @@ const App: React.FC = () => (
             <IonIcon icon={person} />
             <IonLabel>Profile</IonLabel>
           </IonTabButton>
-          
+
         </IonTabBar>
       </IonTabs>
     </IonReactRouter>

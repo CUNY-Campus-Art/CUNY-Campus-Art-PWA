@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useCallback, useContext} from "react";
+import { Redirect, Route } from 'react-router-dom';
+import {NavContext} from '@ionic/react';
+import { connect, ConnectedProps } from 'react-redux'
 import {
+  IonRouterOutlet,
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonFab,
-  IonFabButton,
-  IonIcon,
+  // IonFab,
+  // IonFabButton,
+  // IonIcon,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -17,7 +21,47 @@ import "./ScanQR.css";
 import { camera, folder, stop, scan} from "ionicons/icons";
 import QRScanner from "../components/QRScanner"
 
-const ScanQR: React.FC = () => {
+
+import {RootState} from '../store'
+import {fetchScannedArtDisplay} from '../store/artdisplay'
+import Information from "./Information";
+
+/* use the props currentArtDisplay and allArtDisplays to access state */
+const mapState = (state: RootState) => ({
+  currentArtDisplay: state.artDisplay.currentArtDisplay,
+  allArtDisplays: state.artDisplay.allArtDisplays
+})
+
+const mapDispatch = {
+  getScannedArtDisplay: (qrCodeText : string) => fetchScannedArtDisplay(qrCodeText)
+}
+
+const connector = connect(mapState, mapDispatch)
+
+// The inferred type will look like:
+// {isOn: boolean, toggleOn: () => void}
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
+}
+
+const ScanQR = (props: Props) => {
+  const {navigate} = useContext(NavContext);
+
+    // Call this function when required to redirect with the forward animation
+    const redirect = useCallback(
+      () => navigate('/Information', 'forward'),
+      [navigate]
+    );
+  //This function will be called from inside QR Scanner when it extracts information from the QR Code.
+  //added async/ await so that state of the currentArtDisplay is able to adjust before redirecting  to the information tab
+ let scanResultParent = async ( qrCodeText: string) => {
+    console.log('qrcodeResult', qrCodeText)
+    await props.getScannedArtDisplay(qrCodeText)
+    redirect()
+  };
+
   return (
     <IonPage>
       <IonContent>
@@ -27,6 +71,11 @@ const ScanQR: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
+        {/* Redirects page to information after QR code is processed */}
+        {/* <Route
+        exact
+        path="/ScanQR"
+        render={props => redirect ? <Information />: ''} /> */}
 
           <IonCard class="ion-text-center">
             <IonCardHeader>
@@ -37,30 +86,14 @@ const ScanQR: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
-          <QRScanner name="QR Scanner" />
+          <QRScanner name="QR Scanner" scanResultParent={scanResultParent} />
         {/* to do: link to camera */}
 
 
-        <IonFab vertical="bottom" horizontal="start" slot="fixed">
-          <IonFabButton color="secondary" >
-            <IonIcon icon={folder}></IonIcon>
-          </IonFabButton>
-        </IonFab>
 
-        <IonFab vertical="bottom" horizontal="center" slot="fixed">
-          <IonFabButton >
-            <IonIcon icon={scan}></IonIcon>
-          </IonFabButton>
-        </IonFab>
-
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton color="danger" >
-            <IonIcon color='light' icon={stop}></IonIcon>
-          </IonFabButton>
-        </IonFab>
       </IonContent>
     </IonPage>
   );
 };
 
-export default ScanQR;
+export default connector(ScanQR)
