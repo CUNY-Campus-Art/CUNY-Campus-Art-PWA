@@ -21,14 +21,14 @@ import {
 import "./Information.css";
 import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
 
-import {RootState} from '../store'
+import { RootState } from '../store'
 
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay
 })
 
 const mapDispatch = {
-  // toggleOn: () => ({ type: 'TOGGLE_IS_ON' })
+
 }
 
 const connector = connect(mapState, mapDispatch)
@@ -41,7 +41,7 @@ type Props = PropsFromRedux & {
   // backgroundColor: string
 }
 
-// controls the initial image shown and the speed at which it changes
+// Controls the initial image shown and the speed at which it changes
 const slideOpts = {
   initialSlide: 0,
   speed: 400,
@@ -62,20 +62,20 @@ const Information = (props: Props) => {
       <IonContent>
         <IonCard>
           <IonCardHeader>
-          <IonCardSubtitle>{currentArtDisplay.artist}</IonCardSubtitle>
-          <IonCardTitle >{`${currentArtDisplay.title}, ${currentArtDisplay.year}`}</IonCardTitle>
+            <IonCardSubtitle>{currentArtDisplay.artist}</IonCardSubtitle>
+            <IonCardTitle >{`${currentArtDisplay.title}, ${currentArtDisplay.year}`}</IonCardTitle>
           </IonCardHeader>
 
           <IonCardContent>
             <IonSlides pager={true} options={slideOpts}>
               <IonSlide>
-                <img src={currentArtDisplay.primary_image? currentArtDisplay.primary_image.url: ''} alt={currentArtDisplay.primary_image.alt} />
+                <img src={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.url : ''} alt={currentArtDisplay.primary_image.alternative} />
               </IonSlide>
 
-                {/* If there are other images post them to slideshow as well*/}
-                {currentArtDisplay.other_images ? currentArtDisplay.other_images.map(image => <IonSlide>
-                <img src={image.url} alt={image.alt}/>
-              </IonSlide>): ''}
+              {/* If there are other images post them to slideshow as well*/}
+              {currentArtDisplay.other_images ? currentArtDisplay.other_images.map(image => <IonSlide>
+                <img src={image.url} alt={image.alternative} />
+              </IonSlide>) : ''}
             </IonSlides>
           </IonCardContent>
         </IonCard>
@@ -90,7 +90,7 @@ const Information = (props: Props) => {
           </IonItem>
 
           <IonCardContent>
-              {currentArtDisplay.description}
+            {currentArtDisplay.description}
           </IonCardContent>
         </IonCard>
 
@@ -105,9 +105,6 @@ const Information = (props: Props) => {
     </IonPage>
   );
 };
-
-
-
 
 
 
