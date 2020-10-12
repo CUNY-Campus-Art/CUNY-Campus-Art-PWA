@@ -47,15 +47,16 @@ type Props = PropsFromRedux & {
 }
 
 const ScanQR = (props: Props) => {
-  const {navigate} = useContext(NavContext);
 
-    // Call this function when required to redirect with the forward animation
+    // To redirect to Information with forward animation
+    const {navigate} = useContext(NavContext);
     const redirect = useCallback(
       () => navigate('/Information', 'forward'),
       [navigate]
     );
-  //This function will be called from inside QR Scanner when it extracts information from the QR Code.
-  //added async/ await so that state of the currentArtDisplay is able to adjust before redirecting  to the information tab
+
+  // Will be called from inside QR Scanner when it extracts information from the QR Code.
+  // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting  to the information tab
  let scanResultParent = async ( qrCodeText: string) => {
     console.log('qrcodeResult', qrCodeText)
     await props.getScannedArtDisplay(qrCodeText)

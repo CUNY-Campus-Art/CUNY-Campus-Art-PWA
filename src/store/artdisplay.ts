@@ -41,6 +41,7 @@ export interface ArtDisplaysState {
 /******* TYPE CHECKING ACTIONS AND ACTION CREATORS ******/
 
 // ACTION TYPES
+export const CHANGE_CURRENT_ART_DISPLAY = 'CHANGE_CURRENT_ART_DISPLAY'
 export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
@@ -49,6 +50,11 @@ export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
 // ACTION CREATORS
 interface AddArtDisplayAction {
   type: typeof ADD_ART_DISPLAY,
+  payload: ArtDisplay
+}
+
+interface ChangeCurrentArtDisplayAction {
+  type: typeof CHANGE_CURRENT_ART_DISPLAY,
   payload: ArtDisplay
 }
 
@@ -69,9 +75,17 @@ interface GotAllArtDisplaysAction {
 }
 
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction |GotPastArtDisplaysAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction |GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction
 
-// TypeScript infers that this function is returning SendMessageAction
+//This action only changes current art display, but does not modify state otherwise
+export function changeCurrentArtDisplay(differentArtDisplay: ArtDisplay): ArtDisplayActionTypes {
+  return {
+    type: ADD_ART_DISPLAY,
+    payload: differentArtDisplay
+  }
+}
+
+//This action will ensure that artdisplay gets added, and that current display changes as well
 export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes {
   return {
     type: ADD_ART_DISPLAY,
@@ -102,20 +116,11 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
   }
 }
 
-/*** THUNK CREATORS ****/
+/*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "http://18.208.253.205:1337";
 
-// export const fetchScannedArtDisplay= (qrCodeText: string): ThunkAction<void, RootState, unknown, Action<string>> => async dispatch => {
-//   try {
-//     let artDisplay = await axios.get(qrCodeText)
-//     dispatch(gotScannedArtDisplay(artDisplay.data))
 
-//   } catch (error) {
-//     console.error(error)
-//   }
-// }
-
-//Right now, will rely on local storage. Ideally supposed to be Invoked after fetching all uesr's past art displays from database
+//Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all uesr's past art displays from database
 
 export const fetchPastArtworks = () => async (dispatch: any) => {
   // let data = ''
@@ -166,11 +171,15 @@ const initialState: ArtDisplaysState = {
 
 export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
+    //This changes the value of the current art to be displayed
+    case CHANGE_CURRENT_ART_DISPLAY:
+      return {...state, currentArtDisplay: action.payload}
+
+    //checks to see if artwork is already in history
+    //duplicate items are not added
+    //updates pastArtDisplay
+    //will soon remove updating allArtDisplays as that is meant to be a definitive source
     case GET_SCANNED_ART_DISPLAY:
-      //checks to see if artwork is already in history
-      //duplicate items are not added
-      //updates pastArtDisplay
-      //will soon remove updating allArtDisplays as that is meant to be a definitive source
       return {...state,
         currentArtDisplay: action.payload,
         pastArtDisplays: state.pastArtDisplays.some(artwork =>artwork.id === action.payload.id ) ? [...state.pastArtDisplays]: [...state.pastArtDisplays, action.payload],

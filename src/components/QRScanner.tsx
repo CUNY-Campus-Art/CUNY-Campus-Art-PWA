@@ -174,7 +174,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   }
 
   render() {
-    console.log(this.videoElement, "jooo")
+    // console.log(this.videoElement, "jooo")
     return (
       <div className="container">
         {/* <strong>{this.props.name}</strong> */}

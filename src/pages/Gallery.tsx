@@ -1,5 +1,6 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useCallback, useContext} from "react";
 import { connect, ConnectedProps } from 'react-redux'
+import {NavContext} from '@ionic/react';
 import { camera} from "ionicons/icons";
 import {
   IonContent,
@@ -22,7 +23,7 @@ import "./Gallery.css";
 import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 import {RootState} from '../store'
-import { fetchAllArtworks, fetchPastArtworks } from '../store/artdisplay'
+import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay } from '../store/artdisplay'
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
@@ -33,8 +34,8 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getAllArtworks: () => dispatch(fetchAllArtworks()),
-  getPastArtworks: () => dispatch(fetchPastArtworks ())
-
+  getPastArtworks: () => dispatch(fetchPastArtworks ()),
+  changeCurrentArtDisplay:( artwork : ArtDisplay) => changeCurrentArtDisplay(artwork)
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -52,7 +53,21 @@ const Gallery = (props: Props) => {
   const { photos, takePhoto } = usePhotoGallery();
   const allArtDisplays = props.allArtDisplays
   const pastArtDisplays = props.pastArtDisplays
-  console.log(pastArtDisplays, "gallery!!")
+
+    // To redirect to Information with forward animation
+    const {navigate} = useContext(NavContext);
+    const redirect = useCallback(
+      () => navigate('/Information', 'forward'),
+      [navigate]
+    );
+
+  //This function allows user to press artwork, updates currentArtDislay, and redirects user to Information tab
+  const selectAnArtwork = async (index: number) => {
+      await props.changeCurrentArtDisplay(allArtDisplays[index])
+      redirect()
+  }
+
+
   return (
     <IonPage>
       <IonHeader>
@@ -83,7 +98,7 @@ const Gallery = (props: Props) => {
             {pastArtDisplays.map((artDisplay,index) =>(
               <IonCol size="3" key={index}>
                 <IonCard>
-                <IonImg src={artDisplay.primary_image? artDisplay.primary_image.url: ''} />
+                <IonImg onClick={()=>selectAnArtwork(index)} src={artDisplay.primary_image? artDisplay.primary_image.url: ''} />
                 <IonCardTitle>{artDisplay.title}</IonCardTitle>
                 <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
                 </IonCard>
