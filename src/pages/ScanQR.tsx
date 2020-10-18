@@ -104,7 +104,8 @@ const ScanQR = (props: Props) => {
           <IonCardTitle>Scan Result: {scanResult}</IonCardTitle>
         </IonCard>
 
-        <QRScanner name="QR Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+        <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+
 
         {/* to do: link to camera */}
         {!scanState ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
