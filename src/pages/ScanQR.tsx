@@ -1,3 +1,7 @@
+/**
+ * ScanQR.tsx currently houses the QRScanner component, and is able to fetch result from QRScanner scan to fetch artwork data from the database. Once it gets the info, it switches the user over to the Information tab displaying the details of that artowrk. The ScanQR page also provides instruction to user,
+ */
+
 import React, { useCallback, useContext, useState } from "react";
 import { Redirect, Route } from 'react-router-dom';
 import { NavContext } from '@ionic/react';
@@ -76,7 +80,7 @@ const ScanQR = (props: Props) => {
   let [scanState, setScanState] = useState(0);
 
   let scanStateParent = (state: any) => {
-      setScanState(state)
+    setScanState(state)
   }
 
 
@@ -97,17 +101,17 @@ const ScanQR = (props: Props) => {
             <img src={require("../assets/images/QR-code-scan-loop-once.gif")} alt="Scan QR" />
           </IonCardContent>
 
-      <IonCardTitle>Scan Result: {scanResult}</IonCardTitle>
+          <IonCardTitle>Scan Result: {scanResult}</IonCardTitle>
         </IonCard>
 
         <QRScanner name="QR Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
-        
+
         {/* to do: link to camera */}
         {!scanState ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => takePhoto()} color="tertiary">
             <IonIcon icon={camera}></IonIcon>
           </IonFabButton>
-        </IonFab>:''}
+        </IonFab> : ''}
 
       </IonContent>
     </IonPage>
