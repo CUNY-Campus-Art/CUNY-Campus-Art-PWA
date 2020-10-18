@@ -1,3 +1,7 @@
+/**
+ * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
+ */
+
 import React from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import {

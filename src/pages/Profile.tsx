@@ -1,11 +1,15 @@
+/**
+ * Profile.tsx - The Profile tsx currently displays a sample profile information section.
+ */
+
 import React from "react";
 import {
-    IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
   IonContent,
   IonGrid,
   IonHeader,
@@ -37,17 +41,17 @@ const Home: React.FC = () => {
           </IonToolbar>
 
         </IonHeader>
-        
+
         <IonCard>
-                
-            <IonCardContent>
-            <img src={require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")} alt="Scan QR" width="150"/>
+
+          <IonCardContent>
+            <img src={require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")} alt="Scan QR" width="150" />
             <IonCardTitle>Chris Campbell</IonCardTitle>
             <IonCardSubtitle>CUNY Brooklyn College</IonCardSubtitle>
             <IonButton fill="outline" slot="end">
-                Edit
+              Edit
                 </IonButton>
-                </IonCardContent>
+          </IonCardContent>
         </IonCard>
 
         <IonCard>

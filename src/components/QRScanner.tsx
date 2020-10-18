@@ -1,3 +1,11 @@
+/**
+ * QRScanner.tsx - builds a QR scanner allowing user to
+ * scan a QR code using their camera, whether it's from
+ * a personal computer, iPhone or Android.
+ * Sends scan result to parent QRScan page.
+ */
+
+
 import React, { createRef } from 'react';
 import { IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonFab, IonFabButton, IonIcon, IonContent } from '@ionic/react';
 import './QRScanner.css';

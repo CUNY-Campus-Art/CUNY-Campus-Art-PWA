@@ -1,3 +1,9 @@
+/**
+ * Gallery.tsx - As of now, the Gallery component can pull
+ * information from the database. It currently retrieves a list
+ * of past artworks the user has scanned locally.
+ */
+
 import React, { useEffect, useCallback, useContext } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { NavContext } from '@ionic/react';
@@ -96,9 +102,9 @@ const Gallery = (props: Props) => {
               <IonCol size="4" key={index}>
                 <IonCard>
                   <IonImg
-                  onClick={() => selectAnArtwork(index)}
-                  src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
-                  alt={artDisplay.primary_image  ? artDisplay.primary_image.alternative: ''}/>
+                    onClick={() => selectAnArtwork(index)}
+                    src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
+                    alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
                   <IonCardTitle>{artDisplay.title}</IonCardTitle>
                   <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
                 </IonCard>
