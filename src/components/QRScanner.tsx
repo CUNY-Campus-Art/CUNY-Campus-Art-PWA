@@ -88,7 +88,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         return true
     else {
       console.log ('invalid qr code')
-      if(this.state.scanActive) this.stopScan();
+      // if(this.state.scanActive) this.stopScan();
       this.setState({showInvalidQRToast: true})
       return false
     }
@@ -164,7 +164,9 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
           });
           this.props.scanResultParent(code.data);
           //this.showQrToast();
-        } else {this.startScan()}
+        } else {
+          requestAnimationFrame(this.scan);
+        }
 
       } else {
         if (this.state.scanActive)
