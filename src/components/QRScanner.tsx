@@ -25,9 +25,10 @@ interface ContainerProps {
 }
 
 interface ContainerState {
-  scanActive: boolean;
-  scanResult: string;
+  scanActive: boolean
+  scanResult: string
   videoSrc: string
+  showInvalidQRToast: boolean
 }
 
 class QRScanner extends React.Component<ContainerProps, ContainerState> {
@@ -42,7 +43,6 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   private stream: any;
   // private loading!: HTMLIonLoadingElement;
 
-  private showInvalidQRToast: boolean;
 
   constructor(props: ContainerProps) {
     super(props);
@@ -50,10 +50,10 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     this.state = {
       scanActive: false,
       scanResult: '',
-      videoSrc: ''
+      videoSrc: '',
+      showInvalidQRToast: false
     }
 
-    this.showInvalidQRToast = false
     this.setShowInvalidQRToast = this.setShowInvalidQRToast.bind(this)
     this.startScan = this.startScan.bind(this)
     this.scan = this.scan.bind(this)
@@ -65,7 +65,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   }
 
   setShowInvalidQRToast (status: boolean){
-    this.showInvalidQRToast = status;
+    this.setState({showInvalidQRToast: status})
   }
 
   // When DOM is loaded, get references to canvas and video elements.
@@ -89,7 +89,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     else {
       console.log ('invalid qr code')
       if(this.state.scanActive) this.stopScan();
-      this.showInvalidQRToast = true;
+      this.setState({showInvalidQRToast: true})
       return false
     }
   }
@@ -191,7 +191,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
   // Handles uploaded image
-  async handleFile(event: React.ChangeEvent<HTMLElement>) {
+   handleFile(event: React.ChangeEvent<HTMLElement>) {
     const file = this.fileInput.files.item(0);
 
     var img = new Image();
@@ -215,6 +215,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         if (isValidQRCode) {
           this.props.scanResultParent(code.data);
           this.setState({ scanResult: code.data });
+        } else{
+          this.setState({showInvalidQRToast: true})
         }
       }
     };
@@ -278,11 +280,12 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         <IonToast
         id="invalid-qr-toast"
         color="warning"
-        isOpen={this.showInvalidQRToast}
+        isOpen={this.state.showInvalidQRToast}
         onDidDismiss={() => this.setShowInvalidQRToast(false)}
         message="Invalid QR code! Please scan one from a CUNY art display."
         duration={600}
         position="middle"
+        z-index= {20001}
       />
         {/* --Display scanner result-- Moved to Parent page */}
         {/* <IonCard>
