@@ -6,3 +6,7 @@
   height: 100%;
 }
 
+#invalid-qr-toast{
+  position:absolute;
+  z-index: 2000;
+}

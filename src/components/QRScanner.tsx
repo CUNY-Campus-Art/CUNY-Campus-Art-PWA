@@ -6,14 +6,13 @@
  */
 
 
-import React, { createRef } from 'react';
-import { IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonFab, IonFabButton, IonIcon, IonContent } from '@ionic/react';
+import React, { createRef, useState } from 'react';
+import { IonButton, IonFab, IonFabButton, IonIcon, IonToast } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
 
 import {
-  camera, folder, scan,
-  stop
+  folder, scan, stop
 } from "ionicons/icons";
 
 //For Camera Button:
@@ -43,6 +42,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   private stream: any;
   // private loading!: HTMLIonLoadingElement;
 
+  private showInvalidQRToast: boolean;
+
   constructor(props: ContainerProps) {
     super(props);
 
@@ -52,33 +53,54 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       videoSrc: ''
     }
 
-    this.startScan = this.startScan.bind(this);
-    this.scan = this.scan.bind(this);
+    this.showInvalidQRToast = false
+    this.setShowInvalidQRToast = this.setShowInvalidQRToast.bind(this)
+    this.startScan = this.startScan.bind(this)
+    this.scan = this.scan.bind(this)
     this.stopScan = this.stopScan.bind(this)
     this.refresh = this.refresh.bind(this)
     this.uploadImage = this.uploadImage.bind(this)
     this.handleFile = this.handleFile.bind(this)
+    this.parseQRCode = this.parseQRCode.bind(this)
   }
 
+  setShowInvalidQRToast (status: boolean){
+    this.showInvalidQRToast = status;
+  }
+
+  // When DOM is loaded, get references to canvas and video elements.
   componentDidMount() {
     this.canvasElement = this.canvas.current!
     this.videoElement = this.video.current!
     this.canvasContext = this.canvasElement.getContext('2d')
   }
 
-  // When DOM is loaded, componentDidUpdate grabs references to relevant elements.
   async componentDidUpdate() {
     this.canvasElement = this.canvas.current!
-    this.videoElement = this.video.current!
     this.canvasContext = this.canvasElement.getContext('2d')
+    this.videoElement = this.video.current!
     this.fileInput = document.getElementById('file-input')
   }
 
+  parseQRCode(code: String) {
+    console.log("parseQRCode")
+    if(code.startsWith('campus-art-'))
+        return true
+    else {
+      console.log ('invalid qr code')
+      if(this.state.scanActive) this.stopScan();
+      this.showInvalidQRToast = true;
+      return false
+    }
+  }
 
-  // startScan sets up the stream and then sets up a continuous call
+  // startScan() sets up the camera stream
+  // As of now doesn't work on, iOS standalone mode
   async startScan() {
-    // As of now doesn't work on, iOS standalone mode!
-    this.props.scanStateParent(true) //sends update to parent to let it know scan state is active
+
+    //sends update to parent to let it know scan state is active
+    this.props.scanStateParent(true)
+
     this.stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' }
     });
@@ -96,6 +118,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     requestAnimationFrame(this.scan);
   }
 
+  // scan() takes images from the camera stream and detects QR code
   async scan() {
     console.log(this.canvas, "TESTING")
     if (this.videoElement.readyState === this.videoElement.HAVE_ENOUGH_DATA) {
@@ -123,17 +146,26 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert'
       });
+
       console.log(code);
+
       if (code) {
-        console.log(this.props.scanResultParent, "ScanResultParent")
-        this.videoElement.setAttribute('playsinline', false);
-        this.stream.getTracks()[0].stop();
-        this.setState({
-          scanActive: false,
-          scanResult: code.data
-        });
-        this.props.scanResultParent(code.data);
-        //this.showQrToast();
+
+        let isValidQRCode = this.parseQRCode(code.data)
+
+     // When a result is found, video stops, and scanResult Parent is called. scanResultParent tries to update state of overall app,
+        if (isValidQRCode) {
+          console.log(this.props.scanResultParent, "ScanResultParent")
+          this.videoElement.setAttribute('playsinline', false);
+          this.stream.getTracks()[0].stop();
+          this.setState({
+            scanActive: false,
+            scanResult: code.data
+          });
+          this.props.scanResultParent(code.data);
+          //this.showQrToast();
+        } else {this.startScan()}
+
       } else {
         if (this.state.scanActive)
           requestAnimationFrame(this.scan);
@@ -144,8 +176,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   }
 
 
-  //stops scan when user presses corresponding button.
-  //stops stream and sets the state of scanActive to false
+  // Stops stream when user presses stop button and sets the state of scanActive to false
   stopScan() {
     this.props.scanStateParent(false)//sends update to parent to let it know scan state is not active
     this.videoElement.setAttribute('playsinline', false);
@@ -159,7 +190,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   }
 
 
-  handleFile(event: React.ChangeEvent<HTMLElement>): void {
+  // Handles uploaded image
+  async handleFile(event: React.ChangeEvent<HTMLElement>) {
     const file = this.fileInput.files.item(0);
 
     var img = new Image();
@@ -175,30 +207,34 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         inversionAttempts: 'dontInvert'
       });
 
+
       if (code) {
-        //when a result is found, video stops, and scanResult Parent is called. scanResultParent tries to update state of overall app,
-        // this.videoElement.setAttribute('playsinline', false);
-        // this.stream.getTracks()[0].stop();
-        this.props.scanResultParent(code.data);
-        this.setState({ scanResult: code.data });
-        // this.showQrToast();
+
+        let isValidQRCode = this.parseQRCode(code.data)
+
+        if (isValidQRCode) {
+          this.props.scanResultParent(code.data);
+          this.setState({ scanResult: code.data });
+        }
       }
     };
     img.src = URL.createObjectURL(file);
   }
 
   uploadImage() {
-    //turns off scanner if uploadImage button is pressed
-    if(this.state.scanActive) {
+    // Turns off scanner if uploadImage button is pressed
+    if (this.state.scanActive) {
       this.stream.getTracks()[0].stop();
-      this.setState({scanActive: false})
+      this.setState({ scanActive: false })
     }
-    //clicks hidden input file buttons
+    // Clicks hidden input file button
     this.fileInput.click();
   }
 
   render() {
     // console.log(this.videoElement, "jooo")
+
+
     return (
       <span>
         {/* <strong>{this.props.name}</strong> */}
@@ -208,18 +244,11 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         <input id="file-input" type="file" accept="image/*;capture=camera" hidden onChange={this.handleFile} />
 
         {/* --Trigger the file input-- */}
-        {/* <IonButton id="camera" shape="round" onClick={this.uploadImage} color="primary">Upload Image</IonButton> */}
-
         <IonFab vertical="bottom" horizontal="start" slot="fixed">
           <IonFabButton id="camera" color="secondary" onClick={this.uploadImage}>
             <IonIcon icon={folder}></IonIcon>
           </IonFabButton>
         </IonFab>
-
-
-
-         {/* - or -
-        <IonButton id="qr-scanner" shape="round" onClick={this.startScan} color="primary">Start Scan</IonButton> <br /> */}
 
 
         <IonFab vertical="bottom" horizontal="center" slot="fixed" >
@@ -232,17 +261,13 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         <IonButton id="refresh-button" shape="round" onClick={this.refresh} color="warning">Reset</IonButton>
 
         <div id="scanner-section">
-        {/* --Shows our camera stream-- */}
-        {/* <video width="50%" ref={this.video} autoPlay={true}/> */}
-        <video id="video-scanner" hidden={!this.state.scanActive} width="100%" ref={this.video} autoPlay={true} />
+          {/* --Shows our camera stream-- */}
+          <video id="video-scanner" hidden={!this.state.scanActive} width="100%" ref={this.video} autoPlay={true} />
 
-        {/* --Used to render the camera stream images-- */}
-        <canvas hidden ref={this.canvas}></canvas>
+          {/* --Used to render the camera stream images-- */}
+          <canvas hidden ref={this.canvas}></canvas>
 
         </div>
-
-        {/* --Stop our scanner preview if active-- */}
-        {/* {this.state.scanActive ? <IonButton shape="round" onClick={this.stopScan} color="danger">Stop Scan</IonButton> : null} */}
 
         {this.state.scanActive ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton id='stop-button' color="danger" onClick={this.stopScan} >
@@ -250,8 +275,16 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
           </IonFabButton>
         </IonFab> : null}
 
-
-        {/* --Display scanner result-- */}
+        <IonToast
+        id="invalid-qr-toast"
+        color="warning"
+        isOpen={this.showInvalidQRToast}
+        onDidDismiss={() => this.setShowInvalidQRToast(false)}
+        message="Invalid QR code! Please scan one from a CUNY art display."
+        duration={600}
+        position="middle"
+      />
+        {/* --Display scanner result-- Moved to Parent page */}
         {/* <IonCard>
           <IonCardHeader>
             <IonCardTitle>QR Scan Result:</IonCardTitle>
