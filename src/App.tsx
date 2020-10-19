@@ -11,7 +11,7 @@ import {
   IonHeader,
   IonToolbar,
   IonButton,
-  IonTitle, IonGrid, IonRow, IonCol
+  IonTitle, IonGrid, IonRow, IonCol, IonItemDivider
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
@@ -24,6 +24,7 @@ import { images, home, person, qrCodeOutline, menu, informationCircle } from 'io
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
+import './pages/Profile.css';
 
 /* Basic CSS for apps built with Ionic */
 import '@ionic/react/css/normalize.css';
@@ -40,21 +41,14 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './App.css';
 
 const App: React.FC = () => (
   <IonApp>
-    <IonHeader>
-        <IonToolbar>
-          {/* <IonButton slot="start">
-            <IonIcon icon={menu} />
-          </IonButton> */}
-          <IonGrid>
-          <IonRow>
-            <IonCol className="ion-text-center">
-          <IonTitle className="CUNY-title">CUNY Gallery</IonTitle>
-          </IonCol>
-          </IonRow>
-          </IonGrid>
+    <IonHeader className= "CUNY-title" >
+
+          <IonToolbar>
+          <IonTitle className="ion-text-center CUNY-title"> CUNY Gallery</IonTitle>
         </IonToolbar>
       </IonHeader>
     <IonReactRouter>

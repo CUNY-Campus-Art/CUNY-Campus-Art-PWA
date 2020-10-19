@@ -59,10 +59,13 @@ const Information = (props: Props) => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle >Artwork Information</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+          <IonToolbar></IonToolbar>
+
+          <IonToolbar>
+            <IonTitle className="ion-text-center">Artwork Information</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+
       <IonContent>
         <IonCard>
           <IonCardHeader>

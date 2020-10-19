@@ -87,11 +87,15 @@ const ScanQR = (props: Props) => {
   return (
     <IonPage>
       <IonContent>
-        <IonHeader>
+
+      <IonHeader>
+          <IonToolbar></IonToolbar>
+
           <IonToolbar>
-            <IonTitle size="large">Scan</IonTitle>
+            <div className="ion-text-center">Scan a QR code located on any CUNY Artwork to learn more!</div>
           </IonToolbar>
         </IonHeader>
+
 
         <IonCard class="ion-text-center">
           <IonCardHeader>
