@@ -4,6 +4,7 @@
 
 import React from "react";
 import {
+  IonBadge,
   IonButton,
   IonCard,
   IonCardContent,
@@ -13,54 +14,117 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
+  IonLabel,
   IonPage,
+  IonTab,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
   IonTitle,
   IonToolbar,
-  // IonTabButton,
-  // IonLabel,
-  // IonIcon,
-  // IonButton
 } from "@ionic/react";
-import ExploreContainer from "../components/ExploreContainer";
-import "./Home.css";
-//import { menuOutline } from "ionicons/icons";
+import { calendar, personCircle } from "ionicons/icons";
 
+import "./Profile.css";
 
-const Home: React.FC = () => {
+const Profile: React.FC = () => {
   return (
-    <IonPage>
+    <IonPage className="container-fluid">
+      <IonHeader>
+        <IonToolbar></IonToolbar>
+
+        <IonToolbar>
+          <IonTitle className="ion-text-center">Profile</IonTitle>
+        </IonToolbar>
+      </IonHeader>
 
       <IonContent>
-        <IonHeader>
+        <IonCardContent className="ion-text-center">
+          <img
+            className="profile-pic"
+            src={require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")}
+            alt="Scan QR"
+          />
+          <IonCardTitle>Chris Campbell</IonCardTitle>
+          <IonCardSubtitle>CUNY Brooklyn College</IonCardSubtitle>
+          {/* To do: decide to keep this button to open up to form or remove this button */}
+          <IonButton fill="outline" slot="end">
+            Edit
+          </IonButton>
+        </IonCardContent>
 
-          <IonToolbar>
-          </IonToolbar>
+        <ul className="nav nav-tabs">
+          <li>
+            <IonButton color="light" className="active">
+              <a href="#home" data-toggle="tab">
+                Profile
+              </a>
+            </IonButton>
+          </li>
+          <li>
+            <IonButton color="light">
+              <a href="#profile" data-toggle="tab">
+                Password
+              </a>
+            </IonButton>
+          </li>
+        </ul>
 
-          <IonToolbar>
-            <IonTitle className="ion-text-center">Profile</IonTitle>
-          </IonToolbar>
+        {/* tab-content allows changing of tabs */}
+        <div id="myTabContent" className="tab-content">
+          <hr />
+          {/* default tab is profile */}
+          <div className="tab-pane active in" id="home">
+            <form id="tab">
+              <IonLabel>Username</IonLabel>
+              <br />
+              <input type="text" value="Ccampbell" className="input-xlarge" />
+              <hr />
 
-        </IonHeader>
+              <IonLabel>First Name</IonLabel>
+              <br />
+              <input type="text" value="Chris" className="input-xlarge" />
+              <hr />
 
-        <IonCard>
+              <IonLabel>Last Name</IonLabel>
+              <br />
+              <input type="text" value="Campbell" className="input-xlarge" />
+              <hr />
 
-          <IonCardContent>
-            <img src={require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")} alt="Scan QR" width="150" />
-            <IonCardTitle>Chris Campbell</IonCardTitle>
-            <IonCardSubtitle>CUNY Brooklyn College</IonCardSubtitle>
-            <IonButton fill="outline" slot="end">
-              Edit
+              <IonLabel>Email</IonLabel>
+              <br />
+              <input
+                type="text"
+                value="Ccampbell@ybrooklyn.com"
+                className="input-xlarge"
+              />
+              <hr />
+
+              <div>
+                <IonButton color="success" expand="block">
+                  Update
                 </IonButton>
-          </IonCardContent>
-        </IonCard>
+              </div>
+            </form>
+          </div>
 
-        <IonCard>
-
-        </IonCard>
-
+          {/* Password Tab */}
+          <div className="tab-pane fade" id="profile">
+            <form id="tab2">
+              <IonLabel>New Password</IonLabel> <br />
+              <input type="password" className="input-xlarge" />
+              <div>
+                <IonButton color="success" expand="block">
+                  Update
+                </IonButton>
+              </div>
+            </form>
+          </div>
+        </div>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Home;
+export default Profile;

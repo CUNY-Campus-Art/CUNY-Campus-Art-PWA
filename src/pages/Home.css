@@ -2,3 +2,18 @@
     align-content: center;
     position: center;
 }
+
+.alt-bkgd{
+    background-color: #f2f2f2;
+}
+
+.About-title{
+    color:#1D3A83;
+}
+.card-imgs{
+    max-width: 300px;
+}
+
+.card-img-today{
+    max-width: 250px;
+}

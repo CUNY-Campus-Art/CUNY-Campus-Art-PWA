@@ -50,3 +50,15 @@ You can test what we have so far with these QR Codes.
 
 <img src="The Birth of Venus qr-code-by-id.png" width="300"/>
 
+## Update 10/19/20 - Mary - Adding UI Components
+
+* Added bootstrap to the application and added more ui components to profile tab and home tab.
+* Edited the header using css.
+* Added form to profile tab.
+* Edited qr-icon to resemble a real qr-code more.
+
+
+<img src="homescreen-snap.png" width="250"/>
+<img src="profileA.png" width="250"/>
+<img src="profileB.png" width="250"/>
+<img src="./src/assets/images/QR-Icon.png" width="175"/>
