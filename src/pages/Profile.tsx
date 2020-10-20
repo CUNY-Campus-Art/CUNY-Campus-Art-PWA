@@ -63,7 +63,10 @@ const Profile = (props: Props) => {
   useEffect(() => { props.getUser('Ccampbell', 'cunygallery') }, []);
 
   let user = props.currentUser;
+
   console.log(user, "STATE PROPS")
+
+
   return (
     <IonPage className="container-fluid">
       <IonHeader>
@@ -78,7 +81,7 @@ const Profile = (props: Props) => {
         <IonCardContent className="ion-text-center">
           <img
             className="profile-pic"
-            src={require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")}
+            src={user.profilePicture ? user.profilePicture.url : ''}
             alt="Scan QR"
           />
           <IonCardTitle>{`${user.firstName} ${user.lastName}`}</IonCardTitle>
