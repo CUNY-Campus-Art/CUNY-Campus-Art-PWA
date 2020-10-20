@@ -115,7 +115,7 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
 const strapiUrl = "http://18.208.253.205:1337";
 
 
-//Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all uesr's past art displays from database
+//Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
 
 export const fetchPastArtworks = () => async (dispatch: any) => {
   // let data = ''
@@ -124,7 +124,7 @@ export const fetchPastArtworks = () => async (dispatch: any) => {
 };
 
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
-  //campus-art- -> 11 characters
+  //"campus-art-" -> 11 characters
   let artworkId = qrCodeText.slice(11);
   const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
   console.log("getArtworkById", data);

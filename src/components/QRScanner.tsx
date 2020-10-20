@@ -6,7 +6,7 @@
  */
 
 
-import React, { createRef, useState } from 'react';
+import React, { createRef } from 'react';
 import { IonButton, IonFab, IonFabButton, IonIcon, IonToast } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
@@ -16,7 +16,7 @@ import {
 } from "ionicons/icons";
 
 //For Camera Button:
-import { usePhotoGallery } from "../hooks/usePhotoGallery";
+// import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 interface ContainerProps {
   name: string;

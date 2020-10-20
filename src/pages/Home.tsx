@@ -1,4 +1,4 @@
-// Home Page currently holds information about the applicaiton and some dummy data
+// Home Page currently holds information about the application and some dummy data
 //This tab is responsive, on large screen ths rows show data in 2 columns and only 1
 //colum on smaller screens.
 
