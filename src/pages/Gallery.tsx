@@ -7,16 +7,12 @@
 import React, { useEffect, useCallback, useContext } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { NavContext } from '@ionic/react';
-import { camera } from "ionicons/icons";
 import {
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonFab,
-  IonFabButton,
-  IonIcon,
   IonGrid,
   IonRow,
   IonCol,
@@ -26,7 +22,7 @@ import {
   IonCardSubtitle
 } from "@ionic/react";
 import "./Gallery.css";
-import { usePhotoGallery } from "../hooks/usePhotoGallery";
+
 
 import { RootState } from '../store'
 import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay } from '../store/artdisplay'

@@ -3,11 +3,11 @@
  */
 
 import React, { useCallback, useContext, useState } from "react";
-import { Redirect, Route } from 'react-router-dom';
+// import { Redirect, Route } from 'react-router-dom';
 import { NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 import {
-  IonRouterOutlet,
+  // IonRouterOutlet,
   IonContent,
   IonHeader,
   IonPage,
@@ -22,7 +22,7 @@ import {
   IonCardTitle
 } from "@ionic/react";
 import "./ScanQR.css";
-import { camera, folder, stop, scan, timeSharp } from "ionicons/icons";
+import { camera  } from "ionicons/icons";
 import QRScanner from "../components/QRScanner"
 
 //For Camera Button:
@@ -30,7 +30,6 @@ import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 import { RootState } from '../store'
 import { fetchScannedArtDisplay } from '../store/artdisplay'
-import Information from "./Information";
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
@@ -55,15 +54,15 @@ type Props = PropsFromRedux & {
 const ScanQR = (props: Props) => {
   const { photos, takePhoto } = usePhotoGallery();
 
-  // To redirect to Information with forward animation
+  // To redirect to Information tab using forward animation
   const { navigate } = useContext(NavContext);
   const redirect = useCallback(
     () => navigate('/Information', 'forward'),
     [navigate]
   );
 
-  // Will be called from inside QR Scanner when it extracts information from the QR Code.
-  // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting  to the information tab
+  // Will be called from inside QR Scanner component when it extracts information from the QR Code.
+  // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting to the information tab
 
   let [scanResult, setScanResult] = useState('');
 

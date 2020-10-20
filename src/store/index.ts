@@ -8,9 +8,12 @@ import { createLogger } from 'redux-logger'
 
 
 import artDisplay from './artdisplay'
+import user from './user'
+
 
 const rootReducer = combineReducers({
-  artDisplay
+  artDisplay,
+  user
 })
 
 /*  Type Checking Middlewares */
