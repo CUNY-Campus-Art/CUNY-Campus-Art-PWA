@@ -5,12 +5,18 @@ import { StringLiteral } from 'typescript'
 import { RootState } from './index'
 
 /************ Type Checking State ************/
+
+export interface Image {
+  url: string,
+  alternativeText: string
+}
+
 export interface User {
   username: string
   firstName: string
   lastName: string
   email: string
-  profilePicture: string
+  profilePicture: Image
 }
 
 /******* TYPE CHECKING ACTIONS AND ACTION CREATORS ******/
