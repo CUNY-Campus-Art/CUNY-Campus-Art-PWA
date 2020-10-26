@@ -44,7 +44,7 @@ const getUser = (user: User) => ({type: GET_USER, user})
 const removeUser = () => ({type: REMOVE_USER})
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "http://18.208.253.205:1337";
+const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 // export const me = () => async dispatch => {
 //   try {
