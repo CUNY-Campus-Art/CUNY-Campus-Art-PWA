@@ -112,7 +112,7 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
 }
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "http://18.208.253.205:1337";
+const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
 //Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
