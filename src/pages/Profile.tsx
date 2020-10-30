@@ -2,11 +2,12 @@
  * Profile.tsx - The Profile tsx currently displays a sample profile information section.
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
-import { fetchUser } from "../store/user"
-import "./Profile.css";
+import { getUser, removeUser, fetchUser } from '../store/user'
+import './Profile.css';
+import AuthFormContainer from '../components/AuthFormContainer'
 
 import {
   IonBadge,
@@ -32,19 +33,15 @@ import {
 import { calendar, personCircle } from "ionicons/icons";
 
 
-/* use the props currentArtDisplay and allArtDisplays to access state */
+/* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
-  currentUser: state.user
-  // currentArtDisplay: state.artDisplay.currentArtDisplay,
-  // pastArtDisplays: state.artDisplay.pastArtDisplays,
-  // allArtDisplays: state.artDisplay.allArtDisplays
+  currentUser: state.user.user,
+  campus: state.user.campus
 })
 
 const mapDispatch = (dispatch: any) => ({
-  getUser: (username:string, pw:string) => dispatch(fetchUser(username, pw))
-  // changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
-  // getAllArtworks: () => dispatch(fetchAllArtworks()),
-  // getPastArtworks: () => dispatch(fetchPastArtworks()),
+  fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
+  getUser: (user: any) => dispatch(getUser(user))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -60,13 +57,24 @@ type Props = PropsFromRedux & {
 
 
 const Profile = (props: Props) => {
-  useEffect(() => { props.getUser('Ccampbell', 'cunygallery') }, []);
+
+  const [isLogged, setIsLogged] = useState(!!localStorage.getItem('user'));
+
+  useEffect(() => {
+
+    if(isLogged) {
+      const user = JSON.parse(String(localStorage.getItem('user')));
+      console.log(user, "TESTING")
+        props.getUser(user)
+      }
+   }, []);
 
   let user = props.currentUser;
+  let campus = props.campus;
 
-  console.log(user, "STATE PROPS")
+//  console.log(typeof campus.campus_name, "STATE PROPS")
 
-
+  console.log(user, "Does this work?")
   return (
     <IonPage className="container-fluid">
       <IonHeader>
@@ -78,14 +86,19 @@ const Profile = (props: Props) => {
       </IonHeader>
 
       <IonContent>
+
+        <IonCard>
+          <AuthFormContainer />
+
+        </IonCard>
         <IonCardContent className="ion-text-center">
           <img
             className="profile-pic"
-            src={user.profilePicture ? user.profilePicture.url : ''}
+            src={user.profile_picture ? user.profile_picture.url : ''}
             alt="Scan QR"
           />
-          <IonCardTitle>{`${user.firstName} ${user.lastName}`}</IonCardTitle>
-          <IonCardSubtitle>{user.campus}</IonCardSubtitle>
+          <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
+          {/* <IonCardSubtitle>{user.campus.campus_name}</IonCardSubtitle> */}
           {/* To do: decide to keep this button to open up to form or remove this button */}
           <IonButton fill="outline" slot="end">
             Edit
@@ -122,12 +135,12 @@ const Profile = (props: Props) => {
 
               <IonLabel>First Name</IonLabel>
               <br />
-              <input type="text" value={user.firstName} className="input-xlarge" />
+              <input type="text" value={user.first_Name} className="input-xlarge" />
               <hr />
 
               <IonLabel>Last Name</IonLabel>
               <br />
-              <input type="text" value={user.lastName} className="input-xlarge" />
+              <input type="text" value={user.last_Name} className="input-xlarge" />
               <hr />
 
               <IonLabel>Email</IonLabel>
