@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -42,6 +42,7 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
+
 
 const App: React.FC = () => (
   <IonApp>

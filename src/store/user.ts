@@ -11,12 +11,23 @@ export interface Image {
   alternativeText: string
 }
 
+export interface Campus {
+  campus_name: string,
+}
+
 export interface User {
-  username: string
-  firstName: string
-  lastName: string
+  user_name: string
+  first_name: string
+  last_name: string
   email: string
-  profilePicture: Image
+  profile_picture: Image
+  campus: Campus
+}
+
+export interface UserState {
+  user: User,
+  campus: any,
+  isAuthenticated: boolean
 }
 
 /******* TYPE CHECKING ACTIONS AND ACTION CREATORS ******/
@@ -26,7 +37,11 @@ export const GET_USER = 'GET_USER'
 export const REMOVE_USER = 'REMOVE_USER'
 
 // INITIAL STATE
-const defaultUser = {}
+const defaultUser = {
+  user: '',
+  campus: '',
+  isAuthenticated: false
+}
 
 // ACTION CREATORS
 interface getUserAction {
@@ -35,13 +50,13 @@ interface getUserAction {
 }
 
 interface removeUserAction {
-  type: typeof GET_USER
+  type: typeof REMOVE_USER
   payload: User
 }
 
 
-const getUser = (user: User) => ({type: GET_USER, user})
-const removeUser = () => ({type: REMOVE_USER})
+export const getUser = (user: User) => ({type: GET_USER, user})
+export const removeUser = (user: User) => ({type: REMOVE_USER, user})
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
@@ -58,7 +73,7 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 const axoisPostToStrapi = async (url: any, data:any, headerConfig:any) => {
   var returnedData:any = {status:-1};
   try {
-    returnedData = await axios.post(url,data, headerConfig);
+    returnedData = await axios.post(url, data, headerConfig);
   } catch (error) {
     console.log(error);
     console.log(url);
@@ -75,8 +90,37 @@ const axoisPostToStrapi = async (url: any, data:any, headerConfig:any) => {
   }
 }
 
+/* loginAndGetToken
+Function calls to strapi api to login a user and get authentication token that will be used for
+other calls to create, update, delete entries in database.
+Accepts:
+ - id - user id (email, username)
+ - pw - password for the respective account
+Returns: authentication token if call is completed succesfully or -1 if there was a error.
+*/
+export const loginAndGetToken = (id:string , pw:string) => async (dispatch:any) =>{
+  const sendConfig = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+  const sendData = JSON.stringify({
+    identifier: id,
+    password: pw,
+  })
 
-/* loginAndGetToken */
+  const returnData = await axoisPostToStrapi(strapiUrl + '/auth/local',sendData, sendConfig);
+
+  if(returnData.status === 200){
+    return returnData.data.jwt;
+  }else{
+    return -1;
+  }
+}
+
+
+
+/* loginAndGetToken modified */
 export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
   const sendConfig = {
     headers: {
@@ -93,8 +137,11 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
   if(returnData.status === 200){
     console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
     console.log("This is the user information: ", returnData.data.user)
+    localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
+    localStorage.setItem('user', JSON.stringify(returnData.data.user));
+    console.log('You have been successfully logged in. You will be redirected in a few seconds...');
     dispatch(getUser(returnData.data.user))
-    return returnData.data.jwt;
+    return [returnData.data.jwt, returnData.data.user];
   }else{
     return -1;
   }
@@ -137,9 +184,9 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
 export default function(state = defaultUser, action: any) {
   switch (action.type) {
     case GET_USER:
-      return action.user
+      return {...state, user: action.user}
     case REMOVE_USER:
-      return defaultUser
+      return defaultUser;
     default:
       return state
   }
