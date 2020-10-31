@@ -1,4 +1,6 @@
 /*
+This contains the Login and Signup component.
+
 Source Code based on:
 https://github.com/strapi/strapi-examples/blob/master/login-react/src/pages/Home.js
 https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/auth-form.js
@@ -95,28 +97,31 @@ const AuthForm = (props:any) => {
   return (<div>
     <p>{text}</p>
     <div>
-        <form onSubmit={handleSubmit} name={name}>
+
+        <form onSubmit={handleSubmit} name={name} className="form-group">
           <div>
             <label htmlFor="email">
               <small>Email</small>
             </label>
-            <input name="email" type="text" />
+            <input name="email" type="text" className="form-control" />
           </div>
           <div>
             <label htmlFor="password">
               <small>Password</small>
             </label>
-            <input name="password" type="password" />
+            <input name="password" type="password" className="form-control"/>
           </div>
           <div>
-            <button type="submit">{displayName}</button>
+            <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
           </div>
           {error && error.response && <div> {error.response.data} </div>}
         </form>
 
-        <a href="/auth/google">{displayName} with Google</a>
+        {/* Possibly add this later when adding option to login with google and other providers*/}
+
+        {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
       </div>
-    {buttons}
+
   </div>);
 }
 

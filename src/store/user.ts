@@ -37,7 +37,9 @@ export const GET_USER = 'GET_USER'
 export const REMOVE_USER = 'REMOVE_USER'
 
 // INITIAL STATE
-// Checks local storage to see if user was previously logged in, otherwise, the default user is set to empty
+
+// Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty
+
 let currentUser;
 let jwt;
 
@@ -180,7 +182,7 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
 //   }
 // }
 
-// Clears local storage and removes user from state
+// Clears local storage and removes user from s tate
 export const logout = () => async (dispatch:any) => {
   try {
     //await axios.post('/auth/logout')
@@ -192,6 +194,17 @@ export const logout = () => async (dispatch:any) => {
     console.error(err)
   }
 }
+
+
+/* testing strapi calls */
+export const getUserStrapi =  async (userId:any) => {
+  const { data } = await axios.get(strapiUrl+'/users/' + userId );
+  console.log("user testing strapi", data);
+  return data;
+};
+
+getUserStrapi('Ccampbell');
+
 
 /*********** TYPE CHECKING REDUCERS **********/
 
