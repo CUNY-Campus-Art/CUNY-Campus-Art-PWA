@@ -10,7 +10,7 @@ https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/au
 import React, { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store'
-import { getUser, removeUser, fetchUser, loginAndGetToken } from '../store/user'
+import { getUser, logout, fetchUser, loginAndGetToken } from '../store/user'
 import { Login, Signup } from './AuthForm'
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
@@ -23,7 +23,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getUser: (userInfo:any) => dispatch(getUser(userInfo)),
-  removeUser: (userInfo:any) => dispatch(removeUser(userInfo))
+  logout: () => dispatch(logout())
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -35,34 +35,14 @@ type Props = PropsFromRedux & {
   // backgroundColor: string
 }
 
-// const useStateWithLocalStorage = (localStorageKey:string) => {
-//   const [value, setValue] = React.useState(
-//     localStorage.getItem(localStorageKey) || ''
-//   );
 
-//   React.useEffect(() => {
-//     localStorage.setItem(localStorageKey, value);
-//   }, [value]);
-
-//   return [value, setValue];
-// };
 
 const AuthFormContainer = (props:Props) => {
-  const [isLogged, setIsLogged] = useState(!!localStorage.getItem('user'));
+  let currentUser = props.currentUser;
 
-
-    // useEffect(() => {
-    //   if(localStorage.getItem('user')) {
-    //       const user = JSON.parse(String(localStorage.getItem('user')));
-    //         props.getUser(user)
-    //   }
-    //  }, []);
-
-    console.log(props.currentUser, "AYOOOOO")
+    console.log(currentUser, "AYOOOOO")
   // Checks whether user has been logged in previously. If so, retrieves, user info based on local storage.
 
-
-  // let currentUser = props.currentUser;
 
   // If user was previously logged in, we will reset the user info, since it gets wiped on refresh
 
@@ -70,21 +50,21 @@ const AuthFormContainer = (props:Props) => {
   // Removes user from Local Storage and from the Redux store
   const logout = (e: Event) => {
     e.preventDefault();
-    localStorage.clear();
-    props.removeUser(props.currentUser)
-    setIsLogged(false);
+
+    props.logout()
+    // setIsLogged(false);
     //also remove user via redux
   };
 
-  let buttons;
-
-  if (!isLogged) {
-    buttons = <LogoutButton onClick={logout} />;
+  let button;
+  console.log(currentUser, "logout testing proximity")
+  if (currentUser) {
+    button = <LogoutButton onClick={logout} />;
   }
     let text;
 
-    if (props.currentUser) {
-      text = `Welcome ${localStorage.getItem('username')}, you are connected!`;
+    if (currentUser) {
+      text = `Welcome ${currentUser.first_name}, you are connected!`;
     } else {
       text = 'You are not connected. Please log in.';
     }
@@ -93,7 +73,8 @@ const AuthFormContainer = (props:Props) => {
     return (<div>
       <p>{text}</p>
       <div>
-        <Login />
+        {currentUser ? button:<Login />}
+
       </div>
     </div>);
 

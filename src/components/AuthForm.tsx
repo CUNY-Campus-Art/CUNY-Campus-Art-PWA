@@ -62,15 +62,13 @@ const mapDispatch = (dispatch:any) => {
 const AuthForm = (props:any) => {
   const {name, displayName, handleSubmit, error} = props
 
-  const [isLogged, setIsLogged] = useState(!!localStorage.getItem('jwt'));
+  const [isLogged, setIsLogged] = useState(!!props.currentUser);
   console.log(isLogged)
 
   //take this out
   const logout = (e: Event) => {
     e.preventDefault();
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('username');
-
+    localStorage.clear();
     setIsLogged(false);
   };
 
