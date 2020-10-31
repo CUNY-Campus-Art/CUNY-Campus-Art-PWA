@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
-import { getUser, removeUser, fetchUser } from '../store/user'
+import { getUser, logout, fetchUser } from '../store/user'
 import './Profile.css';
 import AuthFormContainer from '../components/AuthFormContainer'
 
@@ -58,16 +58,16 @@ type Props = PropsFromRedux & {
 
 const Profile = (props: Props) => {
 
-  const [isLogged, setIsLogged] = useState(!!localStorage.getItem('user'));
+  // const [isLogged, setIsLogged] = useState(!!localStorage.getItem('user'));
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if(isLogged) {
-      const user = JSON.parse(String(localStorage.getItem('user')));
-      console.log(user, "TESTING")
-        props.getUser(user)
-      }
-   }, []);
+  //   if(isLogged) {
+  //     const user = JSON.parse(String(localStorage.getItem('user')));
+  //     console.log(user, "TESTING")
+  //       props.getUser(user)
+  //     }
+  //  }, []);
 
   let user = props.currentUser;
   let campus = props.campus;
@@ -130,24 +130,24 @@ const Profile = (props: Props) => {
             <form id="tab">
               <IonLabel>Username</IonLabel>
               <br />
-              <input type="text" value={user.username} className="input-xlarge" />
+              <input type="text" placeholder={user.username} className="input-xlarge" />
               <hr />
 
               <IonLabel>First Name</IonLabel>
               <br />
-              <input type="text" value={user.first_Name} className="input-xlarge" />
+              <input type="text" placeholder={user.first_Name} className="input-xlarge" />
               <hr />
 
               <IonLabel>Last Name</IonLabel>
               <br />
-              <input type="text" value={user.last_Name} className="input-xlarge" />
+              <input type="text" placeholder={user.last_Name} className="input-xlarge" />
               <hr />
 
               <IonLabel>Email</IonLabel>
               <br />
               <input
                 type="text"
-                value={user.email}
+                placeholder={user.email}
                 className="input-xlarge"
               />
               <hr />

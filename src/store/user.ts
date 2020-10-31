@@ -27,7 +27,7 @@ export interface User {
 export interface UserState {
   user: User,
   campus: any,
-  isAuthenticated: boolean
+  jwt: string
 }
 
 /******* TYPE CHECKING ACTIONS AND ACTION CREATORS ******/
@@ -37,10 +37,21 @@ export const GET_USER = 'GET_USER'
 export const REMOVE_USER = 'REMOVE_USER'
 
 // INITIAL STATE
-const defaultUser = {
-  user: '',
-  campus: '',
-  isAuthenticated: false
+// Checks local storage to see if user was previously logged in, otherwise, the default user is set to empty
+let currentUser;
+let jwt;
+
+console.log(localStorage.getItem('user'))
+if(localStorage.getItem('user')) {
+  currentUser = JSON.parse(String(localStorage.getItem('user')));
+  jwt = JSON.parse(String(localStorage.getItem('jwt')));
+}
+
+const defaultUser =
+{
+  user: currentUser ? currentUser : '',
+  campus: currentUser ? currentUser.campus.campus_name : '',
+  jwt: currentUser ? jwt : '',
 }
 
 // ACTION CREATORS
@@ -56,7 +67,7 @@ interface removeUserAction {
 
 
 export const getUser = (user: User) => ({type: GET_USER, user})
-export const removeUser = (user: User) => ({type: REMOVE_USER, user})
+export const removeUser = () => ({type: REMOVE_USER})
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
@@ -169,15 +180,18 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
 //   }
 // }
 
-// export const logout = () => async dispatch => {
-//   try {
-//     await axios.post('/auth/logout')
-//     dispatch(removeUser())
-//     history.push('/login')
-//   } catch (err) {
-//     console.error(err)
-//   }
-// }
+// Clears local storage and removes user from state
+export const logout = () => async (dispatch:any) => {
+  try {
+    //await axios.post('/auth/logout')
+    localStorage.clear();
+    console.log(localStorage.getItem('user'), 'log out local storage clear')
+    dispatch(removeUser())
+    // history.push('/login')
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 /*********** TYPE CHECKING REDUCERS **********/
 
@@ -186,7 +200,7 @@ export default function(state = defaultUser, action: any) {
     case GET_USER:
       return {...state, user: action.user}
     case REMOVE_USER:
-      return defaultUser;
+      return {user: '', jwt: '', campus: ''};
     default:
       return state
   }
