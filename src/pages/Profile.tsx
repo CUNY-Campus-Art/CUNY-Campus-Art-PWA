@@ -8,6 +8,7 @@ import { RootState } from '../store'
 import { getUser, logout, fetchUser } from '../store/user'
 import './Profile.css';
 import AuthFormContainer from '../components/AuthFormContainer'
+import UserProfile from '../components/UserProfile'
 
 import {
   IonBadge,
@@ -58,23 +59,10 @@ type Props = PropsFromRedux & {
 
 const Profile = (props: Props) => {
 
-  // const [isLogged, setIsLogged] = useState(!!localStorage.getItem('user'));
-
-  // useEffect(() => {
-
-  //   if(isLogged) {
-  //     const user = JSON.parse(String(localStorage.getItem('user')));
-  //     console.log(user, "TESTING")
-  //       props.getUser(user)
-  //     }
-  //  }, []);
-
   let user = props.currentUser;
   let campus = props.campus;
 
-//  console.log(typeof campus.campus_name, "STATE PROPS")
 
-  console.log(user, "Does this work?")
   return (
     <IonPage className="container-fluid">
       <IonHeader>
@@ -87,92 +75,11 @@ const Profile = (props: Props) => {
 
       <IonContent>
 
-        <IonCard>
           <AuthFormContainer />
 
-        </IonCard>
-        <IonCardContent className="ion-text-center">
-          <img
-            className="profile-pic"
-            src={user.profile_picture ? user.profile_picture.url : ''}
-            alt="Scan QR"
-          />
-          <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
-          {/* <IonCardSubtitle>{user.campus.campus_name}</IonCardSubtitle> */}
-          {/* To do: decide to keep this button to open up to form or remove this button */}
-          <IonButton fill="outline" slot="end">
-            Edit
-          </IonButton>
-        </IonCardContent>
 
-        <ul className="nav nav-tabs">
-          <li>
-            <IonButton color="light" className="active">
-              <a href="#home" data-toggle="tab">
-                Profile
-              </a>
-            </IonButton>
-          </li>
-          <li>
-            <IonButton color="light">
-              <a href="#profile" data-toggle="tab">
-                Password
-              </a>
-            </IonButton>
-          </li>
-        </ul>
+        { user? <UserProfile /> : '' }
 
-        {/* tab-content allows changing of tabs */}
-        <div id="myTabContent" className="tab-content">
-          <hr />
-          {/* default tab is profile */}
-          <div className="tab-pane active in" id="home">
-            <form id="tab">
-              <IonLabel>Username</IonLabel>
-              <br />
-              <input type="text" placeholder={user.username} className="input-xlarge" />
-              <hr />
-
-              <IonLabel>First Name</IonLabel>
-              <br />
-              <input type="text" placeholder={user.first_Name} className="input-xlarge" />
-              <hr />
-
-              <IonLabel>Last Name</IonLabel>
-              <br />
-              <input type="text" placeholder={user.last_Name} className="input-xlarge" />
-              <hr />
-
-              <IonLabel>Email</IonLabel>
-              <br />
-              <input
-                type="text"
-                placeholder={user.email}
-                className="input-xlarge"
-              />
-              <hr />
-
-              <div>
-                <IonButton color="success" expand="block">
-                  Update
-                </IonButton>
-              </div>
-            </form>
-          </div>
-
-          {/* Password Tab */}
-          <div className="tab-pane fade" id="profile">
-            <form id="tab2">
-              <IonLabel>New Password</IonLabel> <br />
-              <input type="password" className="input-xlarge" />
-              <div>
-                <IonButton color="success" expand="block">
-                  Update
-                </IonButton>
-              </div>
-            </form>
-          </div>
-        </div>
       </IonContent>
     </IonPage>
   );

@@ -9,13 +9,14 @@ https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/au
 
 import React, { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import './AuthFormContainer.css'
 import { RootState } from '../store'
 import { getUser, logout, fetchUser, loginAndGetToken } from '../store/user'
 import { Login, Signup } from './AuthForm'
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
-const LogoutButton = (props: any) => <button onClick={props.onClick}>Logout</button>;
+const LogoutButton = (props: any) => <button onClick={props.onClick} className="btn login_btn">Logout</button>;
 
 const mapState = (state: RootState) => ({
   currentUser: state.user.user
@@ -40,8 +41,6 @@ type Props = PropsFromRedux & {
 const AuthFormContainer = (props:Props) => {
   let currentUser = props.currentUser;
 
-    console.log(currentUser, "AYOOOOO")
-  // Checks whether user has been logged in previously. If so, retrieves, user info based on local storage.
 
 
   // If user was previously logged in, we will reset the user info, since it gets wiped on refresh

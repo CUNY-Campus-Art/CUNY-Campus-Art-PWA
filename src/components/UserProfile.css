@@ -1,0 +1,14 @@
+.profile-pic{
+  border-radius: 50%;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.tab-pane{
+  padding: 10px;
+}
