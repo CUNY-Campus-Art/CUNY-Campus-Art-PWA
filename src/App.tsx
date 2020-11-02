@@ -20,6 +20,7 @@ import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import Profile from './pages/Profile';
+import ScavengerHunt from './pages/ScavengerHunt';
 import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
@@ -60,6 +61,7 @@ const App: React.FC = () => (
           <Route path="/ScanQR" component={ScanQR} exact={true}/>
           <Route path="/Information" component={Information} exact={true}/>
           <Route path="/Profile" component={Profile} exact={true}/>
+          <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true}/>
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
@@ -82,6 +84,10 @@ const App: React.FC = () => (
           <IonTabButton tab="Profile" href="/Profile">
             <IonIcon icon={person} />
             <IonLabel>Profile</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
+            <IonIcon icon={person} />
+            <IonLabel>Scavenger Hunt</IonLabel>
           </IonTabButton>
 
         </IonTabBar>
