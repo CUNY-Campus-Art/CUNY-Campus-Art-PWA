@@ -11,8 +11,10 @@ import AuthFormContainer from '../components/AuthFormContainer'
 import UserProfile from '../components/UserProfile'
 
 import {
+  IonBackButton,
   IonBadge,
   IonButton,
+  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -23,15 +25,17 @@ import {
   IonHeader,
   IonIcon,
   IonLabel,
+  IonMenuButton,
   IonPage,
   IonTab,
   IonTabBar,
   IonTabButton,
   IonTabs,
+  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { calendar, personCircle } from "ionicons/icons";
+import { calendar, informationCircle, personCircle, search } from "ionicons/icons";
 
 
 /* Retrieves current user from the State */
@@ -69,16 +73,28 @@ const Profile = (props: Props) => {
         <IonToolbar></IonToolbar>
 
         <IonToolbar>
+          {/*back button gotes to scan tab */}
+          <IonButtons slot="start">
+          <IonBackButton defaultHref="/" />
+          </IonButtons>
+          {/* Added the logout button here, but had to exclude 
+          the text attached by commenting out in AuthFormContainer.tsx  */}
+          <IonButtons slot="primary">
+              <div>
+                {user ? (< AuthFormContainer/>) : (<IonText>Login</IonText>) } 
+              </div>
+          </IonButtons>
           <IonTitle className="ion-text-center">Profile</IonTitle>
+             
         </IonToolbar>
       </IonHeader>
 
       <IonContent>
-
-          <AuthFormContainer />
-
-
-        { user? <UserProfile /> : '' }
+          {/*Made edit here to not show logoutbutton in ioncontent 
+          (show UserProfile) else show login container*/}
+        {user ? (<UserProfile />): (<AuthFormContainer />)}
+        {/* <AuthFormContainer /> */}
+        {/* { user? <UserProfile /> : '' } */}
 
       </IonContent>
     </IonPage>

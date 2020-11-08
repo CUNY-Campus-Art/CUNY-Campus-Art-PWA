@@ -13,6 +13,7 @@ import './AuthFormContainer.css'
 import { RootState } from '../store'
 import { getUser, logout, fetchUser, loginAndGetToken } from '../store/user'
 import { Login, Signup } from './AuthForm'
+import { IonButton } from '@ionic/react';
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
@@ -60,24 +61,23 @@ const AuthFormContainer = (props:Props) => {
   if (currentUser) {
     button = <LogoutButton onClick={logout} />;
   }
-    let text;
+     let text;
 
     if (currentUser) {
-      text = `Welcome ${currentUser.first_name}, you are connected!`;
+      // text = `Welcome ${currentUser.first_name}, you are connected!`;
     } else {
       text = 'You are not connected. Please log in.';
     }
-
-
-    return (<div>
-      <p>{text}</p>
-      <div>
+   
+    return (
+      
+       <div>
+       {text}
         {currentUser ? button:<Login />}
-
-      </div>
-    </div>);
+     </div>);
 
 }
 
 
 export default connector(AuthFormContainer);
+
