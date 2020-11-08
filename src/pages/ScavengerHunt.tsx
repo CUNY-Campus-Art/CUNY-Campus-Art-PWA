@@ -41,8 +41,8 @@ const ScavengerHunt = (props: Props) => {
             </IonToolbar>
         </IonHeader>
         <IonContent>
-
-            <IonSegment>
+        {/* value sets checked segment button based on which is clicked */}
+            <IonSegment value={showClues ? "clues" : "status"}>
                 <IonSegmentButton value="clues" onClick={handleClues}>
                     <IonLabel>Clues</IonLabel>
                 </IonSegmentButton>

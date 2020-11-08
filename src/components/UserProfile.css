@@ -1,8 +1,7 @@
 .profile-pic{
   border-radius: 50%;
-  width: 100%;
-  max-width: 400px;
-  height: auto;
+  width: 350px;
+  height: 350px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -11,4 +10,25 @@
 
 .tab-pane{
   padding: 10px;
+}
+
+
+
+/* On screens that are 992px wide or less, profile picture*/
+@media screen and (max-width: 992px) {
+  .profile-pic{
+    width: 250px;
+  height: 250px;
+  }
+}
+
+/* On screens that are 600px wide or less, the profile picture will be a smaller circle*/
+@media screen and (max-width: 600px) {
+  
+  .profile-pic{
+    border-radius: 50%;
+    width: 150px;
+  height: 150px;
+  }
+  
 }
