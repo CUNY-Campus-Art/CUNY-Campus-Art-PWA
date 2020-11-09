@@ -91,9 +91,7 @@ const Information = (props: Props) => {
           <IonItem>
             <IonIcon icon={informationCircleOutline} slot="start" />
             <IonLabel class="ion-text-center">Overview</IonLabel>
-            <IonButton fill="outline" slot="end">
-              View
-            </IonButton>
+
           </IonItem>
 
           <IonCardContent>
