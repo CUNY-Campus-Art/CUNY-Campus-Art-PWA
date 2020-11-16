@@ -3,7 +3,7 @@ import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import { StringLiteral } from 'typescript'
 import { RootState } from './index'
-
+import { StrapiApiConnection, axoisPostToStrapi } from './util'
 /************ Type Checking State ************/
 
 export interface Image {
@@ -42,11 +42,14 @@ export const REMOVE_USER = 'REMOVE_USER'
 
 let currentUser;
 let jwt;
+let con;
 
 console.log(localStorage.getItem('user'))
 if(localStorage.getItem('user')) {
   currentUser = JSON.parse(String(localStorage.getItem('user')));
   jwt = JSON.parse(String(localStorage.getItem('jwt')));
+
+  con = new StrapiApiConnection();
 }
 
 const defaultUser =
@@ -83,25 +86,7 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 //   }
 // }
 
-const axoisPostToStrapi = async (url: any, data:any, headerConfig:any) => {
-  var returnedData:any = {status:-1};
-  try {
-    returnedData = await axios.post(url, data, headerConfig);
-  } catch (error) {
-    console.log(error);
-    console.log(url);
-    console.log(data);
-    console.log(headerConfig);
-  }
 
-  if(returnedData.status === 200){
-    return returnedData;
-  }else{
-    console.log('Error in axoisPostToStrapi');
-    console.log(returnedData);
-    return {status:-1}
-  }
-}
 
 /* loginAndGetToken
 Function calls to strapi api to login a user and get authentication token that will be used for
@@ -122,7 +107,7 @@ export const loginAndGetToken = (id:string , pw:string) => async (dispatch:any) 
     password: pw,
   })
 
-  const returnData = await axoisPostToStrapi(strapiUrl + '/auth/local',sendData, sendConfig);
+  const returnData:any = await axoisPostToStrapi(strapiUrl + '/auth/local',sendData, sendConfig);
 
   if(returnData.status === 200){
     return returnData.data.jwt;
@@ -145,7 +130,7 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
     password: pw,
   })
 
-  const returnData = await axoisPostToStrapi(strapiUrl + '/auth/local', sendData, sendConfig);
+  const returnData:any = await axoisPostToStrapi(strapiUrl + '/auth/local', sendData, sendConfig);
 
   if(returnData.status === 200){
     console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
@@ -196,14 +181,6 @@ export const logout = () => async (dispatch:any) => {
 }
 
 
-/* testing strapi calls */
-export const getUserStrapi =  async (userId:any) => {
-  const { data } = await axios.get(strapiUrl+'/users/' + userId );
-  console.log("user testing strapi", data);
-  return data;
-};
-
-getUserStrapi('Ccampbell');
 
 
 /*********** TYPE CHECKING REDUCERS **********/
