@@ -42,14 +42,15 @@ export const REMOVE_USER = 'REMOVE_USER'
 
 let currentUser;
 let jwt;
-let con;
+let con:StrapiApiConnection;
 
 console.log(localStorage.getItem('user'))
 if(localStorage.getItem('user')) {
   currentUser = JSON.parse(String(localStorage.getItem('user')));
   jwt = JSON.parse(String(localStorage.getItem('jwt')));
-
-  con = new StrapiApiConnection();
+  con = JSON.parse(String(localStorage.getItem('con')));
+} else {
+  con = new StrapiApiConnection(); // if doesn't already exist in local storage, create a new connection
 }
 
 const defaultUser =
@@ -120,6 +121,32 @@ export const loginAndGetToken = (id:string , pw:string) => async (dispatch:any) 
 
 /* loginAndGetToken modified */
 export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
+
+  let returnData:any = await con.loginUser(id,pw);
+
+
+  if(returnData.status === 200){
+    console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
+    console.log("This is the user information: ", returnData.data.user)
+
+    console.log("THIS IS HOW OUR CON OBJECT LOOKS LIKE", con);
+    localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
+    localStorage.setItem('user', JSON.stringify(returnData.data.user));
+    console.log('You have been successfully logged in. You will be redirected in a few seconds...');
+    dispatch(getUser(returnData.data.user))
+    return [returnData.data.jwt, returnData.data.user];
+  }else{
+    return -1;
+  }
+}
+
+
+
+/* loginAndGetToken modified - relies on old cold */
+export const fetchUserOld =  (id:string, pw:string) => async (dispatch:any) => {
+
+
+
   const sendConfig = {
     headers: {
       'Content-Type': 'application/json'
@@ -135,6 +162,8 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
   if(returnData.status === 200){
     console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
     console.log("This is the user information: ", returnData.data.user)
+
+    console.log("THIS IS HOW OUR CON OBJECT LOOKS LIKE", con);
     localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
     localStorage.setItem('user', JSON.stringify(returnData.data.user));
     console.log('You have been successfully logged in. You will be redirected in a few seconds...');
