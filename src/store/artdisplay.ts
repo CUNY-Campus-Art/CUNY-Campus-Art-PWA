@@ -124,8 +124,12 @@ export const fetchPastArtworks = () => async (dispatch: any) => {
 };
 
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
+  //"cuny-campus-art-" -> 16 characters
   //"campus-art-" -> 11 characters
-  let artworkId = qrCodeText.slice(11);
+  let artworkId =
+     qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
+     qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11): '';
+
   const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
   console.log("getArtworkById", data);
   dispatch(gotScannedArtDisplay(data))

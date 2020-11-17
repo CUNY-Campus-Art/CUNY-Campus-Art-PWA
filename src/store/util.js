@@ -539,8 +539,11 @@ export class StrapiApiConnection {
       return -1
     }
   }
-}
+} //============== End of Class
 
+
+
+/* ============== Older database requests */
 
 export const axoisPostToStrapi = async (url, data, headerConfig) => {
   var returnedData = {status:-1};
