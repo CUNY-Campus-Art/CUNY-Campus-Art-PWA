@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import { RootState } from './index'
+import { StrapiApiConnection, axoisPostToStrapi } from './util'
 
 
 /************ Type Checking State ************/
@@ -23,12 +24,23 @@ export interface ArtDisplay {
   campus: string
 }
 
+
+
+export interface User {
+  user_name: string
+  first_name: string
+  last_name: string
+  email: string
+  profile_picture: Image
+  scanned_artworks: Image[]
+}
+
 export interface ArtDisplaysState {
   currentArtDisplay: ArtDisplay
   pastArtDisplays: ArtDisplay[]
   allArtDisplays: ArtDisplay[]
+  user: any
 }
-
 
 //Saving this for future use when we incorporate user
 // export interface SystemState {
@@ -46,6 +58,8 @@ export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
 export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
+export const  RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
+export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
 
 // ACTION CREATORS
 interface AddArtDisplayAction {
@@ -74,8 +88,17 @@ interface GotAllArtDisplaysAction {
   payload: ArtDisplay[]
 }
 
+interface ResetArtDisplaysAction {
+  type: typeof RESET_ART_DISPLAYS
+}
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction
+
+interface RerenderArtDisplaysAction{
+  type: typeof RERENDER_ART_DISPLAYS,
+  payload: User
+}
+
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -108,6 +131,20 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
   return {
     type: GET_ALL_ART_DISPLAYS,
     payload: artDisplays
+  }
+}
+
+export function rerenderArtDisplays(user:User): ArtDisplayActionTypes {
+  return {
+    type: RERENDER_ART_DISPLAYS,
+    payload: user
+  }
+}
+
+
+export function resetArtDisplays(): ArtDisplayActionTypes {
+  return {
+    type: RESET_ART_DISPLAYS
   }
 }
 
@@ -147,6 +184,7 @@ export const fetchAllArtworks = () => async (dispatch: any) => {
 };
 
 /****** SETTING UP INITIAL STATE ***********/
+
 const defaultCurrentArtDisplay = {
   id: 'default',
   title: 'New York City',
@@ -162,11 +200,17 @@ const defaultCurrentArtDisplay = {
   description: 'Inspired by a painter father, Frédéric was interested from a very early age in drawing and painting. He studied fine arts at the University of Aix-en-Provence. After graduation, he moved to southern Spain where he discovered various crafts: leather work, silk painting, jewellery making…By g in contact with these artisans he learned to make leather accessories (belts, bags) and experimented with cold enamel work (producing the same aesthetic effect as enamel, but without firing). He attended a workshop on porcelain painting to learn this technique and soon he experienced the urge to paint on canvas.',
   qr_code: '',
 }
+
+let con:StrapiApiConnection = new StrapiApiConnection();
+//adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays: [defaultCurrentArtDisplay],
-  allArtDisplays: [defaultCurrentArtDisplay]
+  pastArtDisplays:  con.user ? con.user.scanned_artworks: [defaultCurrentArtDisplay],
+  allArtDisplays: [defaultCurrentArtDisplay],
+  user: con.user
 }
+
+
 
 /*********** TYPE CHECKING REDUCERS **********/
 
@@ -187,12 +231,34 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         allArtDisplays: state.allArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.allArtDisplays] : [...state.allArtDisplays, action.payload]
       }
     case GET_PAST_ART_DISPLAYS:
-      return { ...state, pastArtDisplays: [...state.pastArtDisplays, ...action.payload] }
+      return { ...state,
+        pastArtDisplays: state.user ? [...state.user.scanned_artworks]: [...state.pastArtDisplays, ...action.payload] }
     case GET_ALL_ART_DISPLAYS:
       return { ...state, allArtDisplays: [...state.allArtDisplays, ...action.payload] }
     case ADD_ART_DISPLAY:
       return {
         ...state, allArtDisplays: [...state.allArtDisplays, action.payload]
+      }
+    case RESET_ART_DISPLAYS:
+      return {
+        ...state,
+        // allArtDisplays:[],
+        // currentArtDisplay: [defaultCurrentArtDisplay],
+        // pastArtDisplays: [defaultCurrentArtDisplay],
+        user: '',
+        currentArtDisplay: defaultCurrentArtDisplay,
+        pastArtDisplays:
+        //con.user ? [defaultCurrentArtDisplay, ...con.user.scanned_artworks]:
+        [defaultCurrentArtDisplay],
+        allArtDisplays: [defaultCurrentArtDisplay],
+      }
+    case RERENDER_ART_DISPLAYS:
+      return {
+        ...state,
+        user: action.payload,
+       // pastArtDisplays:  action.payload ? action.payload.scanned_artworks: [defaultCurrentArtDisplay],
+        //pastArtDisplays: action.payload.scanned_artworks
+        pastArtDisplays: action.payload ? [...action.payload.scanned_artworks]: [...state.pastArtDisplays]
       }
     default:
       return state
