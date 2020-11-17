@@ -1,12 +1,29 @@
 import axios from 'axios'
 
 export class StrapiApiConnection {
-  constructor(username, password) {
+
+  //Either retrieved info will be passed to constructor or values will be set by accessing local storage. retrieved info will take precedence so new user can be logged in
+  constructor(authToken, user) {
+
+    //checks if anything in local storage
+    console.log(localStorage.getItem('user'))
+    if(!authToken && !user && localStorage.getItem('user')) {
+      user = JSON.parse(String(localStorage.getItem('user')));
+      authToken = JSON.parse(String(localStorage.getItem('jwt')));
+    }
+
+
+
     this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
 
     //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
-    this.authToken = ''
-    this.user = {}
+    this.authToken = authToken ? authToken: ''
+    this.user = user ? user: ''
+
+
+
+
+
   }
 
   /* getAllArtworks

@@ -14,6 +14,7 @@ import { RootState } from '../store'
 import { getUser, logout, fetchUser, loginAndGetToken } from '../store/user'
 import { Login, Signup } from './AuthForm'
 import { IonButton } from '@ionic/react';
+import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
@@ -25,7 +26,9 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getUser: (userInfo:any) => dispatch(getUser(userInfo)),
-  logout: () => dispatch(logout())
+  logout: () => dispatch(logout()),
+  rerenderArtDisplays: (userInfo: any) => dispatch(rerenderArtDisplays(userInfo)),
+  resetArtDisplays: () => dispatch(resetArtDisplays())
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -52,6 +55,7 @@ const AuthFormContainer = (props:Props) => {
     e.preventDefault();
 
     props.logout()
+    props.resetArtDisplays()
     // setIsLogged(false);
     //also remove user via redux
   };
@@ -59,6 +63,7 @@ const AuthFormContainer = (props:Props) => {
   let button;
   console.log(currentUser, "logout testing proximity")
   if (currentUser) {
+    props.rerenderArtDisplays(currentUser)
     button = <LogoutButton onClick={logout} />;
   }
      let text;
@@ -68,9 +73,9 @@ const AuthFormContainer = (props:Props) => {
     } else {
       text = 'You are not connected. Please log in.';
     }
-   
+
     return (
-      
+
        <div>
        {text}
         {currentUser ? button:<Login />}
