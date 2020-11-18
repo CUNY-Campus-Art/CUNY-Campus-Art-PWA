@@ -9,7 +9,7 @@ https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/au
 import React, { useState } from 'react';
 import {connect} from 'react-redux';
 import { RootState } from '../store'
-import { fetchUser, loginAndGetToken } from '../store/user'
+import { fetchUser } from '../store/user'
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
 

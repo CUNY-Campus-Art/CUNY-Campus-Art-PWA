@@ -44,6 +44,10 @@ export const REMOVE_USER = 'REMOVE_USER'
 
 
 let con:StrapiApiConnection = new StrapiApiConnection();
+if(con.user) {
+  con.syncRemoteToLocalUser()
+  //localStorage.setItem('user', JSON.stringify(con.user))
+};
 
 /*
 As of now 11/17, integrated directly in util.js class
@@ -63,7 +67,7 @@ const defaultUser =
 {
     user: currentUser,
    // campus: currentUser ? currentUser.campus.campus_name : '',
-    authToken: currentUser ? authToken : ''
+    authToken: authToken
 }
 
 // ACTION CREATORS
@@ -95,34 +99,6 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
 
-/* loginAndGetToken
-Function calls to strapi api to login a user and get authentication token that will be used for
-other calls to create, update, delete entries in database.
-Accepts:
- - id - user id (email, username)
- - pw - password for the respective account
-Returns: authentication token if call is completed succesfully or -1 if there was a error.
-*/
-export const loginAndGetToken = (id:string , pw:string) => async (dispatch:any) =>{
-  const sendConfig = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
-  const sendData = JSON.stringify({
-    identifier: id,
-    password: pw,
-  })
-
-  const returnData:any = await axoisPostToStrapi(strapiUrl + '/auth/local',sendData, sendConfig);
-
-  if(returnData.status === 200){
-    return returnData.data.jwt;
-  }else{
-    return -1;
-  }
-}
-
 
 
 /* loginAndGetToken functioning most recent 11/17 */
@@ -146,41 +122,12 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
   }
 }
 
-
-
-/* loginAndGetToken modified - relies on old cold */
-export const fetchUserOld =  (id:string, pw:string) => async (dispatch:any) => {
-
-
-
-  const sendConfig = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
-  const sendData = JSON.stringify({
-    identifier: id,
-    password: pw,
-  })
-
-  const returnData:any = await axoisPostToStrapi(strapiUrl + '/auth/local', sendData, sendConfig);
-
-  if(returnData.status === 200){
-    console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
-    console.log("This is the user information: ", returnData.data.user)
-
-    console.log("THIS IS HOW OUR CON OBJECT LOOKS LIKE", con);
-    localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
-    localStorage.setItem('user', JSON.stringify(returnData.data.user));
-    console.log('You have been successfully logged in. You will be redirected in a few seconds...');
-    dispatch(getUser(returnData.data.user))
-
-    return [returnData.data.jwt, returnData.data.user];
-  }else{
-    return -1;
-  }
+//This was added so that artwork could be added to database without any errors and duplicate con objets
+export const addScannedArtDisplayToUserDB = (artworkId:any) => async (dispatch:any) => {
+  await con.addScannedArtworkToUser([artworkId]);
+  await con.syncRemoteToLocalUser();
+  localStorage.setItem('user', JSON.stringify(con.user));
 }
-
 // export const fetchUser = (id:string, pw:string) => async (dispatch: any) => {
 //    await loginAndGetToken (id, pw);
 

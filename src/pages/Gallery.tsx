@@ -26,18 +26,19 @@ import "./Gallery.css";
 
 import { RootState } from '../store'
 import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay } from '../store/artdisplay'
+import { analytics } from "ionicons/icons";
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   pastArtDisplays: state.artDisplay.pastArtDisplays,
-  allArtDisplays: state.artDisplay.allArtDisplays
+  allArtDisplays: state.artDisplay.allArtDisplays,
+  userInfo: state.user
 })
 
 const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
-  getAllArtworks: () => dispatch(fetchAllArtworks()),
-  getPastArtworks: () => dispatch(fetchPastArtworks()),
+  getPastArtworks: (userInfo:any) => dispatch(fetchPastArtworks(userInfo)),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -50,8 +51,8 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
-  useEffect(() => { props.getAllArtworks(); }, []);
-  const allArtDisplays = props.allArtDisplays
+  useEffect(() => { props.getPastArtworks(props.userInfo); }, []);
+  //const pastArtDisplays = props.userInfo.user ? props.userInfo.user.scanned_artworks : [];
   const pastArtDisplays = props.pastArtDisplays
   const changeCurrentArtDisplay = props.changeCurrentArtDisplay
 
@@ -94,7 +95,7 @@ const Gallery = (props: Props) => {
 
         <IonGrid>
           <IonRow>
-            {pastArtDisplays.map((artDisplay, index) => (
+            {pastArtDisplays.map((artDisplay:any, index:any) => (
               <IonCol size="4" key={index}>
                 <IonCard>
                   <IonImg
