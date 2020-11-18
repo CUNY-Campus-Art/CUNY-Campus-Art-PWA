@@ -162,6 +162,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
             scanActive: false,
             scanResult: code.data
           });
+
           this.props.scanResultParent(code.data);
           //this.showQrToast();
         } else {
@@ -194,7 +195,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
   // Handles uploaded image
    handleFile(event: React.ChangeEvent<HTMLElement>) {
-    const file = this.fileInput.files.item(0);
+    let file = this.fileInput.files.item(0);
 
     var img = new Image();
     img.onload = () => {
@@ -212,17 +213,20 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
       if (code) {
 
+
+
         let isValidQRCode = this.parseQRCode(code.data)
 
         if (isValidQRCode) {
-          this.props.scanResultParent(code.data);
           this.setState({ scanResult: code.data });
+          this.props.scanResultParent(code.data);
         } else{
           this.setState({showInvalidQRToast: true})
         }
       }
     };
     img.src = URL.createObjectURL(file);
+
   }
 
   uploadImage() {

@@ -36,7 +36,7 @@ import { calendar, personCircle } from "ionicons/icons";
 /* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
-  campus: state.user.campus,
+  campus: state.user.user.campus
 });
 
 const mapDispatch = (dispatch: any) => ({
@@ -67,7 +67,7 @@ const UserProfile = (props: Props) => {
   };
 
   let user = props.currentUser;
-  let campus = props.campus;
+  let campus = props.currentUser.campus;
 
   return (
     <span>
@@ -78,7 +78,7 @@ const UserProfile = (props: Props) => {
           alt="Scan QR"
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
-        <IonCardSubtitle>{user.campus.campus_name}</IonCardSubtitle>
+        <IonCardSubtitle>{user.campus ? user.campus.campus_name : ''}</IonCardSubtitle>
         {/* To do: decide to keep this button to open up to form or remove this button */}
         <IonButton fill="outline" slot="end">
           Edit

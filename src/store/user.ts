@@ -3,7 +3,9 @@ import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import { StringLiteral } from 'typescript'
 import { RootState } from './index'
+import { StrapiApiConnection, axoisPostToStrapi } from './util'
 
+import { rerenderArtDisplays} from './artdisplay'
 /************ Type Checking State ************/
 
 export interface Image {
@@ -21,13 +23,13 @@ export interface User {
   last_name: string
   email: string
   profile_picture: Image
-  campus: Campus
+  campus: Campus,
 }
 
 export interface UserState {
   user: User,
   campus: any,
-  jwt: string
+  authToken: string
 }
 
 /******* TYPE CHECKING ACTIONS AND ACTION CREATORS ******/
@@ -40,20 +42,32 @@ export const REMOVE_USER = 'REMOVE_USER'
 
 // Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty
 
-let currentUser;
-let jwt;
 
+let con:StrapiApiConnection = new StrapiApiConnection();
+if(con.user) {
+  con.syncRemoteToLocalUser()
+  //localStorage.setItem('user', JSON.stringify(con.user))
+};
+
+/*
+As of now 11/17, integrated directly in util.js class
 console.log(localStorage.getItem('user'))
 if(localStorage.getItem('user')) {
   currentUser = JSON.parse(String(localStorage.getItem('user')));
   jwt = JSON.parse(String(localStorage.getItem('jwt')));
+} else {
+  con = new StrapiApiConnection(); // if doesn't already exist in local storage, create a new connection
 }
+*/
+
+let currentUser = con.user;
+let authToken = con.authToken;
 
 const defaultUser =
 {
-  user: currentUser ? currentUser : '',
-  campus: currentUser ? currentUser.campus.campus_name : '',
-  jwt: currentUser ? jwt : '',
+    user: currentUser,
+   // campus: currentUser ? currentUser.campus.campus_name : '',
+    authToken: authToken
 }
 
 // ACTION CREATORS
@@ -83,73 +97,21 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 //   }
 // }
 
-const axoisPostToStrapi = async (url: any, data:any, headerConfig:any) => {
-  var returnedData:any = {status:-1};
-  try {
-    returnedData = await axios.post(url, data, headerConfig);
-  } catch (error) {
-    console.log(error);
-    console.log(url);
-    console.log(data);
-    console.log(headerConfig);
-  }
-
-  if(returnedData.status === 200){
-    return returnedData;
-  }else{
-    console.log('Error in axoisPostToStrapi');
-    console.log(returnedData);
-    return {status:-1}
-  }
-}
-
-/* loginAndGetToken
-Function calls to strapi api to login a user and get authentication token that will be used for
-other calls to create, update, delete entries in database.
-Accepts:
- - id - user id (email, username)
- - pw - password for the respective account
-Returns: authentication token if call is completed succesfully or -1 if there was a error.
-*/
-export const loginAndGetToken = (id:string , pw:string) => async (dispatch:any) =>{
-  const sendConfig = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
-  const sendData = JSON.stringify({
-    identifier: id,
-    password: pw,
-  })
-
-  const returnData = await axoisPostToStrapi(strapiUrl + '/auth/local',sendData, sendConfig);
-
-  if(returnData.status === 200){
-    return returnData.data.jwt;
-  }else{
-    return -1;
-  }
-}
 
 
 
-/* loginAndGetToken modified */
+
+/* loginAndGetToken functioning most recent 11/17 */
 export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
-  const sendConfig = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
-  const sendData = JSON.stringify({
-    identifier: id,
-    password: pw,
-  })
 
-  const returnData = await axoisPostToStrapi(strapiUrl + '/auth/local', sendData, sendConfig);
+  let returnData:any = await con.loginUser(id,pw);
+
 
   if(returnData.status === 200){
     console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
     console.log("This is the user information: ", returnData.data.user)
+
+    console.log("THIS IS HOW OUR CON OBJECT LOOKS LIKE", con);
     localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
     localStorage.setItem('user', JSON.stringify(returnData.data.user));
     console.log('You have been successfully logged in. You will be redirected in a few seconds...');
@@ -160,6 +122,12 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
   }
 }
 
+//This was added so that artwork could be added to database without any errors and duplicate con objets
+export const addScannedArtDisplayToUserDB = (artworkId:any) => async (dispatch:any) => {
+  await con.addScannedArtworkToUser([artworkId]);
+  await con.syncRemoteToLocalUser();
+  localStorage.setItem('user', JSON.stringify(con.user));
+}
 // export const fetchUser = (id:string, pw:string) => async (dispatch: any) => {
 //    await loginAndGetToken (id, pw);
 
@@ -187,7 +155,7 @@ export const logout = () => async (dispatch:any) => {
   try {
     //await axios.post('/auth/logout')
     localStorage.clear();
-    console.log(localStorage.getItem('user'), 'log out local storage clear')
+    //console.log(localStorage.getItem('user'), 'log out local storage clear')
     dispatch(removeUser())
     // history.push('/login')
   } catch (err) {
@@ -196,14 +164,6 @@ export const logout = () => async (dispatch:any) => {
 }
 
 
-/* testing strapi calls */
-export const getUserStrapi =  async (userId:any) => {
-  const { data } = await axios.get(strapiUrl+'/users/' + userId );
-  console.log("user testing strapi", data);
-  return data;
-};
-
-getUserStrapi('Ccampbell');
 
 
 /*********** TYPE CHECKING REDUCERS **********/
@@ -213,7 +173,7 @@ export default function(state = defaultUser, action: any) {
     case GET_USER:
       return {...state, user: action.user}
     case REMOVE_USER:
-      return {user: '', jwt: '', campus: ''};
+      return {user: '', authToken: '', campus: ''};
     default:
       return state
   }
