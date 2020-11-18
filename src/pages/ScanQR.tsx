@@ -30,16 +30,18 @@ import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 import { RootState } from '../store'
 import { fetchScannedArtDisplay } from '../store/artdisplay'
-
+import { addScannedArtDisplayToUserDB } from '../store/user'
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
-  allArtDisplays: state.artDisplay.allArtDisplays
+  allArtDisplays: state.artDisplay.allArtDisplays,
+  user: state.user
 })
 
-const mapDispatch = {
-  getScannedArtDisplay: (qrCodeText: string) => fetchScannedArtDisplay(qrCodeText)
-}
+const mapDispatch = (dispatch: any) => ({
+  getScannedArtDisplay: (qrCodeText: string, user: any) => dispatch(fetchScannedArtDisplay(qrCodeText, user)),
+  addScannedArtDisplayToUserDB: (artworkId: any) => dispatch(addScannedArtDisplayToUserDB(artworkId)),
+})
 
 const connector = connect(mapState, mapDispatch)
 
@@ -70,7 +72,8 @@ const ScanQR = (props: Props) => {
     scanResult = qrCodeText
     setScanResult(scanResult) //updates local state
     console.log('scan result: ', scanResult)
-    await props.getScannedArtDisplay(scanResult)
+    let id = await props.getScannedArtDisplay(scanResult, props.user)
+    await props.addScannedArtDisplayToUserDB(id);
     redirect()
   };
 

@@ -41,7 +41,7 @@ import { calendar, informationCircle, personCircle, search } from "ionicons/icon
 /* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
-  campus: state.user.campus
+  campus: state.user.user.campus
 })
 
 const mapDispatch = (dispatch: any) => ({
@@ -77,20 +77,20 @@ const Profile = (props: Props) => {
           <IonButtons slot="start">
           <IonBackButton defaultHref="/" />
           </IonButtons>
-          {/* Added the logout button here, but had to exclude 
+          {/* Added the logout button here, but had to exclude
           the text attached by commenting out in AuthFormContainer.tsx  */}
           <IonButtons slot="primary">
               <div>
-                {user ? (< AuthFormContainer/>) : (<IonText>Login</IonText>) } 
+                {user ? (< AuthFormContainer/>) : (<IonText>Login</IonText>) }
               </div>
           </IonButtons>
           <IonTitle className="ion-text-center">Profile</IonTitle>
-             
+
         </IonToolbar>
       </IonHeader>
 
       <IonContent>
-          {/*Made edit here to not show logoutbutton in ioncontent 
+          {/*Made edit here to not show logoutbutton in ioncontent
           (show UserProfile) else show login container*/}
         {user ? (<UserProfile />): (<AuthFormContainer />)}
         {/* <AuthFormContainer /> */}

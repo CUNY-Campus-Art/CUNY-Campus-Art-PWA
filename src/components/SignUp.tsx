@@ -37,7 +37,11 @@ const mapLogin = (state:any) => {
     displayName: 'Login',
     fields: [
       {name: 'email', label: 'Username/ Email', type: 'text'},
-      {name: 'password', label: 'Password', type: 'password'}],
+      {name: 'first-name', label: 'First Name:', type: 'text'},
+      {name: 'last-name', label: 'Last Name:', type: 'text'},
+      {name: 'password', label: 'Choose a Password', type: 'password'},
+      {name: 'password-verification', label: 'Verify Password', type: 'password'}
+    ],
     error: state.user.error
   }
 }
@@ -120,6 +124,12 @@ const AuthForm = (props:any) => {
               <small>Password</small>
             </label>
             <input name="password" type="password" className="form-control"/>
+
+
+            <label htmlFor="profile-picture">Choose a profile picture:</label>
+<input type="file"
+       id="profile-picture" name="profile-picture"
+       accept="image/png, image/jpeg"></input>
             <br/>
           </div>
           <div>
@@ -136,7 +146,7 @@ const AuthForm = (props:any) => {
   </div>);
 }
 
-export const Login = connect(mapLogin, mapDispatch)(AuthForm)
+
 export const Signup = connect(mapSignup, mapDispatch)(AuthForm)
 
 
