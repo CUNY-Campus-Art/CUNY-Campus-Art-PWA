@@ -7,9 +7,14 @@ export class StrapiApiConnection {
 
     //checks if anything in local storage
     console.log(localStorage.getItem('user'))
-    if(!authToken && !user && localStorage.getItem('user')) {
-      user = JSON.parse(String(localStorage.getItem('user')));
-      authToken = JSON.parse(String(localStorage.getItem('jwt')));
+    if(!authToken && !user && !!localStorage.getItem('user')) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+       this.syncRemoteToLocalUser();
+      this.authToken = JSON.parse(localStorage.getItem('jwt'));
+      //updates local user to be up to date with the database
+    } else {
+      this.authToken = authToken ? authToken: ''
+      this.user = user ? user: ''
     }
 
 
@@ -17,12 +22,9 @@ export class StrapiApiConnection {
     this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
 
     //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
-    this.authToken = authToken ? authToken: ''
-    this.user = user ? user: ''
 
 
-
-
+  // if(this.user) this.syncRemoteToLocalUser()
 
   }
 

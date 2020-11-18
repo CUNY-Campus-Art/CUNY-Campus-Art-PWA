@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import './AuthFormContainer.css'
 import { RootState } from '../store'
-import { getUser, logout, fetchUser, loginAndGetToken } from '../store/user'
+import { getUser, logout, fetchUser } from '../store/user'
 import { Login, Signup } from './AuthForm'
 import { IonButton } from '@ionic/react';
 import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
@@ -21,13 +21,14 @@ const backendUrl = "https://dev-cms.cunycampusart.com";
 const LogoutButton = (props: any) => <button onClick={props.onClick} className="btn login_btn">Logout</button>;
 
 const mapState = (state: RootState) => ({
-  currentUser: state.user.user
+  currentUser: state.user.user,
+  authToken: state.user.authToken
 })
 
 const mapDispatch = (dispatch: any) => ({
   getUser: (userInfo:any) => dispatch(getUser(userInfo)),
   logout: () => dispatch(logout()),
-  rerenderArtDisplays: (userInfo: any) => dispatch(rerenderArtDisplays(userInfo)),
+  rerenderArtDisplays: (userInfo:any) => dispatch(rerenderArtDisplays(userInfo)),
   resetArtDisplays: () => dispatch(resetArtDisplays())
 })
 
@@ -43,8 +44,10 @@ type Props = PropsFromRedux & {
 
 
 const AuthFormContainer = (props:Props) => {
-  let currentUser = props.currentUser;
 
+
+  let currentUser = props.currentUser;
+  let authToken = props.authToken;
 
 
   // If user was previously logged in, we will reset the user info, since it gets wiped on refresh
@@ -60,10 +63,15 @@ const AuthFormContainer = (props:Props) => {
     //also remove user via redux
   };
 
+  useEffect (() => {
+    props.rerenderArtDisplays([currentUser, authToken])
+
+  })
+
   let button;
   console.log(currentUser, "logout testing proximity")
   if (currentUser) {
-    props.rerenderArtDisplays(currentUser)
+
     button = <LogoutButton onClick={logout} />;
   }
      let text;

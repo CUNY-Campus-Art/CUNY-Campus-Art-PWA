@@ -5,11 +5,14 @@ import { RootState } from './index'
 import { StrapiApiConnection, axoisPostToStrapi } from './util'
 
 
+let con:StrapiApiConnection = new StrapiApiConnection();
+
+
 /************ Type Checking State ************/
 
 interface Image {
   url: string,
-  alternative: string
+  alternativeText: string
 }
 
 export interface ArtDisplay {
@@ -95,7 +98,7 @@ interface ResetArtDisplaysAction {
 
 interface RerenderArtDisplaysAction{
   type: typeof RERENDER_ART_DISPLAYS,
-  payload: User
+  payload: any
 }
 
 export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction
@@ -118,7 +121,7 @@ export function gotScannedArtDisplay(scannedArtDisplay: ArtDisplay): ArtDisplayA
   }
 }
 
-//Right now, will rely on local storage. Ideally supposed to be Invoked after fetching all uesr's past art displays from database
+
 export function gotPastArtDisplays
   (artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
   return {
@@ -134,10 +137,10 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
   }
 }
 
-export function rerenderArtDisplays(user:User): ArtDisplayActionTypes {
+export function rerenderArtDisplays(userInfo:any): ArtDisplayActionTypes {
   return {
     type: RERENDER_ART_DISPLAYS,
-    payload: user
+    payload: userInfo
   }
 }
 
@@ -154,23 +157,36 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 //Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
 
-export const fetchPastArtworks = () => async (dispatch: any) => {
-  // let data = ''
-  // dispatch(gotPastArtDisplays(data))
-  // return data;
+export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
+  let data = ''
+  dispatch(gotPastArtDisplays(userInfo.user.scanned_artworks))
+  return data;
 };
 
-export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
+//retrieves Scanned Art from database
+export const fetchScannedArtDisplay = (qrCodeText: string, user:any) => async (dispatch: any) => {
+  try{
   //"cuny-campus-art-" -> 16 characters
   //"campus-art-" -> 11 characters
   let artworkId =
      qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
      qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11): '';
 
-  const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
+
+      const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
+
+  //const data = await con.getArtworkById(artworkId)
+
   console.log("getArtworkById", data);
   dispatch(gotScannedArtDisplay(data))
-  return data;
+
+  return artworkId;
+     }
+     catch(error){
+       console.log(error)
+     }
+
+  //updates database
 };
 
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
@@ -191,17 +207,16 @@ const defaultCurrentArtDisplay = {
   artist: 'Frédéric Thery',
   year: '2020',
   campus: 'Brooklyn College',
-  primary_image: { url: 'https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1', alternative: `Porte St Denis` },
+  primary_image: { url: 'https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1', alternativeText: `Porte St Denis` },
   other_images: [
-    { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A", alternative: "Petit marché" },
-    { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A", alternative: "Porte St Denis" }
+    { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A", alternativeText: "Petit marché" },
+    { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A", alternativeText: "Porte St Denis" }
 
   ],
   description: 'Inspired by a painter father, Frédéric was interested from a very early age in drawing and painting. He studied fine arts at the University of Aix-en-Provence. After graduation, he moved to southern Spain where he discovered various crafts: leather work, silk painting, jewellery making…By g in contact with these artisans he learned to make leather accessories (belts, bags) and experimented with cold enamel work (producing the same aesthetic effect as enamel, but without firing). He attended a workshop on porcelain painting to learn this technique and soon he experienced the urge to paint on canvas.',
   qr_code: '',
 }
 
-let con:StrapiApiConnection = new StrapiApiConnection();
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
@@ -231,8 +246,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         allArtDisplays: state.allArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.allArtDisplays] : [...state.allArtDisplays, action.payload]
       }
     case GET_PAST_ART_DISPLAYS:
-      return { ...state,
-        pastArtDisplays: state.user ? [...state.user.scanned_artworks]: [...state.pastArtDisplays, ...action.payload] }
+      return {...state }
     case GET_ALL_ART_DISPLAYS:
       return { ...state, allArtDisplays: [...state.allArtDisplays, ...action.payload] }
     case ADD_ART_DISPLAY:
@@ -253,12 +267,11 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         allArtDisplays: [defaultCurrentArtDisplay],
       }
     case RERENDER_ART_DISPLAYS:
+      con = new StrapiApiConnection(action.payload[0], action.payload[1])
       return {
         ...state,
-        user: action.payload,
-       // pastArtDisplays:  action.payload ? action.payload.scanned_artworks: [defaultCurrentArtDisplay],
-        //pastArtDisplays: action.payload.scanned_artworks
-        pastArtDisplays: action.payload ? [...action.payload.scanned_artworks]: [...state.pastArtDisplays]
+        user: con.user,
+        pastArtDisplays: action.payload[0] ? [...action.payload[0].scanned_artworks]: [...state.pastArtDisplays]
       }
     default:
       return state
