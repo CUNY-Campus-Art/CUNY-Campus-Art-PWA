@@ -9,3 +9,7 @@
 #invalid-qr-toast{
   z-index:  20001;
 }
+
+.button-height{
+  height: 50px;
+}
