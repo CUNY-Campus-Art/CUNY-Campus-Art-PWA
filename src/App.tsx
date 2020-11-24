@@ -15,13 +15,13 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
-import Home from './pages/Home';
+//import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
-import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
+import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -56,29 +56,33 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route path="/Home" component={Home} exact={true} />
-          <Redirect from="/cuny-campus-art-" to="/Home" />
-          <Redirect from="/cuny-campus-art-:id" to="/Home" />
-          <Route path="/Gallery" component={Gallery} exact={true} />
+          <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true}/>
           <Route path="/ScanQR" component={ScanQR} exact={true}/>
+          {/* <Route path="/Home" component={Home} exact={true} /> */}
+          <Redirect from="/cuny-campus-art-" to="/Gallery" />
+          <Redirect from="/cuny-campus-art-:id" to="/Gallery" />
+          <Route path="/Gallery" component={Gallery} exact={true} />
           <Route path="/Information" component={Information} exact={true}/>
           <Route path="/Profile" component={Profile} exact={true}/>
-          <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true}/>
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="Home" href="/Home">
-            <IonIcon icon={home} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="Gallery" href="/Gallery">
-            <IonIcon icon={images} />
-            <IonLabel>Gallery</IonLabel>
+          <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
+            <IonIcon icon={map} />
+            <IonLabel>Scavenger Hunt</IonLabel>
           </IonTabButton>
           <IonTabButton tab="ScanQR" href="/ScanQR">
             <IonIcon icon={qrCodeOutline} />
             <IonLabel>Scan</IonLabel>
           </IonTabButton>
+          <IonTabButton tab="Gallery" href="/Gallery">
+            <IonIcon icon={images} />
+            <IonLabel>Gallery</IonLabel>
+          </IonTabButton>
+          {/* <IonTabButton tab="Home" href="/Home">
+            <IonIcon icon={home} />
+            <IonLabel>Home</IonLabel>
+          </IonTabButton> */}
           <IonTabButton tab="Information" href="/Information">
             <IonIcon icon={informationCircle} />
             <IonLabel>Information</IonLabel>
@@ -87,10 +91,7 @@ const App: React.FC = () => (
             <IonIcon icon={person} />
             <IonLabel>Profile</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
-            <IonIcon icon={person} />
-            <IonLabel>Scavenger Hunt</IonLabel>
-          </IonTabButton>
+
 
         </IonTabBar>
       </IonTabs>
