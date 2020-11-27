@@ -1,31 +1,25 @@
 import axios from 'axios'
 
 export class StrapiApiConnection {
-
   //Either retrieved info will be passed to constructor or values will be set by accessing local storage. retrieved info will take precedence so new user can be logged in
   constructor(authToken, user) {
-
     //checks if anything in local storage
     console.log(localStorage.getItem('user'))
-    if(!authToken && !user && !!localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'));
-       this.syncRemoteToLocalUser();
-      this.authToken = JSON.parse(localStorage.getItem('jwt'));
+    if (!authToken && !user && !!localStorage.getItem('user')) {
+      this.user = JSON.parse(localStorage.getItem('user'))
+      this.syncRemoteToLocalUser()
+      this.authToken = JSON.parse(localStorage.getItem('jwt'))
       //updates local user to be up to date with the database
     } else {
-      this.authToken = authToken ? authToken: ''
-      this.user = user ? user: ''
+      this.authToken = authToken ? authToken : ''
+      this.user = user ? user : ''
     }
-
-
 
     this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
 
     //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
 
-
-  // if(this.user) this.syncRemoteToLocalUser()
-
+    // if(this.user) this.syncRemoteToLocalUser()
   }
 
   /* getAllArtworks
@@ -134,7 +128,6 @@ export class StrapiApiConnection {
     this.createAndUploadQRImageForArtwork(returnData.data.id)
     return returnData
   }
-
 
   /* updateArtworkById
   Function calls to strapi API to updat a artwork entry
@@ -245,6 +238,72 @@ export class StrapiApiConnection {
       sendConfig
     )
     return returnData
+  }
+
+  /*createUser
+  Function calls to strapi to register a new user with public role
+  Accepts:
+    - email - text
+    - password - text
+    - username - text
+    - fistName - text
+    - lastName - text
+    - file - a Buffer or Stream
+  Returns: object contain a sucess (boolean) variable that indicates if registeration
+           was succesful or not and either a api response if successful (user data and auth token)
+           or error object if unsuccessful
+            -- error object can be array of error messages or one error message object
+            ---- more than 1 error message example: message[0].messages[0]
+            ---- 1 error message example: {id: "Auth.form.error.email.taken", message: "Email is already taken."}
+  */
+  createUser = async (
+    email,
+    pw,
+    username,
+    firstName = '',
+    lastName = '',
+    file
+  ) => {
+    let error
+    let response
+    await axios
+      .post(this.strapiUrl + '/auth/local/register', {
+        username: username,
+        email: email,
+        password: pw,
+        first_name: firstName,
+        last_name: lastName,
+      })
+      .then((res) => {
+        response = res.data
+      })
+      .catch((e) => {
+        if (
+          e.response.data.message[0].messages.length == 1 &&
+          e.response.data.message.length == 1
+        ) {
+          error = e.response.data.message[0].messages[0]
+        } else {
+          error = e.response.data.message
+        }
+      })
+
+    if (response) {
+      this.authToken = response.jwt
+      this.user = response.user
+      if (file) {
+        await this.axiosUploadToStrapi(
+          file,
+          response.user.id,
+          'user',
+          'profile_picture',
+          'users-permissions'
+        )
+      }
+      return { success: true, response: response, error: {} }
+    } else {
+      return { success: false, response: {}, error: error }
+    }
   }
 
   /* loginUser
@@ -560,26 +619,24 @@ export class StrapiApiConnection {
   }
 } //============== End of Class
 
-
-
 /* ============== Older database requests */
 
 export const axoisPostToStrapi = async (url, data, headerConfig) => {
-  var returnedData = {status:-1};
+  var returnedData = { status: -1 }
   try {
-    returnedData = await axios.post(url, data, headerConfig);
+    returnedData = await axios.post(url, data, headerConfig)
   } catch (error) {
-    console.log(error);
-    console.log(url);
-    console.log(data);
-    console.log(headerConfig);
+    console.log(error)
+    console.log(url)
+    console.log(data)
+    console.log(headerConfig)
   }
 
-  if(returnedData.status === 200){
-    return returnedData;
-  }else{
-    console.log('Error in axoisPostToStrapi');
-    console.log(returnedData);
-    return {status:-1}
+  if (returnedData.status === 200) {
+    return returnedData
+  } else {
+    console.log('Error in axoisPostToStrapi')
+    console.log(returnedData)
+    return { status: -1 }
   }
 }

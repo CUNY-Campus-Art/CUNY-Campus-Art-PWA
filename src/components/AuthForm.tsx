@@ -7,7 +7,7 @@ https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/au
 */
 
 import React, { useState } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { RootState } from '../store'
 import { fetchUser } from '../store/user'
 
@@ -24,41 +24,41 @@ const providersNames = [
 ];
 
 
-const LoginButton = (props:any) => <a href={`${backendUrl}/connect/${props.providerName}`}>
-    <button style={{ width: '150px' }}>Connect to {props.providerName}</button>
-  </a>;
+const LoginButton = (props: any) => <a href={`${backendUrl}/connect/${props.providerName}`}>
+  <button style={{ width: '150px' }}>Connect to {props.providerName}</button>
+</a>;
 
-const LogoutButton = (props:any) => <button onClick={props.onClick}>Logout</button>;
+const LogoutButton = (props: any) => <button onClick={props.onClick}>Logout</button>;
 
 
-const mapLogin = (state:any) => {
+const mapLogin = (state: any) => {
   return {
     name: 'login',
     displayName: 'Login',
     fields: [
-      {name: 'email', label: 'Username/ Email', type: 'text'},
-      {name: 'password', label: 'Password', type: 'password'}],
+      { name: 'email', label: 'Username/ Email', type: 'text' },
+      { name: 'password', label: 'Password', type: 'password' }],
     error: state.user.error
   }
 }
 
-const mapSignup = (state:any) => {
+const mapSignup = (state: any) => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
     fields: [
-      {name: 'username', label: 'Username', type: 'text'},
-      {name: 'email', label: 'Username/ Email', type: 'text'},
-      {name: 'password', label: 'Password', type: 'password'},
-      {name: 'campus', label: 'Your Campus', type: 'text'},
-      {name: 'profile-picture', label: 'Profile Picture', type: 'text'}
+      { name: 'username', label: 'Username', type: 'text' },
+      { name: 'email', label: 'Email', type: 'text' },
+      { name: 'password', label: 'Password', type: 'password' },
+      { name: 'campus', label: 'Your Campus', type: 'text' },
+      { name: 'profile-picture', label: 'Profile Picture', type: 'text' }
     ],
     error: state.user.error
   }
 }
 
 
-const mapDispatch = (dispatch:any) => {
+const mapDispatch = (dispatch: any) => {
   return {
     handleSubmit(evt: any) {
       evt.preventDefault()
@@ -71,8 +71,8 @@ const mapDispatch = (dispatch:any) => {
   }
 }
 
-const AuthForm = (props:any) => {
-  const {name, displayName, handleSubmit, error} = props
+const AuthForm = (props: any) => {
+  const { name, displayName, handleSubmit, error } = props
 
   const [isLogged, setIsLogged] = useState(!!props.currentUser);
   console.log(isLogged)
@@ -91,49 +91,37 @@ const AuthForm = (props:any) => {
   } else {
     buttons = <ul style={{ listStyleType: 'none' }}>
       {providersNames.map((providerName, i) => <li key={providerName}>
-        <LoginButton providerName={providerName}/>
-        </li>)}
+        <LoginButton providerName={providerName} />
+      </li>)}
     </ul>;
   }
 
   let text;
 
-  // if (isLogged) {
-  //   text = `Welcome ${localStorage.getItem('username')}, you are connected!`;
-  // } else {
-  //   text = 'You are not connected. Please log in.';
-  // }
-
   return (<div>
     <p>{text}</p>
     <div>
 
-        <form onSubmit={handleSubmit} name={name} className="form-group">
+      <form onSubmit={handleSubmit} name={name} className="form-group">
+
+        {props.fields.map((field: any) =>
           <div>
-            <label htmlFor="email">
-              <small>Email</small>
+            <label htmlFor={field.name}>
+              <small>{field.label}</small>
             </label>
-            <input name="email" type="text" className="form-control" />
+            <input name={field.name} type={field.type} className="form-control" />
           </div>
-          <div>
-            <label htmlFor="password">
-              <small>Password</small>
-            </label>
-            <input name="password" type="password" className="form-control"/>
-            <br/>
-          </div>
-          <div>
-            <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
-          </div>
-          {error && error.response && <div> {error.response.data} </div>}
-        </form>
+        )}
+        <br/>
+        <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
+        {error && error.response && <div> {error.response.data} </div>}
+      </form>
 
-        {/* Possibly add this later when adding option to login with google and other providers*/}
+      {/* Possibly add this later when adding option to login with google and other providers*/}
+      {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
+    </div>
 
-        {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
-      </div>
-
-  </div>);
+  </div >);
 }
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)

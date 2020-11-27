@@ -12,7 +12,8 @@ import { connect, ConnectedProps } from 'react-redux';
 import './AuthFormContainer.css'
 import { RootState } from '../store'
 import { getUser, logout, fetchUser } from '../store/user'
-import { Login, Signup } from './AuthForm'
+import { Login } from './AuthForm'
+import { Signup } from './SignUp'
 import { IonButton } from '@ionic/react';
 import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
 
@@ -22,7 +23,8 @@ const LogoutButton = (props: any) => <button onClick={props.onClick} className="
 
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
-  authToken: state.user.authToken
+  authToken: state.user.authToken,
+  campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
@@ -65,7 +67,6 @@ const AuthFormContainer = (props:Props) => {
 
   useEffect (() => {
     props.rerenderArtDisplays([currentUser, authToken])
-
   })
 
   let button;
@@ -86,7 +87,7 @@ const AuthFormContainer = (props:Props) => {
 
        <div>
        {text}
-        {currentUser ? button:<Login />}
+        {currentUser ? button:<Signup campuses={props.campuses} />}
      </div>);
 
 }

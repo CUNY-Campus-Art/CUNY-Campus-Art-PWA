@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
 import { getUser, logout, fetchUser } from '../store/user'
+import {fetchAllCampuses } from '../store/general'
 import './Profile.css';
 import AuthFormContainer from '../components/AuthFormContainer'
 import UserProfile from '../components/UserProfile'
@@ -41,12 +42,14 @@ import { calendar, informationCircle, personCircle, search } from "ionicons/icon
 /* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
-  campus: state.user.user.campus
+  campus: state.user.user.campus,
+  campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
+  getAllCampuses: () => dispatch(fetchAllCampuses()),
   fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
-  getUser: (user: any) => dispatch(getUser(user))
+  getUser: (user: any) => dispatch(getUser(user)),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -63,6 +66,8 @@ type Props = PropsFromRedux & {
 
 const Profile = (props: Props) => {
 
+  useEffect(() => {   props.getAllCampuses(); }, []);
+
   let user = props.currentUser;
   let campus = props.campus;
 
@@ -73,7 +78,7 @@ const Profile = (props: Props) => {
         <IonToolbar></IonToolbar>
 
         <IonToolbar>
-          {/*back button gotes to scan tab */}
+          {/* Back button goes to scan tab */}
           <IonButtons slot="start">
           <IonBackButton defaultHref="/" />
           </IonButtons>
