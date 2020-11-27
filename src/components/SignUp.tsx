@@ -7,9 +7,21 @@ https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/au
 */
 
 import React, { useState } from 'react';
+import {
+  IonContent,
+  IonPage,
+  IonText,
+  IonInput,
+  IonButton,
+  IonCheckbox,
+  IonItem,
+  IonLabel,
+} from "@ionic/react";
 import {connect} from 'react-redux';
-import { RootState } from '../store'
 import { fetchUser } from '../store/user'
+import { useForm } from "react-hook-form";
+import Input, { InputProps } from './input'
+import { object, string } from 'yup';
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
@@ -52,8 +64,9 @@ const mapSignup = (state:any) => {
     displayName: 'Sign Up',
     fields: [
       {name: 'username', label: 'Username', type: 'text'},
-      {name: 'email', label: 'Username/ Email', type: 'text'},
+      {name: 'email', label: 'Email', type: 'email'},
       {name: 'password', label: 'Password', type: 'password'},
+      {name: 'password-verification', label: 'Verify Password', type: 'password'},
       {name: 'campus', label: 'Your Campus', type: 'text'},
       {name: 'profile-picture', label: 'Profile Picture', type: 'text'}
     ],
@@ -64,19 +77,52 @@ const mapSignup = (state:any) => {
 
 const mapDispatch = (dispatch:any) => {
   return {
-    handleSubmit(evt: any) {
-      evt.preventDefault()
-      if (evt.target) {
-        const email = evt.target.email.value
-        const password = evt.target.password.value
-        dispatch(fetchUser(email, password))
-      }
-    }
+    // handleSubmit(evt: any) {
+    //   evt.preventDefault()
+    //   if (evt.target) {
+    //     const email = evt.target.email.value
+    //     const password = evt.target.password.value
+    //     dispatch(fetchUser(email, password))
+    //   }
+    // }
   }
 }
 
 const AuthForm = (props:any) => {
-  const {name, displayName, handleSubmit, error} = props
+  const validationSchema = object().shape({
+    email: string().required().email(),
+    fullName: string().required().min(5).max(32),
+    password: string().required().min(8),
+  });
+  const { control, handleSubmit, errors } = useForm({
+    validationSchema,
+  });
+
+  const formFields: InputProps[] = [
+    {
+      name: "email",
+      component: <IonInput type="email" />,
+      label: "Email",
+    },
+    {
+      name: "fullName",
+      label: "Full Name",
+    },
+    {
+      name: "password",
+      component: <IonInput type="password" clearOnEdit={false} />,
+      label: "Password",
+    },
+  ];
+
+  const registerUser = (data: any) => {
+    console.log("creating a new user account with: ", data);
+  };
+
+
+
+
+  //const {name, displayName, handleSubmit, error} = props
 
   const [isLogged, setIsLogged] = useState(!!props.currentUser);
   console.log(isLogged)
@@ -111,32 +157,20 @@ const AuthForm = (props:any) => {
   return (<div>
     <p>{text}</p>
     <div>
+    <form onSubmit={handleSubmit(registerUser)}>
 
-        <form onSubmit={handleSubmit} name={name} className="form-group">
+        {props.fields.map((field: any) =>
           <div>
-            <label htmlFor="email">
-              <small>Email</small>
-            </label>
-            <input name="email" type="text" className="form-control" />
+            <input name={field.name} type={field.type} className="form-control" placeholder={field.label} />
+            <br />
           </div>
-          <div>
-            <label htmlFor="password">
-              <small>Password</small>
-            </label>
-            <input name="password" type="password" className="form-control"/>
+        )}
 
 
-            <label htmlFor="profile-picture">Choose a profile picture:</label>
-<input type="file"
-       id="profile-picture" name="profile-picture"
-       accept="image/png, image/jpeg"></input>
-            <br/>
-          </div>
-          <div>
-            <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
-          </div>
-          {error && error.response && <div> {error.response.data} </div>}
-        </form>
+            <IonButton expand="block" type="submit" className="ion-margin-top">
+              Sign Up
+            </IonButton>
+          </form>
 
         {/* Possibly add this later when adding option to login with google and other providers*/}
 
