@@ -16,8 +16,13 @@ import {
   IonCheckbox,
   IonItem,
   IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonTitle
 } from "@ionic/react";
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import ImageUpload from './HelperComponents/ImageUpload'
+import './Signup.css'
 import { fetchUser } from '../store/user'
 import { useForm } from "react-hook-form";
 import Input, { InputProps } from './input'
@@ -36,46 +41,49 @@ const providersNames = [
 ];
 
 
-const LoginButton = (props:any) => <a href={`${backendUrl}/connect/${props.providerName}`}>
-    <button style={{ width: '150px' }}>Connect to {props.providerName}</button>
-  </a>;
+const LoginButton = (props: any) => <a href={`${backendUrl}/connect/${props.providerName}`}>
+  <button style={{ width: '150px' }}>Connect to {props.providerName}</button>
+</a>;
 
-const LogoutButton = (props:any) => <button onClick={props.onClick}>Logout</button>;
+const LogoutButton = (props: any) => <button onClick={props.onClick}>Logout</button>;
 
 
-const mapLogin = (state:any) => {
+const mapLogin = (state: any) => {
   return {
     name: 'login',
     displayName: 'Login',
     fields: [
-      {name: 'email', label: 'Username/ Email', type: 'text'},
-      {name: 'first-name', label: 'First Name:', type: 'text'},
-      {name: 'last-name', label: 'Last Name:', type: 'text'},
-      {name: 'password', label: 'Choose a Password', type: 'password'},
-      {name: 'password-verification', label: 'Verify Password', type: 'password'}
+      { name: 'email', label: 'Username/ Email', type: 'text' },
+      { name: 'first-name', label: 'First Name:', type: 'text' },
+      { name: 'last-name', label: 'Last Name:', type: 'text' },
+      { name: 'password', label: 'Choose a Password', type: 'password' },
+      { name: 'password-verification', label: 'Verify Password', type: 'password' }
     ],
     error: state.user.error
   }
 }
 
-const mapSignup = (state:any) => {
+const mapSignup = (state: any) => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
     fields: [
-      {name: 'username', label: 'Username', type: 'text'},
-      {name: 'email', label: 'Email', type: 'email'},
-      {name: 'password', label: 'Password', type: 'password'},
-      {name: 'password-verification', label: 'Verify Password', type: 'password'},
-      {name: 'campus', label: 'Your Campus', type: 'text'},
-      {name: 'profile-picture', label: 'Profile Picture', type: 'text'}
+      { name: 'username', label: 'Username*', type: 'text' },
+      { name: 'firstName', label: 'First Name*', type: 'text' },
+      { name: 'lastName', label: 'Last Name', type: 'text' },
+      { name: 'email', label: 'Email*', type: 'email' },
+      { name: 'password', label: 'Password*', type: 'password' },
+      { name: 'password-verification', label: 'Verify Password*', type: 'password' },
+      // {name: 'campus', label: 'Your Campus', type: 'text'},
+      // {name: 'profile-picture', label: 'Profile Picture', type: 'text'}
     ],
+    campus: '',
     error: state.user.error
   }
 }
 
 
-const mapDispatch = (dispatch:any) => {
+const mapDispatch = (dispatch: any) => {
   return {
     // handleSubmit(evt: any) {
     //   evt.preventDefault()
@@ -88,7 +96,7 @@ const mapDispatch = (dispatch:any) => {
   }
 }
 
-const AuthForm = (props:any) => {
+const AuthForm = (props: any) => {
   const validationSchema = object().shape({
     email: string().required().email(),
     fullName: string().required().min(5).max(32),
@@ -141,8 +149,8 @@ const AuthForm = (props:any) => {
   } else {
     buttons = <ul style={{ listStyleType: 'none' }}>
       {providersNames.map((providerName, i) => <li key={providerName}>
-        <LoginButton providerName={providerName}/>
-        </li>)}
+        <LoginButton providerName={providerName} />
+      </li>)}
     </ul>;
   }
 
@@ -153,29 +161,60 @@ const AuthForm = (props:any) => {
   // } else {
   //   text = 'You are not connected. Please log in.';
   // }
+  const [listCampuses, setListCampuses] = useState<string[]>([]);
 
   return (<div>
+              <IonTitle className="ion-text-center">Profile</IonTitle>
     <p>{text}</p>
     <div>
-    <form onSubmit={handleSubmit(registerUser)}>
+      <form onSubmit={handleSubmit(registerUser)}>
+
+      <IonItem >
+              <label className="custom-input-label" >Upload Profile Picture: </label>
+              <ImageUpload />
+      </IonItem>
+
 
         {props.fields.map((field: any) =>
           <div>
-            <input name={field.name} type={field.type} className="form-control" placeholder={field.label} />
+            {/* <input name={field.name} type={field.type} className="form-control" placeholder={field.label} /> */}
+
+            <IonItem className="custom-input">
+              <IonLabel className="custom-input-label" >{field.label}</IonLabel>
+              <IonInput value={''} type={field.type}></IonInput>
+            </IonItem>
             <br />
           </div>
         )}
 
+        <IonItem id="campus-menu">
+          <IonLabel>Campus*</IonLabel>
+          <IonSelect
+            interfaceOptions={{cssClass: 'my-custom-interface'}}
+            interface="popover"
+            multiple={false}
+            placeholder=""
+            //onIonChange={e => setListCampuses(e.detail.value)}
+            value={listCampuses}
+          >
+            {props.campuses.map((campus: any, index: any) =>
+              <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
+            )}
 
-            <IonButton expand="block" type="submit" className="ion-margin-top">
-              Sign Up
+
+          </IonSelect>
+
+        </IonItem>
+
+        <IonButton expand="block" type="submit" className="ion-margin-top">
+          Sign Up
             </IonButton>
-          </form>
+      </form>
 
-        {/* Possibly add this later when adding option to login with google and other providers*/}
+      {/* Possibly add this later when adding option to login with google and other providers*/}
 
-        {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
-      </div>
+      {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
+    </div>
 
   </div>);
 }

@@ -89,7 +89,7 @@ const Profile = (props: Props) => {
                 {user ? (< AuthFormContainer/>) : (<IonText>Login</IonText>) }
               </div>
           </IonButtons>
-          <IonTitle className="ion-text-center">Profile</IonTitle>
+          <IonTitle className="ion-text-center"> {user ? 'Profile' : 'Login' }</IonTitle>
 
         </IonToolbar>
       </IonHeader>
