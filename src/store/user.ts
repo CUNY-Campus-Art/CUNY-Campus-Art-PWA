@@ -99,8 +99,20 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
 export const signupNewUser =  (email:string, pw:string, username:string, firstName:string = "", lastName:string = "", file:any = '') => async (dispatch:any) => {
-  con.createUser(email, pw, username, firstName, lastName, file)
-  console.log("success")
+  let status = await con.createUser(email, pw, username, firstName, lastName, file)
+  console.log("success", con.user)
+
+  let newUser = {
+    user_name: con.user.user_name,
+    first_name: con.user.first_name,
+    last_name: con.user.last_Name,
+    email: con.user.email,
+    profile_picture: con.user.profile_picture,
+    campus: con.user.campus
+  }
+
+  dispatch(getUser(newUser))
+  return status;
 }
 
 
