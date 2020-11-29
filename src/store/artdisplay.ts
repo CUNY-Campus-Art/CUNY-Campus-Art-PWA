@@ -267,11 +267,11 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         allArtDisplays: [defaultCurrentArtDisplay],
       }
     case RERENDER_ART_DISPLAYS:
-      con = new StrapiApiConnection(action.payload[0], action.payload[1])
+     // con = new StrapiApiConnection(action.payload[0], action.payload[1])
       return {
         ...state,
-        user: con.user,
-        pastArtDisplays: action.payload[0] ? [...action.payload[0].scanned_artworks]: [...state.pastArtDisplays]
+       // user: con.user,
+        //pastArtDisplays: action.payload[0] ? [...action.payload[0].scanned_artworks]: [...state.pastArtDisplays]
       }
     default:
       return state

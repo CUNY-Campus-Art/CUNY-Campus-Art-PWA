@@ -71,13 +71,13 @@ const mapDispatch = (dispatch: any) => {
 
 const AuthForm = (props: any) => {
 
-    // To redirect to Information tab using forward animation
-    // const { navigate } = useContext(NavContext);
-    // const redirect = useCallback(
-    //   () => navigate('/Profile', 'backward'),
-    //   [navigate]
-    // );
-    
+    //To redirect to Information tab using forward animation
+    const { navigate } = useContext(NavContext);
+    const redirect = useCallback(
+      () => navigate('/Profile', 'back'),
+      [navigate]
+    );
+
   // const validationSchema = object().shape({
   //   email: string().required().email(),
   //   fullName: string().required().min(5).max(32),
@@ -144,7 +144,10 @@ const AuthForm = (props: any) => {
       formValues.lastName = evt.target.lastName.value
 
       // imgData, selectedCampus:  values we still need to send to database somehow
-      props.signupNewUser(formValues.email, formValues.password, formValues.username, formValues.firstName, formValues.lastName, imgData)
+      let result = props.signupNewUser(formValues.email, formValues.password, formValues.username, formValues.firstName, formValues.lastName, imgData)
+
+      //If user sucessfully signs up is redirected to Profile tab
+      if(result) redirect();
     }
   }
 
