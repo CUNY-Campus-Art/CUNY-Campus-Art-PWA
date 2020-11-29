@@ -1,8 +1,37 @@
+.top-bar{
+  padding: 0 20px;
+}
+
 .CUNY-title{
   font-family: 'Merriweather', serif;
-  background-color: #f2f2f2;
+  /* background-color: #f2f2f2; */
   font-size: 25px;
   color: #1D3A83;
-  /* padding: 3px; */
+  /* white-space: nowrap; */
+  width: 100%;
+  height: 100%;
+}
 
+.profile-icon{
+  font-family: 'Merriweather', serif;
+  background-color: #000;
+  font-size: 25px;
+  color: #1D3A83;
+  width: 25%;
+
+}
+
+.profile-button{
+  /* height: 2em;
+  width: 2em; */
+   /* background: #000;
+   border-radius: 50%;
+   padding: .5em; */
+}
+
+.profile-button ion-icon{
+  font-size: 25px;
+}
+
+.profile-button i{
 }

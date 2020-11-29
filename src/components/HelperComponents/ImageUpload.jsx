@@ -8,8 +8,11 @@ function ImageUpload (props) {
   const maxNumber = 69;
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
-    console.log(imageList, addUpdateIndex);
+    //console.log(imageList, addUpdateIndex);
     setImages(imageList);
+
+    // This sends file info to the parent (Signup Component) so file can be processed and sent to the database
+    props.getImgFileInfoParent(imageList[0].file)
   };
 
   return (
