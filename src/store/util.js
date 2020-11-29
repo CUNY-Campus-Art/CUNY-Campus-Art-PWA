@@ -276,6 +276,22 @@ export class StrapiApiConnection {
       })
       .then((res) => {
         response = res.data
+        if (response) {
+          this.authToken = response.jwt
+          this.user = response.user
+          if (file) {
+             this.axiosUploadToStrapi(
+              file,
+              response.user.id,
+              'user',
+              'profile_picture',
+              'users-permissions'
+            )
+          }
+          return { success: true, response: response, error: {} }
+        } else {
+          return { success: false, response: {}, error: error }
+        }
       })
       .catch((e) => {
         if (
@@ -288,22 +304,7 @@ export class StrapiApiConnection {
         }
       })
 
-    if (response) {
-      this.authToken = response.jwt
-      this.user = response.user
-      if (file) {
-        await this.axiosUploadToStrapi(
-          file,
-          response.user.id,
-          'user',
-          'profile_picture',
-          'users-permissions'
-        )
-      }
-      return { success: true, response: response, error: {} }
-    } else {
-      return { success: false, response: {}, error: error }
-    }
+
   }
 
   /* loginUser

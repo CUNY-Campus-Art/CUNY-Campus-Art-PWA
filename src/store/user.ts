@@ -98,7 +98,10 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 // }
 
 
-
+export const signupNewUser =  (email:string, pw:string, username:string, firstName:string = "", lastName:string = "", file:any = '') => async (dispatch:any) => {
+  con.createUser(email, pw, username, firstName, lastName, file)
+  console.log("success")
+}
 
 
 /* loginAndGetToken functioning most recent 11/17 */

@@ -1,15 +1,17 @@
 /*
-This contains the Login and Signup component.
+Login component. It contains a link to the Signup component.
 
-Source Code based on:
-https://github.com/strapi/strapi-examples/blob/master/login-react/src/pages/Home.js
-https://github.com/FullstackAcademy/boilermaker/blob/master/client/components/auth-form.js
+This Login component will:
+
+
 */
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { RootState } from '../store'
 import { fetchUser } from '../store/user'
+import { IonText } from '@ionic/react';
 
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
@@ -23,13 +25,11 @@ const providersNames = [
   // 'instagram,
 ];
 
-
 const LoginButton = (props: any) => <a href={`${backendUrl}/connect/${props.providerName}`}>
   <button style={{ width: '150px' }}>Connect to {props.providerName}</button>
 </a>;
 
 const LogoutButton = (props: any) => <button onClick={props.onClick}>Logout</button>;
-
 
 const mapLogin = (state: any) => {
   return {
@@ -42,20 +42,6 @@ const mapLogin = (state: any) => {
   }
 }
 
-const mapSignup = (state: any) => {
-  return {
-    name: 'signup',
-    displayName: 'Sign Up',
-    fields: [
-      { name: 'username', label: 'Username', type: 'text' },
-      { name: 'email', label: 'Email', type: 'text' },
-      { name: 'password', label: 'Password', type: 'password' },
-      { name: 'campus', label: 'Your Campus', type: 'text' },
-      { name: 'profile-picture', label: 'Profile Picture', type: 'text' }
-    ],
-    error: state.user.error
-  }
-}
 
 
 const mapDispatch = (dispatch: any) => {
@@ -102,6 +88,7 @@ const AuthForm = (props: any) => {
     <p>{text}</p>
     <div>
 
+      {/* Displays Login in form (username/ email) */}
       <form onSubmit={handleSubmit} name={name} className="form-group">
 
         {props.fields.map((field: any) =>
@@ -112,11 +99,12 @@ const AuthForm = (props: any) => {
             <input name={field.name} type={field.type} className="form-control" />
           </div>
         )}
-        <br/>
+        <br />
         <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
         {error && error.response && <div> {error.response.data} </div>}
       </form>
 
+          <IonText> Don't have an account? <Link to="/Signup">Sign Up</Link></IonText>
       {/* Possibly add this later when adding option to login with google and other providers*/}
       {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
     </div>
@@ -125,8 +113,6 @@ const AuthForm = (props: any) => {
 }
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)
-export const Signup = connect(mapSignup, mapDispatch)(AuthForm)
-
 
 export interface AuthForm {
   name: string

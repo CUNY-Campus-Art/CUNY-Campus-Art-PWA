@@ -10,17 +10,19 @@ import {
   IonTabs,
   IonHeader,
   IonToolbar,
+  IonText,
   IonButton,
   IonTitle, IonGrid, IonRow, IonCol, IonItemDivider
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-
+import { Link } from 'react-router-dom';
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
+import { Signup } from './components/Signup'
 import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
@@ -47,23 +49,28 @@ import './App.css';
 
 const App: React.FC = () => (
   <IonApp>
-    <IonHeader className= "CUNY-title" >
+    <IonReactRouter>
+      <IonHeader >
 
-          <IonToolbar>
-          <IonTitle className="ion-text-center CUNY-title"> CUNY Gallery</IonTitle>
+        <IonToolbar className="top-bar" >
+
+        <IonText className="ion-text-center CUNY-title"><span >CUNY Gallery</span></IonText>
+        <Link to="/Profile" className="profile-button"  slot="end"> <IonIcon color= "medium" icon={person} /> </Link>
+
         </IonToolbar>
       </IonHeader>
-    <IonReactRouter>
+
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/Home" component={Home} exact={true} />
           <Redirect from="/cuny-campus-art-" to="/Home" />
           <Redirect from="/cuny-campus-art-:id" to="/Home" />
+          <Route path="/Signup" component={Signup} exact={true} />
           <Route path="/Gallery" component={Gallery} exact={true} />
-          <Route path="/ScanQR" component={ScanQR} exact={true}/>
-          <Route path="/Information" component={Information} exact={true}/>
-          <Route path="/Profile" component={Profile} exact={true}/>
-          <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true}/>
+          <Route path="/ScanQR" component={ScanQR} exact={true} />
+          <Route path="/Information" component={Information} exact={true} />
+          <Route path="/Profile" component={Profile} exact={true} />
+          <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true} />
           <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
@@ -83,10 +90,7 @@ const App: React.FC = () => (
             <IonIcon icon={informationCircle} />
             <IonLabel>Information</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="Profile" href="/Profile">
-            <IonIcon icon={person} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
+
           <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
             <IonIcon icon={person} />
             <IonLabel>Scavenger Hunt</IonLabel>

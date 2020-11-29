@@ -78,15 +78,16 @@ const Profile = (props: Props) => {
         <IonToolbar></IonToolbar>
 
         <IonToolbar>
-          {/* Back button goes to scan tab */}
-          <IonButtons slot="start">
+          {/* Back button goes to scan tab - Commented out for now because not necessary at the moment. User can with one tap go back to the Scan Page. Added to Signup page however, which redirects back to this login */}
+          {/* <IonButtons slot="start">
           <IonBackButton defaultHref="/" />
-          </IonButtons>
+          </IonButtons> */}
+
           {/* Added the logout button here, but had to exclude
           the text attached by commenting out in AuthFormContainer.tsx  */}
           <IonButtons slot="primary">
               <div>
-                {user ? (< AuthFormContainer/>) : (<IonText>Login</IonText>) }
+                {user ? (< AuthFormContainer/>) : '' }
               </div>
           </IonButtons>
           <IonTitle className="ion-text-center"> {user ? 'Profile' : 'Login' }</IonTitle>
