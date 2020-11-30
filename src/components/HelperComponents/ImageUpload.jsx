@@ -12,7 +12,7 @@ function ImageUpload (props) {
     setImages(imageList);
 
     // This sends file info to the parent (Signup Component) so file can be processed and sent to the database
-    props.getImgFileInfoParent(imageList[0].file)
+    if(imageList[0]) props.getImgFileInfoParent(imageList[0].file)
   };
 
   return (

@@ -1,8 +1,9 @@
 /*
-Login component. It contains a link to the Signup component.
 
-This Login component will:
+Login.tsx -  Login/ Logout components
 
+- If user is already signed in, displays a logout button
+- If user is not signed in, Login form is displayed, as well a link to Sign Up form for user who has not signed up yet
 
 */
 
@@ -10,26 +11,16 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { RootState } from '../store'
-import { fetchUser } from '../store/user'
-import { IonText } from '@ionic/react';
-
+import { fetchUser, logout } from '../store/user'
+import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
+import { IonText, IonButton } from '@ionic/react';
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
 const providersNames = [
-  // 'github',
-  // 'facebook',
-  'google',
-  // 'twitter',
-  // 'discord',
-  // 'twitch',
-  // 'instagram,
+  'google'
 ];
 
-const LoginButton = (props: any) => <a href={`${backendUrl}/connect/${props.providerName}`}>
-  <button style={{ width: '150px' }}>Connect to {props.providerName}</button>
-</a>;
-
-const LogoutButton = (props: any) => <button onClick={props.onClick}>Logout</button>;
+const LogoutButton = (props: any) => <IonButton color="dark" onClick={props.onClick} className="btn login_btn">Logout</IonButton>;
 
 const mapLogin = (state: any) => {
   return {
@@ -38,11 +29,10 @@ const mapLogin = (state: any) => {
     fields: [
       { name: 'email', label: 'Username/ Email', type: 'text' },
       { name: 'password', label: 'Password', type: 'password' }],
+    currentUser: state.user.user,
     error: state.user.error
   }
 }
-
-
 
 const mapDispatch = (dispatch: any) => {
   return {
@@ -53,63 +43,54 @@ const mapDispatch = (dispatch: any) => {
         const password = evt.target.password.value
         dispatch(fetchUser(email, password))
       }
-    }
+    },
+    logout: () => dispatch(logout()),
+    rerenderArtDisplays: (userInfo: any) => dispatch(rerenderArtDisplays(userInfo)),
+    resetArtDisplays: () => dispatch(resetArtDisplays())
   }
 }
 
 const AuthForm = (props: any) => {
+
+  let currentUser = props.currentUser;
+
   const { name, displayName, handleSubmit, error } = props
 
-  const [isLogged, setIsLogged] = useState(!!props.currentUser);
-  console.log(isLogged)
-
-  //take this out
+  // When user logs out, Redux removes user from Local Storage and from the store, and clears Art Displays
   const logout = (e: Event) => {
     e.preventDefault();
-    localStorage.clear();
-    setIsLogged(false);
+    props.logout()
+    props.resetArtDisplays()
   };
 
-  let buttons;
+  return (<span>
 
-  if (isLogged) {
-    buttons = <LogoutButton onClick={logout} />;
-  } else {
-    buttons = <ul style={{ listStyleType: 'none' }}>
-      {providersNames.map((providerName, i) => <li key={providerName}>
-        <LoginButton providerName={providerName} />
-      </li>)}
-    </ul>;
-  }
+    { !!currentUser ? <LogoutButton onClick={logout} /> :
+      <div>
+        <p>{'Log in to save your progress!'}</p>
 
-  let text;
+        {/* Displays Login in form (username/ email) */}
+        <form onSubmit={handleSubmit} name={name} className="form-group">
 
-  return (<div>
-    <p>{text}</p>
-    <div>
+          {props.fields.map((field: any, index: any) =>
+            <div key={index}>
+              <label htmlFor={field.name}>
+                <small>{field.label}</small>
+              </label>
+              <input name={field.name} type={field.type} className="form-control" />
+            </div>
+          )}
+          <br />
+          <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
+          {error && error.response && <div> {error.response.data} </div>}
+        </form>
 
-      {/* Displays Login in form (username/ email) */}
-      <form onSubmit={handleSubmit} name={name} className="form-group">
+        <IonText> Don't have an account? <Link to="/Signup">Sign Up</Link></IonText>
 
-        {props.fields.map((field: any) =>
-          <div>
-            <label htmlFor={field.name}>
-              <small>{field.label}</small>
-            </label>
-            <input name={field.name} type={field.type} className="form-control" />
-          </div>
-        )}
-        <br />
-        <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
-        {error && error.response && <div> {error.response.data} </div>}
-      </form>
+      </div>
+    }
+  </span>);
 
-          <IonText> Don't have an account? <Link to="/Signup">Sign Up</Link></IonText>
-      {/* Possibly add this later when adding option to login with google and other providers*/}
-      {/* <a href="/auth/google">{displayName} with Google</a> {buttons}*/}
-    </div>
-
-  </div >);
 }
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)

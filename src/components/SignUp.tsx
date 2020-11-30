@@ -8,7 +8,7 @@ Collects username, email, first name, last name, campus, and profile picture fro
 
 Makes use of the React Hook Form library to have values persist even after other items on form is updated.
 
-To Dos: To add Form Validations
+To Dos: To add Form Validations. Once database values are updated, will have profile picture and campus id added to database as well.
 
 */
 
@@ -27,14 +27,14 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonText
+  IonCard
 } from "@ionic/react";
 import { connect } from 'react-redux';
 import { RootState } from '../store'
 
 import ImageUpload from './HelperComponents/ImageUpload'
 import './Signup.css'
-import { signupNewUser } from '../store/user'
+import { signupNewUser, fetchUser } from '../store/user'
 import { useForm, Controller } from "react-hook-form";
 import Input, { InputProps } from './input'
 import { object, string } from 'yup';
@@ -65,13 +65,14 @@ const mapSignup = (state: RootState) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, file))
+    signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, file)),
+    loginUser: (username:string, password:string) => dispatch(fetchUser(username, password))
   }
 }
 
 const AuthForm = (props: any) => {
 
-    //To redirect to Information tab using forward animation
+    //To redirect to Profile tab using forward animation
     const { navigate } = useContext(NavContext);
     const redirect = useCallback(
       () => navigate('/Profile', 'back'),
@@ -133,7 +134,7 @@ const AuthForm = (props: any) => {
   };
 
   // Form invokes handlesSubmit1, updates local form values, and sends info to database to sign up user
-  const handleSubmit1 = (evt: any) => {
+  const handleSubmit1 = async (evt: any) => {
     evt.preventDefault()
     if (evt.target) {
 
@@ -144,10 +145,14 @@ const AuthForm = (props: any) => {
       formValues.lastName = evt.target.lastName.value
 
       // imgData, selectedCampus:  values we still need to send to database somehow
-      let result = props.signupNewUser(formValues.email, formValues.password, formValues.username, formValues.firstName, formValues.lastName, imgData)
+      let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, formValues.firstName, formValues.lastName, imgData)
 
-      //If user sucessfully signs up is redirected to Profile tab
-      if(result) redirect();
+      //If user sucessfully signs up, have user logged in, and redirected to Profile tab
+      //Once Profile Picture Upload is resolved. Should be able to replace result with result.sucess. For now result is based on whether con.user has a value (logic set in the user store)
+        if(result) {
+          await props.loginUser(formValues.username, formValues.password);
+          redirect();
+        }
     }
   }
 
@@ -160,15 +165,14 @@ const AuthForm = (props: any) => {
           <IonButtons slot="start">
           <IonBackButton defaultHref="/Profile" />
           </IonButtons>
-          <IonTitle slot="primary" className="ion-text-center">Sign Up</IonTitle>
+          <IonTitle className="ion-text-end">Sign Up</IonTitle>
           </IonToolbar>
       </IonHeader>
       <IonContent>
 
-        <div>
           <form onSubmit={handleSubmit1}>
 
-            {/* Upload Profile Picture */}
+            {/* Upload Profile Picture - We pass the Image Upload component the getImgFileInfoParent function so that it can be invoked and Signup component can retrieve the image file */}
             <IonItem >
               <label className="custom-input-label" >Upload Profile Picture: </label>
               <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
@@ -215,7 +219,7 @@ const AuthForm = (props: any) => {
 
           </form>
 
-        </div>
+
       </IonContent>
     </IonPage>);
 }

@@ -103,16 +103,18 @@ export const signupNewUser =  (email:string, pw:string, username:string, firstNa
   console.log("success", con.user)
 
   let newUser = {
-    user_name: con.user.user_name,
+    user_name: con.user.username,
     first_name: con.user.first_name,
-    last_name: con.user.last_Name,
+    last_name: con.user.last_name,
     email: con.user.email,
     profile_picture: con.user.profile_picture,
     campus: con.user.campus
   }
 
   dispatch(getUser(newUser))
-  return status;
+
+  //If there is a user assigned that means user was successfully added to database, so return true
+  return con.user ? true : false;
 }
 
 
@@ -123,12 +125,20 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
 
 
   if(returnData.status === 200){
-    console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
-    console.log("This is the user information: ", returnData.data.user)
 
-    console.log("THIS IS HOW OUR CON OBJECT LOOKS LIKE", con);
+    let user = {
+      user_name: con.user.username,
+      first_name: con.user.first_name,
+      last_name: con.user.last_name,
+      email: con.user.email,
+      profile_picture: con.user.profile_picture,
+      campus: con.user.campus.campus_name,
+      campusId: con.user.campus.campusid,
+      scanned_artworks: con.user.scanned_artworks
+    }
+
     localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
-    localStorage.setItem('user', JSON.stringify(returnData.data.user));
+    localStorage.setItem('user', JSON.stringify(user));
     console.log('You have been successfully logged in. You will be redirected in a few seconds...');
     dispatch(getUser(returnData.data.user))
     return [returnData.data.jwt, returnData.data.user];
