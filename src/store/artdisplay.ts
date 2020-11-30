@@ -42,7 +42,7 @@ export interface ArtDisplaysState {
   currentArtDisplay: ArtDisplay
   pastArtDisplays: ArtDisplay[]
   allArtDisplays: ArtDisplay[]
-  user: any
+  // user: any
 }
 
 //Saving this for future use when we incorporate user
@@ -221,8 +221,7 @@ const defaultCurrentArtDisplay = {
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
   pastArtDisplays:  con.user ? con.user.scanned_artworks: [defaultCurrentArtDisplay],
-  allArtDisplays: [defaultCurrentArtDisplay],
-  user: con.user
+  allArtDisplays: [defaultCurrentArtDisplay]
 }
 
 
@@ -259,7 +258,6 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         // allArtDisplays:[],
         // currentArtDisplay: [defaultCurrentArtDisplay],
         // pastArtDisplays: [defaultCurrentArtDisplay],
-        user: '',
         currentArtDisplay: defaultCurrentArtDisplay,
         pastArtDisplays:
         //con.user ? [defaultCurrentArtDisplay, ...con.user.scanned_artworks]:

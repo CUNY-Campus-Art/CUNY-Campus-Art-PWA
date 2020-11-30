@@ -2,13 +2,14 @@ import axios from 'axios'
 
 export class StrapiApiConnection {
   //Either retrieved info will be passed to constructor or values will be set by accessing local storage. retrieved info will take precedence so new user can be logged in
+
   constructor(authToken, user) {
-    //checks if anything in local storage
-    console.log(localStorage.getItem('user'))
+
+    // Checks if anything in local storage, relevant for when app initially loads or refreshes
     if (!authToken && !user && !!localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
-      this.syncRemoteToLocalUser()
       this.authToken = JSON.parse(localStorage.getItem('jwt'))
+      //this.syncRemoteToLocalUser()
       //updates local user to be up to date with the database
     } else {
       this.authToken = authToken ? authToken : ''

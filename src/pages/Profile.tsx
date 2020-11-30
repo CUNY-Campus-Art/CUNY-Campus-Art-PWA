@@ -6,9 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
 import { getUser, logout, fetchUser } from '../store/user'
-import {fetchAllCampuses } from '../store/general'
 import './Profile.css';
-import AuthFormContainer from '../components/AuthFormContainer'
+import { Login } from '../components/Login'
 import UserProfile from '../components/UserProfile'
 
 import {
@@ -47,7 +46,6 @@ const mapState = (state: RootState) => ({
 })
 
 const mapDispatch = (dispatch: any) => ({
-  getAllCampuses: () => dispatch(fetchAllCampuses()),
   fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
   getUser: (user: any) => dispatch(getUser(user)),
 })
@@ -65,8 +63,6 @@ type Props = PropsFromRedux & {
 
 
 const Profile = (props: Props) => {
-
-  useEffect(() => {   props.getAllCampuses(); }, []);
 
   let user = props.currentUser;
   let campus = props.campus;
@@ -86,9 +82,7 @@ const Profile = (props: Props) => {
           {/* Added the logout button here, but had to exclude
           the text attached by commenting out in AuthFormContainer.tsx  */}
           <IonButtons slot="primary">
-              <div>
-                {user ? (< AuthFormContainer/>) : '' }
-              </div>
+                {user ? (< Login />) : '' }
           </IonButtons>
           <IonTitle className="ion-text-center"> {user ? 'Profile' : 'Login' }</IonTitle>
 
@@ -98,9 +92,7 @@ const Profile = (props: Props) => {
       <IonContent>
           {/*Made edit here to not show logoutbutton in ioncontent
           (show UserProfile) else show login container*/}
-        {user ? (<UserProfile />): (<AuthFormContainer />)}
-        {/* <AuthFormContainer /> */}
-        {/* { user? <UserProfile /> : '' } */}
+        {user ? (<UserProfile />): (<Login />)}
 
       </IonContent>
     </IonPage>
