@@ -5,16 +5,15 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import ReduxThunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 
-
-import artDisplay from './artdisplay'
-import user from './user'
 import general from './general'
+import user from './user'
+import artDisplay from './artdisplay'
 
 
 const rootReducer = combineReducers({
-  artDisplay,
+  general,
   user,
-  general
+  artDisplay
 })
 
 /*  Type Checking Middlewares */
