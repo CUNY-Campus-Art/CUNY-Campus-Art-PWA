@@ -5,7 +5,7 @@ import { StringLiteral } from 'typescript'
 import { RootState } from './index'
 import { StrapiApiConnection, axoisPostToStrapi } from './util'
 
-import { rerenderArtDisplays} from './artdisplay'
+import { rerenderArtDisplays, fetchPastArtworks} from './artdisplay'
 /************ Type Checking State ************/
 
 export interface Image {
@@ -37,6 +37,7 @@ export interface UserState {
 // ACTION TYPES
 export const GET_USER = 'GET_USER'
 export const REMOVE_USER = 'REMOVE_USER'
+export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 
 // INITIAL STATE
 
@@ -79,6 +80,11 @@ interface getUserAction {
 interface removeUserAction {
   type: typeof REMOVE_USER
   payload: User
+}
+
+interface GotAllCampusesAction {
+  type: typeof GET_ALL_CAMPUSES
+  payload: Campus[]
 }
 
 
@@ -132,8 +138,8 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
       last_name: con.user.last_name,
       email: con.user.email,
       profile_picture: con.user.profile_picture,
-      campus: con.user.campus.campus_name,
-      campusId: con.user.campus.campusid,
+      campus: con.user.campus ? con.user.campus.campus_name : '',
+      campusId: con.user.campus ? con.user.campus.campusid : '',
       scanned_artworks: con.user.scanned_artworks
     }
 
@@ -141,7 +147,8 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
     localStorage.setItem('user', JSON.stringify(user));
     console.log('You have been successfully logged in. You will be redirected in a few seconds...');
     dispatch(getUser(returnData.data.user))
-    return [returnData.data.jwt, returnData.data.user];
+    dispatch(fetchPastArtworks(returnData.data.user))
+    //return [returnData.data.jwt, returnData.data.user];
   }else{
     return -1;
   }
@@ -187,6 +194,8 @@ export const logout = () => async (dispatch:any) => {
     console.error(err)
   }
 }
+
+
 
 
 

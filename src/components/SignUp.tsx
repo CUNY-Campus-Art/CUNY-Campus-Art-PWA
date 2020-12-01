@@ -12,7 +12,7 @@ To Dos: To add Form Validations. Once database values are updated, will have pro
 
 */
 
-import React, { useState, useContext, useCallback} from 'react';
+import React, { useState, useContext, useCallback, useEffect} from 'react';
 import { NavContext } from '@ionic/react';
 import {
   IonInput,
@@ -35,6 +35,7 @@ import { RootState } from '../store'
 import ImageUpload from './HelperComponents/ImageUpload'
 import './Signup.css'
 import { signupNewUser, fetchUser } from '../store/user'
+import { fetchAllCampuses } from '../store/general'
 import { useForm, Controller } from "react-hook-form";
 import Input, { InputProps } from './input'
 import { object, string } from 'yup';
@@ -66,12 +67,15 @@ const mapSignup = (state: RootState) => {
 const mapDispatch = (dispatch: any) => {
   return {
     signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, file)),
-    loginUser: (username:string, password:string) => dispatch(fetchUser(username, password))
+    loginUser: (username:string, password:string) => dispatch(fetchUser(username, password)),
+    getAllCampuses: () => dispatch(fetchAllCampuses()),
+
   }
 }
 
 const AuthForm = (props: any) => {
-
+    // useEffect(() => { props.getAllCampuses(); }, []);
+    if(!props.campuses)  props.getAllCampuses();
     //To redirect to Profile tab using forward animation
     const { navigate } = useContext(NavContext);
     const redirect = useCallback(
@@ -155,9 +159,10 @@ const AuthForm = (props: any) => {
         }
     }
   }
+    // <IonPage className="container-fluid">     </IonPage>);
 
-  return (
-    <IonPage className="container-fluid">
+
+  return ( <IonPage>
       <IonHeader>
       <IonToolbar></IonToolbar>
 
@@ -196,21 +201,21 @@ const AuthForm = (props: any) => {
             )}
 
             {/* Campus Drop Down Menu */}
-            <IonItem id="campus-menu">
-              <IonLabel>Campus*</IonLabel>
-              <IonSelect
-                interfaceOptions={{ cssClass: 'my-custom-interface' }}
-                interface="popover"
-                multiple={false}
-                placeholder=""
-                onIonChange={e => setSelectedCampus(e.detail.value)}
-                value={selectedCampus}
-              >
-                {props.campuses.map((campus: any, index: any) =>
-                  <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
-                )}
-              </IonSelect>
-            </IonItem>
+          <IonItem id="campus-menu">
+                <IonLabel>Campus*</IonLabel>
+                <IonSelect
+                  interfaceOptions={{ cssClass: 'my-custom-interface' }}
+                  interface="popover"
+                  multiple={false}
+                  placeholder=""
+                  onIonChange={e => setSelectedCampus(e.detail.value)}
+                  value={selectedCampus}
+                >
+                  {props.campuses ? props.campuses.map((campus: any, index: any) =>
+                    <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
+                  ): ''}
+                </IonSelect>
+              </IonItem>
 
             {/* Submit Button */}
             <IonButton expand="block" type="submit" className="ion-margin-top">
@@ -221,7 +226,7 @@ const AuthForm = (props: any) => {
 
 
       </IonContent>
-    </IonPage>);
+      </IonPage>)
 }
 
 

@@ -67,7 +67,7 @@ const Profile = (props: Props) => {
   let user = props.currentUser;
   let campus = props.campus;
 
-
+  // let =
   return (
     <IonPage className="container-fluid">
       <IonHeader>
