@@ -7,7 +7,7 @@ import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
 import { getUser, logout, fetchUser } from '../store/user'
 import './Profile.css';
-import AuthFormContainer from '../components/AuthFormContainer'
+import { Login } from '../components/Login'
 import UserProfile from '../components/UserProfile'
 
 import {
@@ -41,12 +41,13 @@ import { calendar, informationCircle, personCircle, search } from "ionicons/icon
 /* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
-  campus: state.user.user.campus
+  campus: state.user.user.campus,
+  campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
   fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
-  getUser: (user: any) => dispatch(getUser(user))
+  getUser: (user: any) => dispatch(getUser(user)),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -66,25 +67,24 @@ const Profile = (props: Props) => {
   let user = props.currentUser;
   let campus = props.campus;
 
-
+  // let =
   return (
     <IonPage className="container-fluid">
       <IonHeader>
         <IonToolbar></IonToolbar>
 
         <IonToolbar>
-          {/*back button gotes to scan tab */}
-          <IonButtons slot="start">
+          {/* Back button goes to scan tab - Commented out for now because not necessary at the moment. User can with one tap go back to the Scan Page. Added to Signup page however, which redirects back to this login */}
+          {/* <IonButtons slot="start">
           <IonBackButton defaultHref="/" />
-          </IonButtons>
+          </IonButtons> */}
+
           {/* Added the logout button here, but had to exclude
           the text attached by commenting out in AuthFormContainer.tsx  */}
           <IonButtons slot="primary">
-              <div>
-                {user ? (< AuthFormContainer/>) : (<IonText>Login</IonText>) }
-              </div>
+                {user ? (< Login />) : '' }
           </IonButtons>
-          <IonTitle className="ion-text-center">Profile</IonTitle>
+          <IonTitle className="ion-text-center"> {user ? 'Profile' : 'Login' }</IonTitle>
 
         </IonToolbar>
       </IonHeader>
@@ -92,9 +92,7 @@ const Profile = (props: Props) => {
       <IonContent>
           {/*Made edit here to not show logoutbutton in ioncontent
           (show UserProfile) else show login container*/}
-        {user ? (<UserProfile />): (<AuthFormContainer />)}
-        {/* <AuthFormContainer /> */}
-        {/* { user? <UserProfile /> : '' } */}
+        {user ? (<UserProfile />): (<Login />)}
 
       </IonContent>
     </IonPage>
