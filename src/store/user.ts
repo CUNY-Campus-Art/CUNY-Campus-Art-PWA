@@ -5,7 +5,7 @@ import { StringLiteral } from 'typescript'
 import { RootState } from './index'
 import { StrapiApiConnection, axoisPostToStrapi } from './util'
 
-import { rerenderArtDisplays} from './artdisplay'
+import { rerenderArtDisplays, fetchPastArtworks} from './artdisplay'
 /************ Type Checking State ************/
 
 export interface Image {
@@ -37,6 +37,7 @@ export interface UserState {
 // ACTION TYPES
 export const GET_USER = 'GET_USER'
 export const REMOVE_USER = 'REMOVE_USER'
+export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 
 // INITIAL STATE
 
@@ -81,6 +82,11 @@ interface removeUserAction {
   payload: User
 }
 
+interface GotAllCampusesAction {
+  type: typeof GET_ALL_CAMPUSES
+  payload: Campus[]
+}
+
 
 export const getUser = (user: User) => ({type: GET_USER, user})
 export const removeUser = () => ({type: REMOVE_USER})
@@ -98,7 +104,24 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 // }
 
 
+export const signupNewUser =  (email:string, pw:string, username:string, firstName:string = "", lastName:string = "", file:any = '') => async (dispatch:any) => {
+  let status = await con.createUser(email, pw, username, firstName, lastName, file)
+  console.log("success", con.user)
 
+  let newUser = {
+    user_name: con.user.username,
+    first_name: con.user.first_name,
+    last_name: con.user.last_name,
+    email: con.user.email,
+    profile_picture: con.user.profile_picture,
+    campus: con.user.campus
+  }
+
+  dispatch(getUser(newUser))
+
+  //If there is a user assigned that means user was successfully added to database, so return true
+  return con.user ? true : false;
+}
 
 
 /* loginAndGetToken functioning most recent 11/17 */
@@ -108,15 +131,24 @@ export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
 
 
   if(returnData.status === 200){
-    console.log( "THIS IS THE RETURN DATA FOR loginAndGetToken", returnData)
-    console.log("This is the user information: ", returnData.data.user)
 
-    console.log("THIS IS HOW OUR CON OBJECT LOOKS LIKE", con);
+    let user = {
+      user_name: con.user.username,
+      first_name: con.user.first_name,
+      last_name: con.user.last_name,
+      email: con.user.email,
+      profile_picture: con.user.profile_picture,
+      campus: con.user.campus ? con.user.campus.campus_name : '',
+      campusId: con.user.campus ? con.user.campus.campusid : '',
+      scanned_artworks: con.user.scanned_artworks
+    }
+
     localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
-    localStorage.setItem('user', JSON.stringify(returnData.data.user));
+    localStorage.setItem('user', JSON.stringify(user));
     console.log('You have been successfully logged in. You will be redirected in a few seconds...');
     dispatch(getUser(returnData.data.user))
-    return [returnData.data.jwt, returnData.data.user];
+    dispatch(fetchPastArtworks(returnData.data.user))
+    //return [returnData.data.jwt, returnData.data.user];
   }else{
     return -1;
   }
@@ -162,6 +194,8 @@ export const logout = () => async (dispatch:any) => {
     console.error(err)
   }
 }
+
+
 
 
 

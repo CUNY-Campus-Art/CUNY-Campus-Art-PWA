@@ -1,0 +1,25 @@
+#campus-menu, .custom-input {
+  /* border: 1px solid #ced4da;
+  border-radius: .25rem; */
+  --padding-top: 0;
+  font-weight: bold;
+  --color: #595353;
+
+}
+
+
+
+/* Adjusts user input areas in form */
+.custom-input .native-input {
+  margin-left: 10px;
+  /* border-left: 1px solid #ced4da; */
+  font-weight: normal;
+  color: #551d83;
+}
+
+
+
+/* For Campus Menu Options */
+.my-custom-interface .select-interface-option {
+  --color:#551d83;
+}
