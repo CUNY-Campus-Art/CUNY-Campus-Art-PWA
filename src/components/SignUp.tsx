@@ -83,11 +83,11 @@ const AuthForm = (props: any) => {
       [navigate]
     );
 
-  // const validationSchema = object().shape({
-  //   email: string().required().email(),
-  //   fullName: string().required().min(5).max(32),
-  //   password: string().required().min(8),
-  // });
+  const validationSchema = object().shape({
+    email: string().required().email(),
+    fullName: string().required().min(5).max(32),
+    password: string().required().min(8),
+  });
   // const { control, handleSubmit, errors } = useForm({
   //   validationSchema,
   // });
@@ -127,7 +127,8 @@ const AuthForm = (props: any) => {
   }
 
   const { control, register, handleSubmit, errors, formState } = useForm({
-    defaultValues: formValues
+    defaultValues: formValues,
+    validationSchema
   });
 
   const [data, setData] = useState();
@@ -200,7 +201,7 @@ const AuthForm = (props: any) => {
               </div>
             )}
 
-            {/* Campus Drop Down Menu */}
+          {/* Campus Drop Down Menu */}
           <IonItem id="campus-menu">
                 <IonLabel>Campus*</IonLabel>
                 <IonSelect
