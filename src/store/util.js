@@ -331,9 +331,13 @@ export class StrapiApiConnection {
       sendData,
       sendConfig
     )
-    this.user = returnData.data.user
-    this.authToken = returnData.data.jwt
+    if (returnData.data) {
+      this.user = returnData.data.user
+      this.authToken = returnData.data.jwt
+    }
+
     return returnData
+
   }
 
   /* loginAndGetToken
@@ -499,7 +503,7 @@ export class StrapiApiConnection {
     } catch (error) {
       console.log(error)
       console.log(url)
-      console.log(data)
+     // console.log(data)
       console.log(headerConfig)
     }
 
@@ -508,7 +512,7 @@ export class StrapiApiConnection {
     } else {
       console.log('Error in axiosPostToStrapi')
       console.log(returnedData)
-      return -1
+      return returnedData  // returns {status: -1} for failed data
     }
   }
 
