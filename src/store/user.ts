@@ -126,32 +126,36 @@ export const signupNewUser =  (email:string, pw:string, username:string, firstNa
 
 /* loginAndGetToken functioning most recent 11/17 */
 export const fetchUser =  (id:string, pw:string) => async (dispatch:any) => {
+  try {
+    let returnData:any = await con.loginUser(id,pw);
 
-  let returnData:any = await con.loginUser(id,pw);
+    if(returnData.status === 200){
 
+      let user = {
+        user_name: con.user.username,
+        first_name: con.user.first_name,
+        last_name: con.user.last_name,
+        email: con.user.email,
+        profile_picture: con.user.profile_picture,
+        campus: con.user.campus ? con.user.campus.campus_name : '',
+        campusId: con.user.campus ? con.user.campus.campusid : '',
+        scanned_artworks: con.user.scanned_artworks
+      }
 
-  if(returnData.status === 200){
-
-    let user = {
-      user_name: con.user.username,
-      first_name: con.user.first_name,
-      last_name: con.user.last_name,
-      email: con.user.email,
-      profile_picture: con.user.profile_picture,
-      campus: con.user.campus ? con.user.campus.campus_name : '',
-      campusId: con.user.campus ? con.user.campus.campusid : '',
-      scanned_artworks: con.user.scanned_artworks
+      localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
+      localStorage.setItem('user', JSON.stringify(user));
+      console.log('You have been successfully logged in. You will be redirected in a few seconds...');
+      dispatch(getUser(returnData.data.user))
+      dispatch(fetchPastArtworks(returnData.data.user))
+      //return [returnData.data.jwt, returnData.data.user];
+    }else{
+      console.log ('reached')
+      return -1;
     }
-
-    localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
-    localStorage.setItem('user', JSON.stringify(user));
-    console.log('You have been successfully logged in. You will be redirected in a few seconds...');
-    dispatch(getUser(returnData.data.user))
-    dispatch(fetchPastArtworks(returnData.data.user))
-    //return [returnData.data.jwt, returnData.data.user];
-  }else{
-    return -1;
+  } catch (error) {
+    console.error(error)
   }
+
 }
 
 //This was added so that artwork could be added to database without any errors and duplicate con objets
