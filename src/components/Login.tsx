@@ -6,14 +6,14 @@ Login.tsx -  Login/ Logout components
 - If user is not signed in, Login form is displayed, as well a link to Sign Up form for user who has not signed up yet
 
 */
-
+import './Login.css'
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { RootState } from '../store'
 import { fetchUser, logout } from '../store/user'
 import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
-import { IonText, IonButton } from '@ionic/react';
+import { IonText, IonButton, IonCard } from '@ionic/react';
 const backendUrl = "https://dev-cms.cunycampusart.com";
 
 const providersNames = [
@@ -37,27 +37,29 @@ const mapLogin = (state: RootState|any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    handleSubmit(evt: any) {
+    async handleSubmit(evt: any) {
       evt.preventDefault()
       if (evt.target) {
         const email = evt.target.email.value
         const password = evt.target.password.value
-        dispatch(fetchUser(email, password))
+        let status = await dispatch(fetchUser(email, password))
+        console.log(status, "THIS IS ERROR")
+        return status //if -1, login didn't go through
       }
     },
     logout: () => dispatch(logout()),
     rerenderArtDisplays: (userInfo: any) => dispatch(rerenderArtDisplays(userInfo)),
-    resetArtDisplays: () => dispatch(resetArtDisplays())
+    resetArtDisplays: () => dispatch(resetArtDisplays()),
+    // setErrorStatus: (status: any) =>
   }
 }
 
 const AuthForm = (props: any) => {
 
   let currentUser = props.currentUser;
-
   const { name, displayName, handleSubmit, error } = props
 
-  // When user logs out, Redux removes user from Local Storage and from the store, and clears Art Displays
+  // When user logs out, user removed from Local Storage and from redux store and art displays are cleared
   const logout = (e: Event) => {
     e.preventDefault();
     props.logout()
@@ -71,6 +73,7 @@ const AuthForm = (props: any) => {
         <p>{'Log in to save your progress!'}</p>
 
         {/* Displays Login in form (username/ email) */}
+        {error ? <IonCard className="error-box"><IonText>{error}</IonText></IonCard>: ''}
         <form onSubmit={handleSubmit} name={name} className="form-group">
 
           {props.fields.map((field: any, index: any) =>
@@ -83,7 +86,7 @@ const AuthForm = (props: any) => {
           )}
           <br />
           <button type="submit" className="btn btn-primary btn-block">{displayName}</button>
-          {error && error.response && <div> {error.response.data} </div>}
+
         </form>
 
         <IonText> Don't have an account? <Link to="/Signup">Sign Up</Link></IonText>
@@ -100,5 +103,5 @@ export interface AuthForm {
   name: string
   displayName: string
   handleSubmit: () => void
-  error: Error
+  error: string
 }
