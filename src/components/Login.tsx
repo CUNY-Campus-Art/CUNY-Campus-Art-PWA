@@ -14,7 +14,6 @@ import { RootState } from '../store'
 import { fetchUser, logout } from '../store/user'
 import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
 import { IonText, IonButton, IonCard } from '@ionic/react';
-const backendUrl = "https://dev-cms.cunycampusart.com";
 
 const providersNames = [
   'google'
