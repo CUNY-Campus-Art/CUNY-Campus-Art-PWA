@@ -34,7 +34,8 @@ import { addScannedArtDisplayToUserDB } from '../store/user'
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   allArtDisplays: state.artDisplay.allArtDisplays,
-  user: state.user
+  user: state.user,
+  campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
