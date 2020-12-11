@@ -22,14 +22,13 @@ const providersNames = [
 
 const LogoutButton = (props: any) => <IonButton color="dark" onClick={props.onClick} className="btn login_btn">Logout</IonButton>;
 
-const mapLogin = (state: RootState|any) => {
+const mapLogin = (state: any) => {
   return {
     name: 'login',
     displayName: 'Login',
     fields: [
       { name: 'email', label: 'Username/ Email', type: 'text' },
       { name: 'password', label: 'Password', type: 'password' }],
-    campuses: state.general.campuses,
     currentUser: state.user.user,
     error: state.user.error
   }

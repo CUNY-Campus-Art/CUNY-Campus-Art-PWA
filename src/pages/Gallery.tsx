@@ -1,6 +1,5 @@
 /**
- * Gallery.tsx
- *  As of now, the Gallery component can pull
+ * Gallery.tsx - As of now, the Gallery component can pull
  * information from the database. It currently retrieves a list
  * of past artworks the user has scanned locally.
  */
@@ -8,11 +7,6 @@
 import React, { useEffect, useCallback, useContext } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { NavContext } from '@ionic/react';
-import "./Gallery.css";
-import { RootState } from '../store'
-import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay, removeScannedArtDisplay } from '../store/artdisplay'
-import { analytics } from "ionicons/icons";
-
 import {
   IonContent,
   IonHeader,
@@ -25,29 +19,30 @@ import {
   IonImg,
   IonCard,
   IonCardTitle,
-  IonCardSubtitle,
-  IonIcon,
-  IonButton,
-  IonText
+  IonCardSubtitle
 } from "@ionic/react";
-import { trash } from 'ionicons/icons';
+import "./Gallery.css";
 
+
+import { RootState } from '../store'
+import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay } from '../store/artdisplay'
+import { analytics } from "ionicons/icons";
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   pastArtDisplays: state.artDisplay.pastArtDisplays,
   allArtDisplays: state.artDisplay.allArtDisplays,
-  currentUser: state.user.user
+  userInfo: state.user
 })
 
 const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
-  getPastArtworks: (currentUser: any) => dispatch(fetchPastArtworks(currentUser)),
-  removeArtwork: (user:any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId))
+  getPastArtworks: (userInfo:any) => dispatch(fetchPastArtworks(userInfo)),
 })
 
 const connector = connect(mapState, mapDispatch)
+
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 
@@ -56,9 +51,8 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
-
-  useEffect(() => { if (props.currentUser) props.getPastArtworks(props.currentUser); }, []);
-
+  useEffect(() => { props.getPastArtworks(props.userInfo); }, []);
+  //const pastArtDisplays = props.userInfo.user ? props.userInfo.user.scanned_artworks : [];
   const pastArtDisplays = props.pastArtDisplays
   const changeCurrentArtDisplay = props.changeCurrentArtDisplay
 
@@ -69,23 +63,21 @@ const Gallery = (props: Props) => {
     [navigate]
   );
 
-  //When user clicks artwork, updates currentArtDislay, and redirects user to Information tab
+  //When user to clicks artwork, updates currentArtDislay, and redirects user to Information tab
   const selectAnArtwork = (index: number) => {
+
     let currentArtDisplayItem: ArtDisplay = pastArtDisplays[index]
     console.log(typeof currentArtDisplayItem, "check link")
     props.changeCurrentArtDisplay(currentArtDisplayItem)
-    //props.removeSelectedArtWork(user, selectedArtWork)
     redirect()
   }
-
 
 
   return (
     <IonPage>
       <IonHeader>
-      <IonToolbar></IonToolbar>
         <IonToolbar>
-          <IonTitle>Your Gallery</IonTitle>
+          <IonTitle>Photo Gallery</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -103,22 +95,15 @@ const Gallery = (props: Props) => {
 
         <IonGrid>
           <IonRow>
-            {pastArtDisplays.map((artDisplay: any, index: any) => (
+            {pastArtDisplays.map((artDisplay:any, index:any) => (
               <IonCol size="4" key={index}>
-                              {console.log(artDisplay)}
-
                 <IonCard>
-                  <IonImg className='artwork-tile'
+                  <IonImg
                     onClick={() => selectAnArtwork(index)}
                     src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
                     alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
                   <IonCardTitle>{artDisplay.title}</IonCardTitle>
                   <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
-
-                 <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
-                    <IonIcon  icon={trash}></IonIcon>
-                  </IonButton>
-
                 </IonCard>
               </IonCol>
             ))}
@@ -130,6 +115,8 @@ const Gallery = (props: Props) => {
             <IonTitle size="large">Gallery</IonTitle>
           </IonToolbar>
         </IonHeader>
+
+        {/* <IonTitle size="large">Take a Picture</IonTitle> */}
 
       </IonContent>
     </IonPage>

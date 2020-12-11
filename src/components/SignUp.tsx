@@ -12,7 +12,7 @@ To Dos: To add Form Validations. Once database values are updated, will have pro
 
 */
 
-import React, { useState, useContext, useCallback, useEffect} from 'react';
+import React, { useState, useContext, useCallback} from 'react';
 import { NavContext } from '@ionic/react';
 import {
   IonInput,
@@ -35,7 +35,6 @@ import { RootState } from '../store'
 import ImageUpload from './HelperComponents/ImageUpload'
 import './Signup.css'
 import { signupNewUser, fetchUser } from '../store/user'
-import { fetchAllCampuses } from '../store/general'
 import { useForm, Controller } from "react-hook-form";
 import Input, { InputProps } from './input'
 import { object, string } from 'yup';
@@ -67,15 +66,12 @@ const mapSignup = (state: RootState) => {
 const mapDispatch = (dispatch: any) => {
   return {
     signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, file)),
-    loginUser: (username:string, password:string) => dispatch(fetchUser(username, password)),
-    getAllCampuses: () => dispatch(fetchAllCampuses()),
-
+    loginUser: (username:string, password:string) => dispatch(fetchUser(username, password))
   }
 }
 
 const AuthForm = (props: any) => {
-    // useEffect(() => { props.getAllCampuses(); }, []);
-    if(!props.campuses)  props.getAllCampuses();
+
     //To redirect to Profile tab using forward animation
     const { navigate } = useContext(NavContext);
     const redirect = useCallback(
@@ -160,10 +156,9 @@ const AuthForm = (props: any) => {
         }
     }
   }
-    // <IonPage className="container-fluid">     </IonPage>);
 
-
-  return ( <IonPage>
+  return (
+    <IonPage className="container-fluid">
       <IonHeader>
       <IonToolbar></IonToolbar>
 
@@ -201,6 +196,7 @@ const AuthForm = (props: any) => {
               </div>
             )}
 
+<<<<<<< HEAD
           {/* Campus Drop Down Menu */}
           <IonItem id="campus-menu">
                 <IonLabel>Campus*</IonLabel>
@@ -217,6 +213,24 @@ const AuthForm = (props: any) => {
                   ): ''}
                 </IonSelect>
               </IonItem>
+=======
+            {/* Campus Drop Down Menu */}
+            <IonItem id="campus-menu">
+              <IonLabel>Campus*</IonLabel>
+              <IonSelect
+                interfaceOptions={{ cssClass: 'my-custom-interface' }}
+                interface="popover"
+                multiple={false}
+                placeholder=""
+                onIonChange={e => setSelectedCampus(e.detail.value)}
+                value={selectedCampus}
+              >
+                {props.campuses.map((campus: any, index: any) =>
+                  <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
+                )}
+              </IonSelect>
+            </IonItem>
+>>>>>>> parent of 07fd8c2... (feat) app successfully removes artwork (fix) fixed major bug caused by redux
 
             {/* Submit Button */}
             <IonButton expand="block" type="submit" className="ion-margin-top">
@@ -227,7 +241,7 @@ const AuthForm = (props: any) => {
 
 
       </IonContent>
-      </IonPage>)
+    </IonPage>);
 }
 
 

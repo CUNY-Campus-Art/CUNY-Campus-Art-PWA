@@ -2,7 +2,7 @@
  * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
  */
 
-import React,{useState, useEffect} from "react";
+import React from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import {
   IonContent,
@@ -28,7 +28,6 @@ import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
 import { RootState } from '../store'
 
 const mapState = (state: RootState) => ({
-  campuses: state.general.campuses,
   currentArtDisplay: state.artDisplay.currentArtDisplay
 })
 
@@ -55,11 +54,8 @@ const slideOpts = {
 const Information = (props: Props) => {
 
   let currentArtDisplay = props.currentArtDisplay;
-  console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
-  // let [slideKey, setSlideKey] = useState(0);
+  console.log(currentArtDisplay);
 
-  let slides = currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
-  console.log("slides", currentArtDisplay)
   return (
     <IonPage>
       <IonHeader>
@@ -78,19 +74,16 @@ const Information = (props: Props) => {
           </IonCardHeader>
 
           <IonCardContent>
-
-          {/* Slide show of images uploaded for the artwork */}
-          <IonSlides  pager={true} options={slideOpts}>
-              <IonSlide key={'slidefirst'}>
+            <IonSlides pager={true} options={slideOpts}>
+              <IonSlide>
                 <img src={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.url : ''} alt={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.alternativeText: ''} />
               </IonSlide>
 
               {/* If there are other images post them to slideshow as well*/}
-              {currentArtDisplay.other_images ? currentArtDisplay.other_images.map((image, index )=> <IonSlide key={'slide'+ index }>
+              {currentArtDisplay.other_images ? currentArtDisplay.other_images.map((image, index )=> <IonSlide key={index}>
                 <img src={image.url} alt={image.alternativeText} />
               </IonSlide>) : ''}
             </IonSlides>
-
           </IonCardContent>
         </IonCard>
 
@@ -98,6 +91,7 @@ const Information = (props: Props) => {
           <IonItem>
             <IonIcon icon={informationCircleOutline} slot="start" />
             <IonLabel class="ion-text-center">Overview</IonLabel>
+
           </IonItem>
 
           <IonCardContent>

@@ -5,7 +5,6 @@ import {
   IonIcon,
   IonLabel,
   IonRouterOutlet,
-  IonRouterLink,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -121,7 +120,7 @@ const App: React.FC = () => (
 export default App;
 =======
 const mapDispatch = (dispatch: any) => ({
-   getAllCampuses: () => dispatch(fetchAllCampuses()),
+  getAllCampuses: () => dispatch(fetchAllCampuses()),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -143,20 +142,14 @@ const App = (props: Props) => {
           <IonToolbar className="top-bar" >
 
           <IonText className="ion-text-center CUNY-title">CUNY <span style={{fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red'}}>Gallery</span></IonText>
-{/*
-          <IonTabs>
-          <IonRouterOutlet>
-          <Route path="/Profile" component={Profile} exact={true} />
-          </IonRouterOutlet> */}
-
-          <Link to="/Profile" slot="end">
+          <Link to="/Profile" className="profile-button"  slot="end">
               {/* Greet User By Name if logged in */}
                {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
 
                {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
               {props.currentUser && props.currentUser.profile_picture ? <IonImg style={{height: '2em', width: '2em'}} src={props.currentUser.profile_picture.url} /> : <IonIcon color= "medium" icon={person} />}
-            </Link>
-          {/* </IonTabs> */}
+          </Link>
+
           </IonToolbar>
         </IonHeader>
 
@@ -165,20 +158,14 @@ const App = (props: Props) => {
             <Route path="/Home" component={Home} exact={true} />
             <Redirect from="/cuny-campus-art-" to="/Home" />
             <Redirect from="/cuny-campus-art-:id" to="/Home" />
-            <Route path="/Profile" component={Profile} exact={true} />
-            <Route path="/Signup" routerDirection="back" component={Signup} exact={true} />
+            <Route path="/Signup" component={Signup} exact={true} />
             <Route path="/Gallery" component={Gallery} exact={true} />
             <Route path="/ScanQR" component={ScanQR} exact={true} />
             <Route path="/Information" component={Information} exact={true} />
+            <Route path="/Profile" component={Profile} exact={true} />
             <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true} />
             <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
           </IonRouterOutlet>
-          {/* <IonTabBar slot="top">
-             <IonTabButton tab="Profile" href="/Profile">
-              <IonIcon icon={person} />
-              <IonLabel>Profile</IonLabel>
-            </IonTabButton>
-           </IonTabBar> */}
           <IonTabBar slot="bottom">
             <IonTabButton tab="Home" href="/Home">
               <IonIcon icon={home} />
