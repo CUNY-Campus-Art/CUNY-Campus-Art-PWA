@@ -39,8 +39,6 @@ export interface User {
 }
 
 export interface ArtDisplaysState {
-  currentArtDisplay: ArtDisplay
-  pastArtDisplays: ArtDisplay[]
   allArtDisplays: ArtDisplay[]
   campuses: any[]
   // user: any
@@ -59,7 +57,6 @@ export interface ArtDisplaysState {
 // ACTION TYPES
 export const CHANGE_CURRENT_ART_DISPLAY = 'CHANGE_CURRENT_ART_DISPLAY'
 export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
-export const REMOVE_ART_DISPLAY = 'REMOVE_ART_DISPLAY'
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
 export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
@@ -109,12 +106,7 @@ interface RerenderArtDisplaysAction{
   payload: any
 }
 
-interface RemoveArtDisplayAction{
-  type: typeof REMOVE_ART_DISPLAY,
-  payload: ArtDisplay
-}
-
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | GotAllCampusesAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -164,13 +156,6 @@ export function resetArtDisplays(): ArtDisplayActionTypes {
   }
 }
 
-export function removeArtDisplay(artDisplay:ArtDisplay): ArtDisplayActionTypes {
-  return {
-    type: REMOVE_ART_DISPLAY,
-    payload: artDisplay
-  }
-}
-
 //Invoked after fetching all campuses from database
 export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
   return {
@@ -188,11 +173,8 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 //Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
 
 export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
-  con.user = userInfo;
-  await con.syncRemoteToLocalUser()
-  let data:any = userInfo.scanned_artworks ? userInfo.scanned_artworks : defaultCurrentArtDisplay;
-  console.log(data)
-  dispatch(gotPastArtDisplays(data))
+  let data = ''
+  dispatch(gotPastArtDisplays(userInfo.user.scanned_artworks))
   return data;
 };
 
@@ -241,22 +223,6 @@ export const fetchAllCampuses = () => async (dispatch: any) => {
 
 }
 
-//Remove ArtDisplay from the database, as well as locally
-export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async (dispatch: any) => {
-  con.user = user;
-  //remove from database
-  console.log("before", con.user)
-
-  const data = await con.removeScannedArtworkFromUser([artwork.id]);
-  await con.syncRemoteToLocalUser()
-  //reload artworks
-  console.log("after", con.user)
-  dispatch(fetchPastArtworks(con.user))
-
-  dispatch(removeArtDisplay(artwork))
-
-}
-
 /****** SETTING UP INITIAL STATE ***********/
 
 const defaultCurrentArtDisplay = {
@@ -277,8 +243,6 @@ const defaultCurrentArtDisplay = {
 
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
-  currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays:  /*con.user ? con.user.scanned_artworks:*/ [defaultCurrentArtDisplay],
   allArtDisplays: [defaultCurrentArtDisplay],
   campuses: []}
 
@@ -287,47 +251,13 @@ const initialState: ArtDisplaysState = {
 
 export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
-    //This changes the value of the current art to be displayed
-    case CHANGE_CURRENT_ART_DISPLAY:
-      return { ...state, currentArtDisplay: action.payload }
-    //checks to see if artwork is already in history
-    //duplicate items are not added
-    //updates pastArtDisplay
-    //will soon remove updating allArtDisplays as that is meant to be a definitive source
-    case GET_SCANNED_ART_DISPLAY:
-      return {
-        ...state,
-        currentArtDisplay: action.payload,
-        pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload],
-        allArtDisplays: state.allArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.allArtDisplays] : [...state.allArtDisplays, action.payload]
-      }
-    case GET_PAST_ART_DISPLAYS:
-      return {...state,
-        pastArtDisplays: [defaultCurrentArtDisplay, ...action.payload]
-      }
+
     case GET_ALL_ART_DISPLAYS:
       return { ...state, allArtDisplays: [...state.allArtDisplays, ...action.payload] }
-    case ADD_ART_DISPLAY:
-      return {
-        ...state, allArtDisplays: [...state.allArtDisplays, action.payload]
-      }
-    case RESET_ART_DISPLAYS:
+    case GET_ALL_CAMPUSES:
       return {
         ...state,
-        currentArtDisplay: defaultCurrentArtDisplay,
-        pastArtDisplays: [defaultCurrentArtDisplay],
-        allArtDisplays: [defaultCurrentArtDisplay],
-      }
-    case RERENDER_ART_DISPLAYS:
-      return {
-        ...state
-      }
-    case REMOVE_ART_DISPLAY:
-        //fetchPastArtworks, should update the past displays
-      return {
-        ...state,
-        //If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
-        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay: state.currentArtDisplay
+        campuses: action.payload
       }
     default:
       return state

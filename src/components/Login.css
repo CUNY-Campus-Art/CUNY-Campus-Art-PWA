@@ -1,0 +1,19 @@
+.form-group {
+  margin: 20px;
+}
+
+.login_btn{
+  color: black;
+  background-color: #FFC312;
+  width: 100px;
+  }
+
+  .error-box {
+    padding: 1em .25em;
+    background-color: #ffe3e6;
+    border: 1px solid rgb(158, 28, 35);
+    color: rgb(158, 28, 35);
+    margin: 0 1.25em;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 0px;
+  }

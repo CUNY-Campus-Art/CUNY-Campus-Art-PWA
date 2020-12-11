@@ -1,5 +1,14 @@
 # CUNY-Campus-Art-PWA
 
+You can test our PWA by visting the following link:<a href="https://cuny-gallery.web.app/"> https://cuny-gallery.web.app/ </a>
+
+Our CUNY Campus Art PWA aims to promote art on CUNY campuses. We chose to make it a PWA so that a student would not need to download any app and can use the site directly.
+- It allows the student to scan a QR code associated with an artwork to retrieve more information about it.
+  - The app has a built in personalized QR scanner that student can use to scan.
+  - The student also has the option of uploading a picture that has the QR code.
+- Student can create an account, login, and a history of scanned artworks can be saved as well as removed.
+- We are in the process of gamifying this app, by creating a Scavenger Hunt in which students can solve clues
+
 ## Update - 10/2/2020 - Mary
 
 To run this locally on your machine you will need to have the following installed:

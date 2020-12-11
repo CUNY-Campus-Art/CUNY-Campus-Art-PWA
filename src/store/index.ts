@@ -3,17 +3,17 @@ import { createStore, combineReducers, Middleware, applyMiddleware } from 'redux
 
 import { composeWithDevTools } from 'redux-devtools-extension'
 import ReduxThunk from 'redux-thunk'
-import * as promiseMiddleware from 'redux-promise';
 import { createLogger } from 'redux-logger'
 
-
-import artDisplay from './artdisplay'
+import general from './general'
 import user from './user'
+import artDisplay from './artdisplay'
 
 
 const rootReducer = combineReducers({
-  artDisplay,
-  user
+  general,
+  user,
+  artDisplay
 })
 
 /*  Type Checking Middlewares */
