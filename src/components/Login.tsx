@@ -43,14 +43,12 @@ const mapDispatch = (dispatch: any) => {
         const email = evt.target.email.value
         const password = evt.target.password.value
         let status = await dispatch(fetchUser(email, password))
-        console.log(status, "THIS IS ERROR")
         return status //if -1, login didn't go through
       }
     },
     logout: () => dispatch(logout()),
     rerenderArtDisplays: (userInfo: any) => dispatch(rerenderArtDisplays(userInfo)),
-    resetArtDisplays: () => dispatch(resetArtDisplays()),
-    // setErrorStatus: (status: any) =>
+    resetArtDisplays: () => dispatch(resetArtDisplays())
   }
 }
 

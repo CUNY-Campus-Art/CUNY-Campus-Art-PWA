@@ -11,15 +11,15 @@
 
 /* Adjusts user input areas in form */
 .custom-input .native-input {
-  margin-left: 10px;
+  margin-left: 0px;
   /* border-left: 1px solid #ced4da; */
   font-weight: normal;
-  color: #551d83;
+  color: #1D3A83;
 }
 
 
 
 /* For Campus Menu Options */
 .my-custom-interface .select-interface-option {
-  --color:#551d83;
+  --color:#1D3A83;
 }
