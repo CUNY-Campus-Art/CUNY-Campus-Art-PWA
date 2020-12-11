@@ -22,14 +22,15 @@ import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from './store'
 import {fetchAllCampuses } from './store/general'
 
-import Home from './pages/Home';
+//import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
-import { Signup } from './components/Signup'
-import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
+import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
+import { Signup } from './components/Signup';
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -101,7 +102,7 @@ const App = (props: Props) => {
 
         <IonTabs>
           <IonRouterOutlet>
-            <Route path="/Home" component={Home} exact={true} />
+            {/* <Route path="/Home" component={Home} exact={true} /> */}
             <Redirect from="/cuny-campus-art-" to="/Home" />
             <Redirect from="/cuny-campus-art-:id" to="/Home" />
             <Route path="/Profile" component={Profile} exact={true} />
@@ -137,7 +138,7 @@ const App = (props: Props) => {
             </IonTabButton>
 
             <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
-              <IonIcon icon={person} />
+              <IonIcon icon={map} />
               <IonLabel>Scavenger Hunt</IonLabel>
             </IonTabButton>
 

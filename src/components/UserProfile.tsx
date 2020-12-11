@@ -112,7 +112,7 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
-              placeholder={user.first_name}
+              placeholder={user.first_Name}
               className="input-xlarge"
             />
             <hr />
@@ -121,7 +121,7 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
-              placeholder={user.last_name}
+              placeholder={user.last_Name}
               className="input-xlarge"
             />
             <hr />

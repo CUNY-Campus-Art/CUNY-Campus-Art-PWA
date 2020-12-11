@@ -12,7 +12,7 @@ To Dos: To add Form Validations. Once database values are updated, will have pro
 
 */
 
-import React, { useState, useContext, useCallback, useEffect} from 'react';
+import React, { useState, useContext, useCallback} from 'react';
 import { NavContext } from '@ionic/react';
 import {
   IonInput,
@@ -26,8 +26,7 @@ import {
   IonPage,
   IonToolbar,
   IonButtons,
-  IonBackButton,
-  IonCard
+  IonBackButton
 } from "@ionic/react";
 import { connect } from 'react-redux';
 import { RootState } from '../store'
