@@ -23,17 +23,17 @@ import { RootState } from './store'
 import {fetchAllCampuses } from './store/general'
 
 //import Home from './pages/Home';
+import Home from './pages/Home'
 import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
-<<<<<<< HEAD
+
 import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
-=======
 import { Signup } from './components/Signup'
-import { images, home, person, qrCodeOutline, menu, informationCircle } from 'ionicons/icons';
->>>>>>> main
+
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -63,63 +63,6 @@ const mapState= (state: RootState) => ({
     //error: state.user.error
 })
 
-<<<<<<< HEAD
-const App: React.FC = () => (
-  <IonApp>
-    <IonHeader className= "CUNY-title" >
-
-          <IonToolbar>
-          <IonTitle className="ion-text-center CUNY-title"> CUNY Gallery</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true}/>
-          <Route path="/ScanQR" component={ScanQR} exact={true}/>
-          {/* <Route path="/Home" component={Home} exact={true} /> */}
-          <Redirect from="/cuny-campus-art-" to="/Gallery" />
-          <Redirect from="/cuny-campus-art-:id" to="/Gallery" />
-          <Route path="/Gallery" component={Gallery} exact={true} />
-          <Route path="/Information" component={Information} exact={true}/>
-          <Route path="/Profile" component={Profile} exact={true}/>
-          <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
-            <IonIcon icon={map} />
-            <IonLabel>Scavenger Hunt</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="ScanQR" href="/ScanQR">
-            <IonIcon icon={qrCodeOutline} />
-            <IonLabel>Scan</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="Gallery" href="/Gallery">
-            <IonIcon icon={images} />
-            <IonLabel>Gallery</IonLabel>
-          </IonTabButton>
-          {/* <IonTabButton tab="Home" href="/Home">
-            <IonIcon icon={home} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton> */}
-          <IonTabButton tab="Information" href="/Information">
-            <IonIcon icon={informationCircle} />
-            <IonLabel>Information</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="Profile" href="/Profile">
-            <IonIcon icon={person} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-
-
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
-
-export default App;
-=======
 const mapDispatch = (dispatch: any) => ({
    getAllCampuses: () => dispatch(fetchAllCampuses()),
 })
@@ -211,4 +154,3 @@ const App = (props: Props) => {
 }
 
 export default connector(App);
->>>>>>> main
