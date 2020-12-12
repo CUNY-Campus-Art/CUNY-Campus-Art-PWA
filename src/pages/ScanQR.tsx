@@ -4,13 +4,14 @@
 
 import React, { useCallback, useContext, useState } from "react";
 // import { Redirect, Route } from 'react-router-dom';
-import { IonGrid, IonRow, NavContext } from '@ionic/react';
+import { NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 import {
   // IonRouterOutlet,
   IonContent,
   IonHeader,
   IonPage,
+  IonTitle,
   IonToolbar,
   IonFab,
   IonFabButton,
@@ -94,54 +95,32 @@ const ScanQR = (props: Props) => {
           <IonToolbar></IonToolbar>
 
           <IonToolbar>
-            <div className="ion-text-center">Welcome!</div>
+            <div className="ion-text-center">Scan a QR code located on any CUNY Artwork to learn more!</div>
           </IonToolbar>
         </IonHeader>
 
 
         <IonCard class="ion-text-center">
-          {/* <IonCardHeader>
+          <IonCardHeader>
             <IonCardTitle >Scan a QR Code</IonCardTitle>
-          </IonCardHeader> */}
-
-          {/* <IonCardContent>
+          </IonCardHeader>
+          <IonCardContent>
             <img src={require("../assets/images/QR-code-scan-loop-once.gif")} alt="Scan QR" />
-          </IonCardContent> */}
-          <IonGrid>
-            <IonRow>
-            <div className="col-lg-4 text-center">
-                <img
-                  src={require("../assets/images/QR-Icon.png")}
-                  className="img-fluid card-imgs"
-                  alt="scan-qr"
-                />
-              </div>
+          </IonCardContent>
 
-              <div className="col-lg-6 order-lg-2 text-lg-left text-center">
-                <hr />
-                <p>
-                CUNY Gallery is an app that showcases CUNY students' artwork
-                in an acccessible way through the scanning of QR codes located on
-                the artwork. <br/>
-                <strong>Scan a QR code to learn more about students' artwork!</strong>
-                
-                </p>
-              </div>
-            </IonRow>
-          </IonGrid>
-
-          <IonCardContent>Scan Result: {scanResult}</IonCardContent>
+          <IonCardTitle>Scan Result: {scanResult}</IonCardTitle>
         </IonCard>
 
-            <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
-          
+        <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+
+
         {/* to do: link to camera */}
-        {/* {!scanState ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
+        {!scanState ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
           <IonFabButton onClick={() => takePhoto()} color="tertiary">
             <IonIcon icon={camera}></IonIcon>
           </IonFabButton>
-        </IonFab> : ''} */}
-        
+        </IonFab> : ''}
+
       </IonContent>
     </IonPage>
   );
