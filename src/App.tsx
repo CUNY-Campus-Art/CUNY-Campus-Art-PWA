@@ -141,7 +141,7 @@ const App = (props: Props) => {
             </IonTabButton>
 
             <IonTabButton tab="ScavengerHunt" href="/ScavengerHunt">
-              <IonIcon icon={person} />
+              <IonIcon icon={map} />
               <IonLabel>Scavenger Hunt</IonLabel>
             </IonTabButton>
 
