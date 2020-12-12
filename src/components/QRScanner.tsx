@@ -6,13 +6,12 @@
  */
 
 
-import React, { createRef, useState } from 'react';
-import { IonButton, IonCol, IonFab, IonFabButton, IonFooter, IonGrid, IonIcon, IonModal, IonRow, IonToast } from '@ionic/react';
+import React, { createRef } from 'react';
+import { IonButton, IonFab, IonFabButton, IonIcon, IonToast } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
 
 import {
-  camera,
   folder, scan, stop
 } from "ionicons/icons";
 
@@ -239,61 +238,36 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     // Clicks hidden input file button
     this.fileInput.click();
   }
-  
 
   render() {
     // console.log(this.videoElement, "jooo")
 
+
     return (
-      <div>
+      <span>
         {/* <strong>{this.props.name}</strong> */}
 
 
         {/* -- Fallback for iOS PWA -- */}
         <input id="file-input" type="file" accept="image/*;capture=camera" hidden onChange={this.handleFile} />
 
-        
         {/* --Trigger the file input-- */}
-        {/* <IonFab vertical="bottom" horizontal="start" slot="fixed">
+        <IonFab vertical="bottom" horizontal="start" slot="fixed">
           <IonFabButton id="camera" color="secondary" onClick={this.uploadImage}>
             <IonIcon icon={folder}></IonIcon>
           </IonFabButton>
-        </IonFab> */}
+        </IonFab>
 
-        
-        
-        <IonButton expand="full" size="large" id="scan-button" onClick={this.startScan} color="primary">
-          Scan QR     <IonIcon slot="end" icon={scan}/>
 
-        </IonButton>
-        
-        <IonGrid>
-          <IonRow >
-        
-        {/* <IonFab vertical="bottom" horizontal="center" slot="fixed" >
+        <IonFab vertical="bottom" horizontal="center" slot="fixed" >
           <IonFabButton id="scan-button" onClick={this.startScan} color="primary">
             <IonIcon icon={scan}></IonIcon>
           </IonFabButton>
-        </IonFab> */}
-        <IonCol className="ion-no-padding" size="6">
-        <IonButton className="ion-no-margin button-height" expand="block" id="camera" color="secondary" onClick={this.uploadImage}>
-          Upload File <IonIcon slot="end" icon={folder}/>
-        </IonButton>
-        </IonCol>
+        </IonFab>
 
-        <IonCol className="ion-no-padding" size="6">
-          <IonButton className="ion-no-margin button-height" expand="block" color="tertiary"> Open Camera
-        <IonIcon  slot="end" icon={camera} />
-        </IonButton>
-        </IonCol>
-        </IonRow>
-        </IonGrid>
 
-        <IonButton expand="full" id="refresh-button" onClick={this.refresh} color="warning">Reset</IonButton>
-        
-        <IonFooter>
-          <IonButton color="light" expand="full" size="small">More About CUNY Gallery</IonButton>
-        </IonFooter>
+        <IonButton id="refresh-button" shape="round" onClick={this.refresh} color="warning">Reset</IonButton>
+
         <div id="scanner-section">
           {/* --Shows our camera stream-- */}
           <video id="video-scanner" hidden={!this.state.scanActive} width="100%" ref={this.video} autoPlay={true} />
@@ -332,7 +306,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
 
-      </div>
+      </span>
 
     );
   }

@@ -22,18 +22,16 @@ import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from './store'
 import {fetchAllCampuses } from './store/general'
 
-//import Home from './pages/Home';
-import Home from './pages/Home'
+
+import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import ScanQR from './pages/ScanQR';
 import Information from './pages/Information';
 import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
 
-import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
 import { Signup } from './components/Signup'
-
-
+import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
