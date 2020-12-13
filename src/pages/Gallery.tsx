@@ -5,13 +5,19 @@
  * of past artworks the user has scanned locally.
  */
 
-import React, { useEffect, useCallback, useContext } from "react";
+import React, { useEffect, useCallback, useContext, useState } from "react";
 import { connect, ConnectedProps } from 'react-redux'
-import { NavContext } from '@ionic/react';
+import { IonItem, IonLabel, IonList, IonListHeader, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
 import { RootState } from '../store'
-import { changeCurrentArtDisplay, fetchAllArtworks, fetchPastArtworks, ArtDisplay, removeScannedArtDisplay } from '../store/artdisplay'
-import { analytics } from "ionicons/icons";
+import { 
+  changeCurrentArtDisplay, 
+  fetchAllArtworks, 
+  fetchPastArtworks, 
+  ArtDisplay, 
+  removeScannedArtDisplay 
+} from '../store/artdisplay'
+import { analytics, heart, heartOutline } from "ionicons/icons";
 
 import {
   IonContent,
@@ -23,12 +29,8 @@ import {
   IonRow,
   IonCol,
   IonImg,
-  IonCard,
-  IonCardTitle,
-  IonCardSubtitle,
   IonIcon,
   IonButton,
-  IonText
 } from "@ionic/react";
 import { trash } from 'ionicons/icons';
 
@@ -78,6 +80,12 @@ const Gallery = (props: Props) => {
     redirect()
   }
 
+  const[likeartwork, setlikeartwork] = useState(false);
+  const handleLikes= ()=>{
+    likeartwork ? setlikeartwork(false) : setlikeartwork(true);
+
+  }
+
 
 
   return (
@@ -86,6 +94,9 @@ const Gallery = (props: Props) => {
       <IonToolbar></IonToolbar>
         <IonToolbar>
           <IonTitle>Your Gallery</IonTitle>
+        </IonToolbar>
+        <IonToolbar>
+          <IonTitle size="small">All Artwork You Have Scanned</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -101,14 +112,14 @@ const Gallery = (props: Props) => {
           </IonRow>
         </IonGrid> */}
 
+        {/* OLD GRID 
         <IonGrid>
           <IonRow>
             {pastArtDisplays.map((artDisplay: any, index: any) => (
-              <IonCol size="4" key={index}>
-                              {console.log(artDisplay)}
-
+              <IonCol size="5" key={index}>
+                  {console.log(artDisplay)}
                 <IonCard>
-                  <IonImg className='artwork-tile'
+                  <IonImg className='artwork-tile img-size'
                     onClick={() => selectAnArtwork(index)}
                     src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
                     alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
@@ -118,19 +129,57 @@ const Gallery = (props: Props) => {
                  <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
                     <IonIcon  icon={trash}></IonIcon>
                   </IonButton>
-
+                  <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
+                    <IonIcon  icon={heart}></IonIcon>
+                  </IonButton>
                 </IonCard>
-              </IonCol>
-            ))}
-          </IonRow>
-        </IonGrid>
+                </IonCol>
+                ))}
+                </IonRow>
+                </IonGrid>*/}
 
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Gallery</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+        <IonList> 
+            {pastArtDisplays.map((artDisplay: any, index: any) => (
+            <IonItem>
+              <IonGrid>
+                <IonRow>
+                  <IonCol size="5">
+                    <IonImg className='artwork-tile img-size'
+                    onClick={() => selectAnArtwork(index)}
+                    src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
+                    alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
+                  </IonCol>
 
+                  <IonCol>
+                    <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
+                    <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
+              
+                    <IonRow className="align-right-row">
+                      <IonButton 
+                      fill="outline" 
+                      size="small" 
+                      color="danger" 
+                      // onClick={() =>props.handleLikes(props.currentUser, artDisplay)}
+                      onClick={handleLikes}
+                      >
+                      <div>{likeartwork ? (<IonIcon  icon={heart}></IonIcon>) : (<IonIcon  icon={heartOutline}></IonIcon>) }</div>
+                      
+                      </IonButton>
+                      <IonButton  
+                      fill="outline" 
+                      size="small" 
+                      color="danger" 
+                      onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}
+                      >
+                      <IonIcon icon={trash}></IonIcon>
+                      </IonButton>                      
+                    </IonRow>
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
+            </IonItem>
+          ))}
+        </IonList>
       </IonContent>
     </IonPage>
   );

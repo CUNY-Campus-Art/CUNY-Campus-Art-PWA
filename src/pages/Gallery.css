@@ -5,3 +5,16 @@
 .artwork-tile{
   cursor: pointer;
 }
+
+.img-size{
+  max-width: 250px;
+  
+}
+
+.align-right-row{
+  direction: rtl;
+  margin-top: 2rem;
+}
+.center-text{
+  margin: auto;
+}
