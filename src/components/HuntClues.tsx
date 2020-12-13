@@ -3,7 +3,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonThumbnail,
   IonModal,
   IonButton,
   IonCard,
@@ -16,19 +15,11 @@ import {
 } from "@ionic/react";
 import {
   arrowBackCircleOutline,
-  pin,
   qrCodeOutline,
-  walk,
-  warning,
-  wifi,
-  wine,
   colorPalette,
   medalOutline,
-  searchOutline,
-  trophy,
   bulbOutline,
 } from "ionicons/icons";
-import { Icon } from "ionicons/dist/types/components/icon/icon";
 
 const HuntClues = () => {
   

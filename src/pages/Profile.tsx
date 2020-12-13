@@ -11,31 +11,13 @@ import { Login } from '../components/Login'
 import UserProfile from '../components/UserProfile'
 
 import {
-  IonBackButton,
-  IonBadge,
-  IonButton,
   IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
   IonContent,
-  IonGrid,
   IonHeader,
-  IonIcon,
-  IonLabel,
-  IonMenuButton,
   IonPage,
-  IonTab,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { calendar, informationCircle, personCircle, search } from "ionicons/icons";
 
 
 /* Retrieves current user from the State */

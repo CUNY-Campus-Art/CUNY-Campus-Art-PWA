@@ -42,7 +42,7 @@ const Home: React.FC = () => {
                 />
               </div>
 
-              <div className="col-lg-6 order-lg-2 text-lg-left text-center">
+              <div className="col-lg-6 order-lg-2 text-lg-left ">
                 <h3 className="About-title">What is CUNY Gallery?</h3>
                 <hr />
                 <p>
@@ -68,7 +68,7 @@ const Home: React.FC = () => {
                 />
               </div>
 
-              <div className="col-lg-6 text-lg-left text-center">
+              <div className="col-lg-6 text-lg-left ">
                 <h3 className="About-title">CUNY Gallery Today</h3>
                 <hr />
                 <p>
@@ -76,14 +76,7 @@ const Home: React.FC = () => {
                   working tirelessly to bring the application to production. We
                   are aiming to create a seamless and accessible experience for
                   users. So far, we have implemented QR Scanning connected to
-                  our databse. Lorem ipsum dolor sit amet, consectetur
-                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                  exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                  consequat. Duis aute irure dolor in reprehenderit in voluptate
-                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                  sint occaecat cupidatat non proident, sunt in culpa qui
-                  officia deserunt mollit anim id est laborum.
+                  our database. 
                 </p>
               </div>
             </IonRow>
