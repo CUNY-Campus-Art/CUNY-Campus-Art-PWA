@@ -18,7 +18,6 @@ import {
   IonCardTitle,
   IonCardContent,
   IonLabel,
-  IonButton,
   IonSlide,
   IonSlides,
 } from "@ionic/react";

@@ -9,29 +9,14 @@ import { getUser, logout, fetchUser } from "../store/user";
 import "./UserProfile.css";
 
 import {
-  IonBadge,
   IonButton,
-  IonCard,
   IonCardContent,
-  IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonContent,
-  IonGrid,
-  IonHeader,
-  IonIcon,
   IonLabel,
-  IonPage,
   IonSegment,
   IonSegmentButton,
-  IonTab,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  IonTitle,
-  IonToolbar,
 } from "@ionic/react";
-import { calendar, personCircle } from "ionicons/icons";
 
 /* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
