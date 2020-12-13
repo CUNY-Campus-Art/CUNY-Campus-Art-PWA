@@ -12,20 +12,14 @@ import {
   IonHeader,
   IonPage,
   IonToolbar,
-  IonFab,
-  IonFabButton,
-  IonIcon,
   IonCard,
   IonCardContent,
-  IonCardHeader,
-  IonCardTitle
+ 
 } from "@ionic/react";
 import "./ScanQR.css";
-import { camera  } from "ionicons/icons";
+
 import QRScanner from "../components/QRScanner"
 
-//For Camera Button:
-import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 import { RootState } from '../store'
 import { fetchScannedArtDisplay } from '../store/artdisplay'
@@ -54,8 +48,6 @@ type Props = PropsFromRedux & {
 }
 
 const ScanQR = (props: Props) => {
-  const { photos, takePhoto } = usePhotoGallery();
-
   // To redirect to Information tab using forward animation
   const { navigate } = useContext(NavContext);
   const redirect = useCallback(
@@ -100,13 +92,6 @@ const ScanQR = (props: Props) => {
 
 
         <IonCard class="ion-text-center">
-          {/* <IonCardHeader>
-            <IonCardTitle >Scan a QR Code</IonCardTitle>
-          </IonCardHeader> */}
-
-          {/* <IonCardContent>
-            <img src={require("../assets/images/QR-code-scan-loop-once.gif")} alt="Scan QR" />
-          </IonCardContent> */}
           <IonGrid>
             <IonRow>
             <div className="col-lg-4 text-center">
@@ -124,7 +109,6 @@ const ScanQR = (props: Props) => {
                 in an acccessible way through the scanning of QR codes located on
                 the artwork. <br/>
                 <strong>Scan a QR code to learn more about students' artwork!</strong>
-                
                 </p>
               </div>
             </IonRow>
@@ -132,16 +116,7 @@ const ScanQR = (props: Props) => {
 
           <IonCardContent>Scan Result: {scanResult}</IonCardContent>
         </IonCard>
-
             <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
-          
-        {/* to do: link to camera */}
-        {/* {!scanState ? <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton onClick={() => takePhoto()} color="tertiary">
-            <IonIcon icon={camera}></IonIcon>
-          </IonFabButton>
-        </IonFab> : ''} */}
-        
       </IonContent>
     </IonPage>
   );
