@@ -1,6 +1,10 @@
 // Scavenger hunt screen with clues and segment buttons
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { connect, ConnectedProps } from 'react-redux'
+import { RootState } from '../store'
+import { getUser, logout, fetchUser } from '../store/user'
+import './Profile.css';
+import { Login } from '../components/Login'
 import {
   IonContent,
   IonHeader,
@@ -15,10 +19,31 @@ import "./Home.css";
 import  HuntClues  from "../components/HuntClues"; //clues list component
 import  HuntStatus  from "../components/HuntStatus";  //user status component
 
-interface Props {
+const mapState = (state: RootState) => ({
+  currentUser: state.user.user,
+  campus: state.user.user.campus,
+  campuses: state.general.campuses
+})
+
+const mapDispatch = (dispatch: any) => ({
+  fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
+  getUser: (user: any) => dispatch(getUser(user)),
+})
+
+const connector = connect(mapState, mapDispatch)
+
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
 }
 
+
 const ScavengerHunt = (props: Props) => {
+
+  let user = props.currentUser;
+  let campus = props.campus;
     // Set clues tab to be default opened
   const [showStatus, setShowStatus] = useState(false);
   const [showClues, setShowClues] = useState(true);
@@ -55,11 +80,11 @@ const ScavengerHunt = (props: Props) => {
         <div>{showClues ? (<HuntClues/>) : (<p></p>)}</div>
 
         {/* ************** shows Status for scavenger hunt of User *************** */}
-        <div> {showStatus ? <HuntStatus/> : <p></p>}</div>
+        <div> {showStatus ? (user ? (<HuntStatus/> ): (<Login />)) : <p></p>}</div>
 
       </IonContent>
     </IonPage>
   );
 };
 
-export default ScavengerHunt;
+export default connector(ScavengerHunt);
