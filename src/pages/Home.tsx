@@ -100,7 +100,7 @@ const Home = (props: Props) => {
         <IonCard className="alt-bkgd" href="/ScanQR">
           <IonGrid>
             <IonRow>
-              <div className="col-lg-4 text-center">
+              <div className="col-sm-4 text-center">
                 <img
                   src={require("../assets/images/artwork-example.png")}
                   className="img-fluid card-imgs"
@@ -108,7 +108,7 @@ const Home = (props: Props) => {
                 />
               </div>
 
-              <div className="col-sm-6 order-sm-2 text-sm-left ">
+              <div className="col-sm-7 order-sm-2 text-sm-left ">
                 <h3 className="About-title"> <IonIcon size="large" icon={qrCode}/> Scan - Explore Student's Artwork</h3>
                 
                 <p>
