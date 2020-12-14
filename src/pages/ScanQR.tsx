@@ -96,7 +96,7 @@ const ScanQR = (props: Props) => {
             <IonRow>
             <div className="col-lg-4 text-center">
                 <img
-                  src={require("../assets/images/QR-Icon.png")}
+                  src={require("../assets/images/gallery-logo-muted.png")}
                   className="img-fluid card-imgs"
                   alt="scan-qr"
                 />
