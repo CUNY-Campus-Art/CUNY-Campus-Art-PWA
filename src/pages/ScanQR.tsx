@@ -24,12 +24,12 @@ import { addScannedArtDisplayToUserDB } from '../store/user'
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   allArtDisplays: state.artDisplay.allArtDisplays,
-  user: state.user,
+  user: state.user.user,
   campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
-  getScannedArtDisplay: (qrCodeText: string, user: any) => dispatch(fetchScannedArtDisplay(qrCodeText, user)),
+  getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
   addScannedArtDisplayToUserDB: (artworkId: any) => dispatch(addScannedArtDisplayToUserDB(artworkId)),
 })
 
@@ -60,8 +60,8 @@ const ScanQR = (props: Props) => {
     scanResult = qrCodeText
     setScanResult(scanResult) //updates local state
     console.log('scan result: ', scanResult)
-    let id = await props.getScannedArtDisplay(scanResult, props.user)
-    await props.addScannedArtDisplayToUserDB(id);
+    let id = await props.getScannedArtDisplay(scanResult)
+    if(props.user) await props.addScannedArtDisplayToUserDB(id);
     redirect()
   };
 
