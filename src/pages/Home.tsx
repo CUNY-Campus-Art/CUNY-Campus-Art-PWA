@@ -46,11 +46,17 @@ const Home: React.FC = () => {
                 <h3 className="About-title">What is CUNY Gallery?</h3>
                 <hr />
                 <p>
+      
+                CUNY Gallery is an app that showcases CUNY students' artwork
+                in an acccessible way through the scanning of QR codes located on
+                the artwork.
+
+                <hr/>
                   {" "}
                   CUNY Gallery was created to showcase CUNY students' artwork in
                   an accessible way through the scanning of QR codes located on artwork
                   throughout different campuses. Students can submit their artwork and information
-                  using our form site and can be showcased on our application. 
+                  using our form site and can be showcased on our application.
                 </p>
               </div>
             </IonRow>
@@ -76,7 +82,7 @@ const Home: React.FC = () => {
                   working tirelessly to bring the application to production. We
                   are aiming to create a seamless and accessible experience for
                   users. So far, we have implemented QR Scanning connected to
-                  our database. 
+                  our database.
                 </p>
               </div>
             </IonRow>
