@@ -10,12 +10,12 @@ import { connect, ConnectedProps } from 'react-redux'
 import { IonItem, IonLabel, IonList, IonListHeader, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
 import { RootState } from '../store'
-import { 
-  changeCurrentArtDisplay, 
-  fetchAllArtworks, 
-  fetchPastArtworks, 
-  ArtDisplay, 
-  removeScannedArtDisplay 
+import {
+  changeCurrentArtDisplay,
+  fetchAllArtworks,
+  fetchPastArtworks,
+  ArtDisplay,
+  removeScannedArtDisplay
 } from '../store/artdisplay'
 import { analytics, heart, heartOutline } from "ionicons/icons";
 
@@ -112,7 +112,7 @@ const Gallery = (props: Props) => {
           </IonRow>
         </IonGrid> */}
 
-        {/* OLD GRID 
+        {/* OLD GRID
         <IonGrid>
           <IonRow>
             {pastArtDisplays.map((artDisplay: any, index: any) => (
@@ -138,9 +138,9 @@ const Gallery = (props: Props) => {
                 </IonRow>
                 </IonGrid>*/}
 
-        <IonList> 
+        <IonList>
             {pastArtDisplays.map((artDisplay: any, index: any) => (
-            <IonItem>
+            <IonItem key={index}>
               <IonGrid>
                 <IonRow>
                   <IonCol size="5">
@@ -153,26 +153,26 @@ const Gallery = (props: Props) => {
                   <IonCol>
                     <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
-              
+
                     <IonRow className="align-right-row">
-                      <IonButton 
-                      fill="outline" 
-                      size="small" 
-                      color="danger" 
+                      <IonButton
+                      fill="outline"
+                      size="small"
+                      color="danger"
                       // onClick={() =>props.handleLikes(props.currentUser, artDisplay)}
                       onClick={handleLikes}
                       >
                       <div>{likeartwork ? (<IonIcon  icon={heart}></IonIcon>) : (<IonIcon  icon={heartOutline}></IonIcon>) }</div>
-                      
+
                       </IonButton>
-                      <IonButton  
-                      fill="outline" 
-                      size="small" 
-                      color="danger" 
+                      <IonButton
+                      fill="outline"
+                      size="small"
+                      color="danger"
                       onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}
                       >
                       <IonIcon icon={trash}></IonIcon>
-                      </IonButton>                      
+                      </IonButton>
                     </IonRow>
                   </IonCol>
                 </IonRow>

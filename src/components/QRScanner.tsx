@@ -318,7 +318,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
             onClick={this.stopScan}
             color="danger"
           >
-            Stop Scan <IonIcon slot="end" icon={scan} />
+            Stop Scan <IonIcon slot="end" icon={stop} />
           </IonButton>
 
           : null}

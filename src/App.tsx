@@ -85,12 +85,8 @@ const App = (props: Props) => {
 <link href="https://fonts.googleapis.com/css2?family=Clicker+Script&display=swap" rel="stylesheet" />
           <IonToolbar className="top-bar" >
 
-          <IonText className="ion-text-center CUNY-title">CUNY <span style={{fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red'}}>Gallery</span></IonText>
-{/*
-          <IonTabs>
-          <IonRouterOutlet>
-          <Route path="/Profile" component={Profile} exact={true} />
-          </IonRouterOutlet> */}
+          <Link to="/Home" slot="start" className="CUNY-title"><IonText className="ion-text-center CUNY-title"> CUNY <span style={{fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red'}}>Gallery</span></IonText></Link>
+
 
           <Link to="/Profile" slot="end">
               {/* Greet User By Name if logged in */}

@@ -103,8 +103,9 @@ const ScanQR = (props: Props) => {
                   alt="scan-qr"
                 />
               </div>
-
+              <hr/>
               <p className="col-lg-6 order-lg-2 text-lg-left text-center">
+
                 <strong>Scan a QR code to learn more about students' artwork!</strong>
               </p>
             </IonRow>
