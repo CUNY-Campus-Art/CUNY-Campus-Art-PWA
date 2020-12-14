@@ -162,7 +162,7 @@ const Gallery = (props: Props) => {
                       // onClick={() =>props.handleLikes(props.currentUser, artDisplay)}
                       onClick={handleLikes}
                       >
-                      <div>{likeartwork ? (<IonIcon  icon={heart}></IonIcon>) : (<IonIcon  icon={heartOutline}></IonIcon>) }</div>
+                      <div>{likeartwork ? (<IonIcon className="iconSize" icon={heart}></IonIcon>) : (<IonIcon  className="iconSize" icon={heartOutline}></IonIcon>) }</div>
                       
                       </IonButton>
                       <IonButton  
