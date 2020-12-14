@@ -46,12 +46,12 @@ const Home: React.FC = () => {
                 <h3 className="About-title">What is CUNY Gallery?</h3>
                 <hr />
                 <p>
-      
+
                 CUNY Gallery is an app that showcases CUNY students' artwork
                 in an acccessible way through the scanning of QR codes located on
                 the artwork.
 
-                <hr/>
+ 
                   {" "}
                   CUNY Gallery was created to showcase CUNY students' artwork in
                   an accessible way through the scanning of QR codes located on artwork
