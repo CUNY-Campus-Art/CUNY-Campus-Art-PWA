@@ -206,7 +206,7 @@ export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
 };
 
 //retrieves Scanned Art from database
-export const fetchScannedArtDisplay = (qrCodeText: string, user:any) => async (dispatch: any) => {
+export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
   try{
   //"cuny-campus-art-" -> 16 characters
   //"campus-art-" -> 11 characters
@@ -252,16 +252,18 @@ export const fetchAllCampuses = () => async (dispatch: any) => {
 
 //Remove ArtDisplay from the database, as well as locally
 export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async (dispatch: any) => {
-  con.user = user;
-  //remove from database
-  console.log("before", con.user)
 
-  const data = await con.removeScannedArtworkFromUser([artwork.id]);
-  await con.syncRemoteToLocalUser()
-  //reload artworks
-  console.log("after", con.user)
-  dispatch(fetchPastArtworks(con.user))
+  //remove from database if user is signed in
+  if (user) {
+    con.user = user;
+    const data = await con.removeScannedArtworkFromUser([artwork.id]);
+    await con.syncRemoteToLocalUser()
+    //reload artworks
+    console.log("after", con.user)
+    dispatch(fetchPastArtworks(con.user))
+  }
 
+  // remove from store locally
   dispatch(removeArtDisplay(artwork))
 
 }
@@ -307,6 +309,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
       return {
         ...state,
         currentArtDisplay: action.payload,
+        //doesn't add duplicates to the history
         pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload],
         allArtDisplays: state.allArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.allArtDisplays] : [...state.allArtDisplays, action.payload]
       }
@@ -335,7 +338,9 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         //fetchPastArtworks, should update the past displays
       return {
         ...state,
-        //If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
+        // remove this artwork from gallery history
+        pastArtDisplays: state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id),
+        // If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
         currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay: state.currentArtDisplay
       }
     default:
