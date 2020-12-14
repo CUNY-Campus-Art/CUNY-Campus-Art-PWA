@@ -67,6 +67,15 @@ export const  RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
 export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 
+export const ADD_LIKED_ARTWORK = 'ADD_LIKED_ARTWORK'
+export const REMOVE_LIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
+
+export const ADD_DISLIKED_ARTWORK = 'ADD_DISLIKED_ARTWORK'
+export const REMOVE_DISLIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
+
+export const ADD_SOLVED_ARTWORK = 'ADD_SOLVED_ARTWORK'
+export const REMOVE_SOLVED_ARTWORK = 'REMOVE_SOLVED_ARTWORK'
+
 // ACTION CREATORS
 interface AddArtDisplayAction {
   type: typeof ADD_ART_DISPLAY,
@@ -265,7 +274,7 @@ const defaultCurrentArtDisplay = {
   artist: 'Frédéric Thery',
   year: '2020',
   campus: 'Brooklyn College',
-  primary_image: { url: 'https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1', alternativeText: `Porte St Denis` },
+  primary_image: { url: require('../assets/images/frederic-thiery-new-york-city.jpg'), alternativeText: `Porte St Denis` },
   other_images: [
     { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A", alternativeText: "Petit marché" },
     { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A", alternativeText: "Porte St Denis" }

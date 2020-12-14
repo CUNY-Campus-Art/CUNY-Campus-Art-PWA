@@ -4,12 +4,7 @@
 
 import React from "react";
 import {
-  IonButton,
   IonCard,
-  IonCardContent,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonCol,
   IonContent,
   IonGrid,
   IonHeader,
@@ -51,7 +46,7 @@ const Home: React.FC = () => {
                 in an acccessible way through the scanning of QR codes located on
                 the artwork.
 
- 
+
                   {" "}
                   CUNY Gallery was created to showcase CUNY students' artwork in
                   an accessible way through the scanning of QR codes located on artwork

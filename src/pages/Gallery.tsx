@@ -7,7 +7,7 @@
 
 import React, { useEffect, useCallback, useContext, useState } from "react";
 import { connect, ConnectedProps } from 'react-redux'
-import { IonItem, IonLabel, IonList, IonListHeader, IonText, NavContext } from '@ionic/react';
+import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
 import { RootState } from '../store'
 import {
@@ -83,9 +83,7 @@ const Gallery = (props: Props) => {
   const[likeartwork, setlikeartwork] = useState(false);
   const handleLikes= ()=>{
     likeartwork ? setlikeartwork(false) : setlikeartwork(true);
-
   }
-
 
 
   return (
@@ -100,17 +98,6 @@ const Gallery = (props: Props) => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-
-
-        {/* <IonGrid>
-          <IonRow>
-            {photos.map((photo,index) =>(
-              <IonCol size="3" key={index}>
-                <IonImg src={photo.webviewPath} />
-              </IonCol>
-            ))}
-          </IonRow>
-        </IonGrid> */}
 
         {/* OLD GRID
         <IonGrid>

@@ -3,18 +3,14 @@
  */
 
 import React, { useCallback, useContext, useState } from "react";
-// import { Redirect, Route } from 'react-router-dom';
 import { IonGrid, IonRow, NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 import {
-  // IonRouterOutlet,
   IonContent,
   IonHeader,
   IonPage,
   IonToolbar,
   IonCard,
-  IonCardContent,
-
 } from "@ionic/react";
 import "./ScanQR.css";
 

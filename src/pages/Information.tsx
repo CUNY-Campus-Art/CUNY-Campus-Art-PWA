@@ -23,7 +23,7 @@ import {
 } from "@ionic/react";
 import "./Information.css";
 import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
-
+import placeHolderImage from '../assets/images/placeholder-image.jpg'
 import { RootState } from '../store'
 
 const mapState = (state: RootState) => ({
@@ -37,8 +37,6 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch)
 
-// The inferred type will look like:
-// {isOn: boolean, toggleOn: () => void}
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 type Props = PropsFromRedux & {
@@ -55,10 +53,7 @@ const Information = (props: Props) => {
 
   let currentArtDisplay = props.currentArtDisplay;
   console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
-  // let [slideKey, setSlideKey] = useState(0);
 
-  let slides = currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
-  console.log("slides", currentArtDisplay)
   return (
     <IonPage>
       <IonHeader>
