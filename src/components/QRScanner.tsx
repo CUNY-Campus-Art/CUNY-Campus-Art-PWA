@@ -7,7 +7,7 @@
 
 
 import React, { createRef } from 'react';
-import { IonButton, IonButtons, IonFab, IonFabButton, IonToolbar, IonIcon, IonToast } from '@ionic/react';
+import { IonButton, IonIcon, IonToast } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
 
@@ -15,8 +15,6 @@ import {
   folder, scan, stop
 } from "ionicons/icons";
 
-//For Camera Button:
-// import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 interface ContainerProps {
   name: string;
@@ -194,7 +192,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
   // Handles uploaded image
-  handleFile(event: React.ChangeEvent<HTMLElement>) {
+  handleFile(event: React.ChangeEvent<HTMLElement> | null) {
+    console.log("HNDLE")
     let file = this.fileInput.files.item(0);
 
     var img = new Image();
@@ -212,21 +211,19 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
       if (code) {
-
-
-
         let isValidQRCode = this.parseQRCode(code.data)
 
         if (isValidQRCode) {
-          this.setState({ scanResult: code.data });
-          this.props.scanResultParent(code.data);
+          this.setState({ scanResult: code.data })
+          this.props.scanResultParent(code.data)
+          event = null;// reset file name so user can upload same file twice //not functioning at the moment
+
         } else {
           this.setState({ showInvalidQRToast: true })
         }
       }
-    };
-    img.src = URL.createObjectURL(file);
-
+    }
+    img.src = URL.createObjectURL(file)
   }
 
   uploadImage() {
@@ -241,12 +238,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
   render() {
-    // console.log(this.videoElement, "jooo")
-
     return (
       <span>
-        {/* <strong>{this.props.name}</strong> */}
-
 
         {/* -- Fallback for iOS PWA -- */}
         <input id="file-input" type="file" accept="image/*;capture=camera" hidden onChange={this.handleFile} />
