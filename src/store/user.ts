@@ -116,7 +116,11 @@ export const signupNewUser = (email: string, pw: string, username: string, first
     last_name: con.user.last_name,
     email: con.user.email,
     profile_picture: con.user.profile_picture,
-    campus: con.user.campus
+    campus: con.user.campus,
+    total_points: con.user.total_points,
+    liked_artworks: con.user.liked_artworks,
+    disliked_artworks: con.user.dislike_artworks,
+    solved_artworks: con.user.solved_artworks
   }
 
   dispatch(getUser(newUser))
@@ -128,7 +132,7 @@ export const signupNewUser = (email: string, pw: string, username: string, first
 
 /* modified loginAndGetToken functioning most recent 12/9 */
 export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
-
+try {
   let returnData: any = await con.loginUser(id, pw)
 
   if (returnData.status === 200) {
@@ -141,7 +145,11 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
       profile_picture: con.user.profile_picture,
       campus: con.user.campus ? con.user.campus.campus_name : '',
       campusId: con.user.campus ? con.user.campus.campusid : '',
-      scanned_artworks: con.user.scanned_artworks
+      scanned_artworks: con.user.scanned_artworks,
+      total_points: con.user.total_points,
+      liked_artworks: con.user.liked_artworks,
+      disliked_artworks: con.user.dislike_artworks,
+      solved_artworks: con.user.solved_artworks
     }
 
     localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
@@ -155,6 +163,10 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
     console.log('Incorrect username or password')
     dispatch(loginError())
   }
+}
+catch(error) {
+   dispatch(loginError())
+}
 
 }
 
@@ -199,7 +211,10 @@ const defaultUser =
   user: currentUser,
   // campus: currentUser ? currentUser.campus.campus_name : '',
   authToken: authToken,
-  error: ''
+  error: '',
+  total_points: currentUser.total_points,
+  solved_artworks: '',
+  unsolved_artworks: ''
 }
 
 

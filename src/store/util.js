@@ -105,6 +105,27 @@ export class StrapiApiConnection {
     return data
   }
 
+
+  /* getArtworksInCampusById
+  Function calls to strapi api get all artwork entries associated to a campus using campus id where the
+  clue is populated
+  Accepts:
+   - campusId - id of campus entry
+  Returns:
+   - JSON data for all artworks associated to the campus
+  */
+ getArtworkWithCluesforCampusById = async (campusId) => {
+  let artworks = await this.getArtworksInCampusById(campusId);
+  let cluedArtworks = [];
+  artworks.forEach((artwork, index)=>{
+    if(artwork.clue!=null){
+      console.log(index)
+      cluedArtworks.push(artwork);
+    }
+  });
+  return artworks;
+};
+
   /* createArtwork
   Function calls to strapi API to create a new artwork entry
   Accepts:
@@ -129,6 +150,50 @@ export class StrapiApiConnection {
     this.createAndUploadQRImageForArtwork(returnData.data.id)
     return returnData
   }
+
+  /*addPointsToUser
+  Function adds given number of points to the user total points
+  Accepts:
+   - numPoints - integer value of points to add to the total points
+  Returns: api request reponse
+  */
+ addPointsToUser = async (numPoints) => {
+  await this.syncRemoteToLocalUser();
+  let newPoints = numPoints + this.user.total_points;
+  let response = await this.updatePointsForUser(newPoints);
+  return response;
+}
+
+/*removePointsFromUser
+Function remove given number of points from the user total points
+Accepts:
+ - numPoints - integer value of points to remove from the total points
+Returns: api request reponse
+*/
+removePointsFromUser = async (numPoints) => {
+  await this.syncRemoteToLocalUser();
+  let newPoints = this.user.total_points - numPoints;
+  let response = await this.updatePointsForUser(newPoints);
+  return response;
+}
+
+/*updatePointsForUser
+Function updates users total points to a given number
+Accepts:
+ - numPoints - integer value of points to update the total points
+Returns: api request reponse
+*/
+updatePointsForUser = async (numPoints) => {
+  //await this.syncRemoteToLocalUser();
+  let response = await this.updateRemoteUser({ "total_points": numPoints });
+  console.log(response);
+  if (response.status === 200) {
+    this.user.total_points = response.data.total_points;
+    console.log('this.user', this.user);
+  }
+  return response;
+}
+
 
   /* updateArtworkById
   Function calls to strapi API to updat a artwork entry
@@ -715,30 +780,30 @@ axiosRequestRemoveRelationToUser = async (relationFeildName, relatedEntriesIdArr
 }
 
 /* axiosPostToStrapi
-Function makes a generic post call to strapi API using provided information
-Accepts:
-  - url - API route for the post call
-  - data - data to be sent with the post call
-  - headerConfig - header data to be sent with the post call
-Returns: full post response from strapi api if successfull or -1 if failed
-*/
-axiosPostToStrapi = async (url, data, headerConfig) => {
-  var returnedData = { status: -1 };
+  Function makes a generic post call to strapi API using provided information
+  Accepts:
+    - url - API route for the post call
+    - data - data to be sent with the post call
+    - headerConfig - header data to be sent with the post call
+  Returns: full post response from strapi api if successfull or -1 if failed
+  */
+ axiosPostToStrapi = async (url, data, headerConfig) => {
+  var returnedData = { status: -1 }
   try {
-    returnedData = await axios.post(url, data, headerConfig);
+    returnedData = await axios.post(url, data, headerConfig)
   } catch (error) {
-    console.log(error);
-    console.log(url);
-    console.log(data);
-    console.log(headerConfig);
+    console.log(error)
+    console.log(url)
+   // console.log(data)
+    console.log(headerConfig)
   }
 
   if (returnedData.status === 200) {
-    return returnedData;
+    return returnedData
   } else {
-    console.log('Error in axiosPostToStrapi');
-    console.log(returnedData);
-    return -1;
+    console.log('Error in axiosPostToStrapi')
+    console.log(returnedData)
+    return returnedData  // returns {status: -1} for failed data
   }
 }
 
@@ -751,25 +816,24 @@ Accepts:
 Returns: full put response from strapi api if successfull or -1 if failed
 */
 axiosPutToStrapi = async (url, data, headerConfig) => {
-  var returnedData = { status: -1 };
+  var returnedData = { status: -1 }
   try {
-    returnedData = await axios.put(url, data, headerConfig);
+    returnedData = await axios.put(url, data, headerConfig)
   } catch (error) {
-    console.log(error);
-    console.log(url);
-    console.log(data);
-    console.log(headerConfig);
+    console.log(error)
+    console.log(url)
+    console.log(data)
+    console.log(headerConfig)
   }
 
   if (returnedData.status === 200) {
-    return returnedData;
+    return returnedData
   } else {
-    console.log('Error in axiosPostToStrapi');
-    console.log(returnedData);
-    return -1;
+    console.log('Error in axiosPostToStrapi')
+    console.log(returnedData)
+    return -1
   }
 }
-
 
 /* axiosDeleteFromStrapi
 Function makes a generic post delete to strapi API
@@ -779,73 +843,77 @@ Accepts:
 Returns: full post response from strapi api if successfull or -1 if failed
 */
 axiosDeleteFromStrapi = async (url, headerConfig) => {
-  var returnedData = { status: -1 };
+  var returnedData = { status: -1 }
   try {
-    returnedData = await axios.delete(url, headerConfig);
+    returnedData = await axios.delete(url, headerConfig)
   } catch (error) {
-    console.log(error);
-    console.log(url);
-    console.log(returnedData);
-    console.log(headerConfig);
+    console.log(error)
+    console.log(url)
+    console.log(returnedData)
+    console.log(headerConfig)
   }
 
   if (returnedData.status === 200) {
-    return returnedData;
+    return returnedData
   } else {
-    console.log('Error in axiosDeleteFromStrapi');
-    console.log(returnedData);
-    return -1;
+    console.log('Error in axiosDeleteFromStrapi')
+    console.log(returnedData)
+    return -1
   }
 }
 
 /*axiosUploadToStrapi
 Function makes a generic post upload strapi API
 Accepts:
+  - token - Authorization token
   - files - files to upload
   - entryId -  the id of the entry to associate to the file being upload
   - entryType -  the collection type of the entry being associated to the file (examples of collection types: artwork, campus)
   - entryFieldName -  the field name from the collection type (examples for artwork would be primary_image, other_images)
 Returns: full post response from strapi api if successfull or -1 if failed
 */
-axiosUploadToStrapi = async (file, entryId, entryType, entryFieldName, source = '') => {
-
+axiosUploadToStrapi = async (
+  token,
+  file,
+  entryId,
+  entryType,
+  entryFieldName
+) => {
   const sendConfig = {
     headers: {
-      'Authorization': "Bearer " + this.authToken,
-      'Content-Type': 'multipart/form-data'
-    }
-  };
-
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data',
+    },
+  }
 
   const formData = new FormData()
   formData.append('files', file)
   formData.append('ref', entryType) // optional, you need it if you want to link the image to an entry
   formData.append('refId', entryId) // optional, you need it if you want to link the image to an entry
   formData.append('field', entryFieldName) // optional, you need it if you want to link the image to an entry
-  if (source && source !== '') {
-    formData.append('source', source);
-  }
-  let returnedData = {};
+  let returnedData = {}
 
   try {
-    returnedData = await axios.post(`${this.strapiUrl}/upload`, formData, sendConfig);
+    returnedData = await axios.post(
+      `${this.strapiUrl}/upload`,
+      formData,
+      sendConfig
+    )
   } catch (error) {
-    console.log(error);
+    console.log(error)
     // console.log(url);
     // console.log(data);
     // console.log(headerConfig);
   }
 
   if (returnedData.status === 200) {
-    return returnedData;
+    return returnedData
   } else {
-    console.log('Error in axiosUploadToStrapi');
-    console.log(returnedData);
-    return -1;
+    console.log('Error in axiosUploadToStrapi')
+    console.log(returnedData)
+    return -1
   }
 }
-
-
 } //============== End of Class
 
 /* ============== Older database requests */

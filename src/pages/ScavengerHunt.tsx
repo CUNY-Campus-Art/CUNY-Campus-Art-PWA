@@ -21,6 +21,7 @@ import  HuntStatus  from "../components/HuntStatus";  //user status component
 
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
+  total_points: state.user.user.total_points,
   campus: state.user.user.campus,
   campuses: state.general.campuses
 })
@@ -80,7 +81,7 @@ const ScavengerHunt = (props: Props) => {
         <div>{showClues ? (<HuntClues/>) : (<p></p>)}</div>
 
         {/* ************** shows Status for scavenger hunt of User *************** */}
-        <div> {showStatus ? (user ? (<HuntStatus/> ): (<Login />)) : <p></p>}</div>
+        <div> {showStatus ? (user ? (<HuntStatus /> ): (<Login />)) : <p></p>}</div>
 
       </IonContent>
     </IonPage>

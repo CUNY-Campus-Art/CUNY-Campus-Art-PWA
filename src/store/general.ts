@@ -244,7 +244,8 @@ const defaultCurrentArtDisplay = {
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   allArtDisplays: [defaultCurrentArtDisplay],
-  campuses: []}
+  campuses: []
+}
 
 
 /*********** TYPE CHECKING REDUCERS **********/
