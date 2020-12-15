@@ -32,7 +32,7 @@ import ScavengerHunt from './pages/ScavengerHunt';
 
 import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
 import { Signup } from './components/Signup'
-
+import defaultProfilePicture from './assets/images/default-profile-pic-2.png'
 
 
 /* Core CSS required for Ionic components to work properly */
@@ -85,19 +85,16 @@ const App = (props: Props) => {
 <link href="https://fonts.googleapis.com/css2?family=Clicker+Script&display=swap" rel="stylesheet" />
           <IonToolbar className="top-bar" >
 
-          <IonText className="ion-text-center CUNY-title">CUNY <span style={{fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red'}}>Gallery</span></IonText>
-{/*
-          <IonTabs>
-          <IonRouterOutlet>
-          <Route path="/Profile" component={Profile} exact={true} />
-          </IonRouterOutlet> */}
+          <Link to="/Home" slot="start" className="CUNY-title"><IonText className="ion-text-center CUNY-title"> CUNY <span style={{fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red'}}>Gallery</span></IonText></Link>
+
 
           <Link to="/Profile" slot="end">
               {/* Greet User By Name if logged in */}
                {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
 
                {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
-              {props.currentUser && props.currentUser.profile_picture ? <IonImg style={{height: '2em', width: '2em'}} src={props.currentUser.profile_picture.url} /> : <IonIcon color= "medium" icon={person} />}
+              {props.currentUser ? <IonImg style={{height: '2em', width: '2em'}} src={props.currentUser.profile_picture ? props.currentUser.profile_picture.url: defaultProfilePicture} /> : <IonIcon color= "medium" icon={person} />}
+
             </Link>
           {/* </IonTabs> */}
           </IonToolbar>

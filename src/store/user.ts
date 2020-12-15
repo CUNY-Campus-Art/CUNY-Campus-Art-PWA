@@ -1,9 +1,6 @@
 import axios from 'axios'
-import { Action } from 'redux'
-import { ThunkAction } from 'redux-thunk'
-import { StringLiteral } from 'typescript'
 import { RootState } from './index'
-import { StrapiApiConnection, axoisPostToStrapi } from './util'
+import { StrapiApiConnection } from './util'
 
 import { rerenderArtDisplays, fetchPastArtworks } from './artdisplay'
 /************ Type Checking State ************/
@@ -40,6 +37,9 @@ export const REMOVE_USER = 'REMOVE_USER'
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 export const LOGIN_ERROR = 'LOGIN_ERROR'
 export const SIGNUP_ERROR = 'SIGNUP_ERROR'
+export const ADD_POINTS = 'ADD_POINTS'
+export const REMOVE_POINTS = 'REMOVE_POINTS'
+
 // INITIAL STATE
 
 // Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty

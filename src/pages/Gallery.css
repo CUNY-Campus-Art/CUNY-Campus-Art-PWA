@@ -9,16 +9,23 @@
 .img-size{
   max-width: 250px;
   margin: auto;
-  
 }
 
 .align-right-row{
   direction: rtl;
   margin-top: 2rem;
+  flex-wrap: none;
 }
+
+.align-right-row ion-button {
+margin: .25em;
+}
+
 .center-text{
+  text-align: center;
   margin: auto;
 }
+
 
 .iconSize{
   font-size: 24px;

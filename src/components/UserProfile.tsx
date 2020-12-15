@@ -7,6 +7,7 @@ import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../store";
 import { getUser, logout, fetchUser } from "../store/user";
 import "./UserProfile.css";
+import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 
 import {
   IonButton,
@@ -59,8 +60,8 @@ const UserProfile = (props: Props) => {
       <IonCardContent className="ion-text-center">
         <img
           className="profile-pic"
-          src={user.profile_picture ? user.profile_picture.url : ""}
-          alt="Scan QR"
+          src={user.profile_picture ? user.profile_picture.url : defaultProfilePicture}
+          alt="Avatar"
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
         <IonCardSubtitle>{user.campus ? user.campus.campus_name : ''}</IonCardSubtitle>
