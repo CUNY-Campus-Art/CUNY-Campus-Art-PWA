@@ -7,19 +7,17 @@
 
 import React, { useEffect, useCallback, useContext, useState } from "react";
 import { connect, ConnectedProps } from 'react-redux'
-import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
+import { IonItem, IonLabel, IonList, IonListHeader, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
 import { RootState } from '../store'
-import {
-  changeCurrentArtDisplay,
-  fetchAllArtworks,
-  fetchPastArtworks,
-  ArtDisplay,
-  removeScannedArtDisplay,
-  increaseLikesForArtworkDBcall
+import { 
+  changeCurrentArtDisplay, 
+  fetchAllArtworks, 
+  fetchPastArtworks, 
+  ArtDisplay, 
+  removeScannedArtDisplay 
 } from '../store/artdisplay'
-
-import { analytics, heart, heartOutline, thumbsDown, heart, heartOutline } from "ionicons/icons";
+import { heart, heartOutline } from "ionicons/icons";
 
 import {
   IonContent,
@@ -38,7 +36,7 @@ import { trash } from 'ionicons/icons';
 
 
 /* use the props currentArtDisplay and allArtDisplays to access state */
-const mapState = (state: any) => ({
+const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   pastArtDisplays: state.artDisplay.pastArtDisplays,
   allArtDisplays: state.artDisplay.allArtDisplays,
@@ -48,8 +46,7 @@ const mapState = (state: any) => ({
 const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getPastArtworks: (currentUser: any) => dispatch(fetchPastArtworks(currentUser)),
-  removeArtwork: (user: any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId)),
-  increaseLikesForArtwork: (artworkId: any) => dispatch(increaseLikesForArtworkDBcall(artworkId))
+  removeArtwork: (user:any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -83,16 +80,18 @@ const Gallery = (props: Props) => {
     redirect()
   }
 
-  const [likeartwork, setlikeartwork] = useState(false);
-  const handleLikes = () => {
+  const[likeartwork, setlikeartwork] = useState(false);
+  const handleLikes= ()=>{
     likeartwork ? setlikeartwork(false) : setlikeartwork(true);
+
   }
+
 
 
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar></IonToolbar>
+      <IonToolbar></IonToolbar>
         <IonToolbar>
           <IonTitle>Your Gallery </IonTitle>
         </IonToolbar>
@@ -103,56 +102,41 @@ const Gallery = (props: Props) => {
       <IonContent fullscreen>
 
 
-        <IonList>
-          {pastArtDisplays.map((artDisplay: any, index: any) => (
-            <IonItem key={index}>
-
+        <IonList> 
+            {pastArtDisplays.map((artDisplay: any, index: any) => (
+            <IonItem>
               <IonGrid>
                 <IonRow>
-                  <IonCol className="center-text" size="5">
+                  <IonCol size="5">
                     <IonImg className='artwork-tile img-size'
-                      onClick={() => selectAnArtwork(index)}
-                      src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
-                      alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
-                    <IonText color="medium">{artDisplay.likes} Likes</IonText>
+                    onClick={() => selectAnArtwork(index)}
+                    src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
+                    alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
                   </IonCol>
 
-                  <IonCol >
+                  <IonCol>
                     <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
-
+              
                     <IonRow className="align-right-row">
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        color="danger"
-                        onClick={() =>props.increaseLikesForArtwork(artDisplay.id)}
-                        // onClick={handleLikes}
+                      <IonButton 
+                      fill="outline" 
+                      size="small" 
+                      color="danger" 
+                      // onClick={() =>props.handleLikes(props.currentUser, artDisplay)}
+                      onClick={handleLikes}
                       >
-
-                        {likeartwork ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
-
+                      <div>{likeartwork ? (<IonIcon className="iconSize" icon={heart}></IonIcon>) : (<IonIcon  className="iconSize" icon={heartOutline}></IonIcon>) }</div>
+                      
                       </IonButton>
-
-                      {/* Thumbs Down Icon */}
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        color="primary"
-                        onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
+                      <IonButton  
+                      fill="outline" 
+                      size="small" 
+                      color="danger" 
+                      onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}
                       >
-                        <IonIcon color="medium" icon={thumbsDown}></IonIcon>
-                      </IonButton>
-
-                      {/* Trash Icon */}
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        color="medium"
-                        onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
-                      >
-                        <IonIcon icon={trash}></IonIcon>
-                      </IonButton>
+                      <IonIcon icon={trash}></IonIcon>
+                      </IonButton>                      
                     </IonRow>
                   </IonCol>
                 </IonRow>

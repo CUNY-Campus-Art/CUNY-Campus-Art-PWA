@@ -3,14 +3,18 @@
  */
 
 import React, { useCallback, useContext, useState } from "react";
+// import { Redirect, Route } from 'react-router-dom';
 import { IonGrid, IonRow, NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 import {
+  // IonRouterOutlet,
   IonContent,
   IonHeader,
   IonPage,
   IonToolbar,
   IonCard,
+  IonCardContent,
+ 
 } from "@ionic/react";
 import "./ScanQR.css";
 
@@ -24,12 +28,12 @@ import { addScannedArtDisplayToUserDB } from '../store/user'
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   allArtDisplays: state.artDisplay.allArtDisplays,
-  user: state.user.user,
+  user: state.user,
   campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
-  getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
+  getScannedArtDisplay: (qrCodeText: string, user: any) => dispatch(fetchScannedArtDisplay(qrCodeText, user)),
   addScannedArtDisplayToUserDB: (artworkId: any) => dispatch(addScannedArtDisplayToUserDB(artworkId)),
 })
 
@@ -60,13 +64,12 @@ const ScanQR = (props: Props) => {
     scanResult = qrCodeText
     setScanResult(scanResult) //updates local state
     console.log('scan result: ', scanResult)
-    let id = await props.getScannedArtDisplay(scanResult)
-    if(props.user) await props.addScannedArtDisplayToUserDB(id);
+    let id = await props.getScannedArtDisplay(scanResult, props.user)
+    await props.addScannedArtDisplayToUserDB(id);
     redirect()
   };
 
   // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
-  //Also causes div with blackground to fillup screen for better aesthetic during scan mode
   // Checks whether scan state in child QRScanner component is active
   let [scanState, setScanState] = useState(0);
 
@@ -78,8 +81,8 @@ const ScanQR = (props: Props) => {
   return (
     <IonPage>
       <IonContent>
-        {scanState ? <div id="black-scanner-bg"></div> : ''}
-        <IonHeader>
+
+      <IonHeader>
           <IonToolbar></IonToolbar>
 
           <IonToolbar>
@@ -91,24 +94,29 @@ const ScanQR = (props: Props) => {
         <IonCard class="ion-text-center">
           <IonGrid>
             <IonRow>
-
-              <div className="col-lg-4 text-center">
+            <div className="col-lg-4 text-center">
                 <img
-                  src={require("../assets/images/QR-Icon.png")}
+                  src={require("../assets/images/gallery-logo-muted.png")}
                   className="img-fluid card-imgs"
                   alt="scan-qr"
                 />
               </div>
-              <hr/>
-              <p className="col-lg-6 order-lg-2 text-lg-left text-center">
 
+              <div className="col-lg-6 order-lg-2 text-lg-left text-center">
+                <hr />
+                <p>
+                CUNY Gallery is an app that showcases CUNY students' artwork
+                in an acccessible way through the scanning of QR codes located on
+                the artwork. <br/>
                 <strong>Scan a QR code to learn more about students' artwork!</strong>
-              </p>
+                </p>
+              </div>
             </IonRow>
           </IonGrid>
+
+          <IonCardContent>Scan Result: {scanResult}</IonCardContent>
         </IonCard>
-        {/* Pass scanStateParent function so that child can update state of parent :) */}
-        <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+            <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
       </IonContent>
     </IonPage>
   );

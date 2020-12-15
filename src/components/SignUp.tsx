@@ -1,9 +1,15 @@
 /*
+
 Signup.tsx
+
 This contains the Signup component.
+
 Collects username, email, first name, last name, campus, and profile picture from user.
+
 Makes use of the React Hook Form library to have values persist even after other items on form is updated.
+
 To Dos: To add Form Validations. Once database values are updated, will have profile picture and campus id added to database as well.
+
 */
 
 import React, { useState, useContext, useCallback, useEffect} from 'react';
@@ -45,11 +51,12 @@ const mapSignup = (state: RootState) => {
     name: 'signup',
     displayName: 'Sign Up',
     fields: [
-      { name: 'username', label: 'Username', type: 'text' },
-      { name: 'fullName', label: 'Full Name', type: 'text' },
-      { name: 'email', label: 'Email', type: 'email' },
-      { name: 'password', label: 'Password', type: 'password' },
-      { name: 'password-verification', label: 'Verify Password', type: 'password' },
+      { name: 'username', label: 'Username*', type: 'text' },
+      { name: 'firstName', label: 'First Name*', type: 'text' },
+      { name: 'lastName', label: 'Last Name', type: 'text' },
+      { name: 'email', label: 'Email*', type: 'email' },
+      { name: 'password', label: 'Password*', type: 'password' },
+      { name: 'password-verification', label: 'Verify Password*', type: 'password' },
     ],
     campuses: state.general.campuses
     //error: state.user.error
@@ -67,6 +74,7 @@ const mapDispatch = (dispatch: any) => {
 }
 
 const AuthForm = (props: any) => {
+    // useEffect(() => { props.getAllCampuses(); }, []);
     if(!props.campuses)  props.getAllCampuses();
     //To redirect to Profile tab using forward animation
     const { navigate } = useContext(NavContext);
@@ -94,6 +102,9 @@ const AuthForm = (props: any) => {
   console.log(isLogged)
 
 
+  let text;
+
+
   const [listCampuses, setListCampuses] = useState<string[]>([]);
 
   //This value will correspond to an id from the Database that matches up with campus
@@ -111,13 +122,13 @@ const AuthForm = (props: any) => {
     email: '',
     password: '',
     username: '',
-    fullName: ''
+    firstName: '',
+    lastName: '',
   }
 
   const { control, register, handleSubmit, errors, formState } = useForm({
     defaultValues: formValues,
-    validationSchema,
-    reValidateMode: 'onChange'
+    validationSchema
   });
 
   const [data, setData] = useState();
@@ -135,13 +146,11 @@ const AuthForm = (props: any) => {
       formValues.email = evt.target.email.value
       formValues.password = evt.target.password.value
       formValues.username = evt.target.username.value
-      formValues.fullName = evt.target.fullName.value
+      formValues.firstName = evt.target.firstName.value
+      formValues.lastName = evt.target.lastName.value
 
-      let nameHolder = formValues.fullName.split(' ')
-      let firstName = nameHolder[0];
-      let lastName =  nameHolder.length> 1 ? nameHolder.slice(1).join(' '): '';
       // imgData, selectedCampus:  values we still need to send to database somehow
-      let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, imgData)
+      let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, formValues.firstName, formValues.lastName, imgData)
 
       //If user sucessfully signs up, have user logged in, and redirected to Profile tab
       //Once Profile Picture Upload is resolved. Should be able to replace result with result.sucess. For now result is based on whether con.user has a value (logic set in the user store)
@@ -153,40 +162,6 @@ const AuthForm = (props: any) => {
   }
     // <IonPage className="container-fluid">     </IonPage>);
 
-/* Form Validation need to modify
-    // Manually setting up validation schema and style
-    const validStyle = {
-      borderBottom: '2px solid #00FF00'
-    }
-
-    const invalidStyle = {
-      borderBottom: '2px solid #FF0000'
-    }
-
-      //checkUserName makes sure that the passwords dont' have special characters aside from the underscore. [^a-zA-z0-9_]
-
-  let checkUsernameValue:any;
-  const checkUsername = (value:any) => {
-
-    let regex = /\W+/;
-    // let userName = document.getElementById('user-name');
-      if(value && !regex.test(value))
-        checkUsernameValue = ''
-      else
-        checkUsernameValue = 'Username can only include: A-Z, 0-9, and _'
-  }
-
-  const checkPasswords= () => {
-    let password1 = document.getElementById('password-1')
-    let password2 = document.getElementById('password-2')
-    console.log('TESTING' + password1.value)
-
-    if(password1.value !== password2.value)
-      return 'Passwords Don\'t Match';
-    else
-      return '';
-  }
-*/
 
   return ( <IonPage>
       <IonHeader>
@@ -215,23 +190,20 @@ const AuthForm = (props: any) => {
               <div key={index}>
 
                 <IonItem className="custom-input">
-                  <IonLabel  position="floating" className="custom-input-label" >{field.label}</IonLabel>
+                  <IonLabel className="custom-input-label" >{field.label}</IonLabel>
                   <IonInput
-                    id={field.name}
                     name={field.name}
                     type={field.type}
-                    // onIonChange={ field.name === 'username' ? e => checkUsername(e.detail.value!): ()=>{}}
-                    // style = {field.name !== 'username' ? {} : checkUsernameValue ? validStyle : invalidStyle }
                   >
                   </IonInput>
                 </IonItem>
+                <br />
               </div>
             )}
 
           {/* Campus Drop Down Menu */}
-          <br />
           <IonItem id="campus-menu">
-                <IonLabel>Campus</IonLabel>
+                <IonLabel>Campus*</IonLabel>
                 <IonSelect
                   interfaceOptions={{ cssClass: 'my-custom-interface' }}
                   interface="popover"

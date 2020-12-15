@@ -2,8 +2,7 @@
  * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
  */
 
-import React,{ useContext, useCallback} from "react";
-import { NavContext } from '@ionic/react';
+import React,{useState, useEffect} from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import {
   IonContent,
@@ -24,9 +23,7 @@ import {
   IonButton,
 } from "@ionic/react";
 import "./Information.css";
-
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
-
 
 import { RootState } from '../store'
 
@@ -41,6 +38,8 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch)
 
+// The inferred type will look like:
+// {isOn: boolean, toggleOn: () => void}
 type PropsFromRedux = ConnectedProps<typeof connector>
 
 type Props = PropsFromRedux & {
@@ -55,17 +54,9 @@ const slideOpts = {
 
 const Information = (props: Props) => {
 
-    // To redirect to QR scan tab using backward animation
-    const { navigate } = useContext(NavContext);
-    const redirect = useCallback(
-      () => navigate('/ScanQR', 'back'),
-      [navigate]
-    );
-
-
   let currentArtDisplay = props.currentArtDisplay;
   console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
-
+  // let [slideKey, setSlideKey] = useState(0);
 
   let slides = currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
   console.log("slides", currentArtDisplay)
@@ -138,7 +129,7 @@ const Information = (props: Props) => {
         </IonCard>
 
         <IonCard >
-          <IonItem onClick={() => redirect()} >
+          <IonItem href="/ScanQR" >
             <IonIcon icon={qrCodeSharp} slot="start" />
             <IonLabel class="ion-text-center">Scan Another Artwork</IonLabel>
           </IonItem>

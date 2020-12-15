@@ -1,11 +1,9 @@
 #video-scanner{
   position: fixed;
   top: 56px; /* 56px seems to be the height of the Ion Header*/
-  top: 25vh;
-  width: 100vw;   /* this makes camera maintain proportions */
   left: 0;
-
-  z-index: 100;
+  width: 100%;
+  height: 100%;
 }
 
 #invalid-qr-toast{
@@ -14,29 +12,4 @@
 
 .button-height{
   height: 50px;
-}
-
-
-#black-scanner-bg {
-  z-index: 50;
-  position: fixed;
-  float: left;
-  height: 100vh;
-  width: 100vw;
-  background-color: black;
-}
-
-
-
-.qr-buttons {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-#stop-button{
-  margin-top: 20px;
-  margin-left: 25%;
-  position: fixed;
-  z-index: 100;
-
 }

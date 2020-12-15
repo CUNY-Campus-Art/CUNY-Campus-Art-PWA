@@ -25,9 +25,6 @@ export interface ArtDisplay {
   year: string
   qr_code: string
   campus: string
-  likes: number
-  artwork_type_clue: string
-  clue : any
 }
 
 
@@ -61,30 +58,14 @@ export interface ArtDisplaysState {
 
 // ACTION TYPES
 export const CHANGE_CURRENT_ART_DISPLAY = 'CHANGE_CURRENT_ART_DISPLAY'
-
 export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const REMOVE_ART_DISPLAY = 'REMOVE_ART_DISPLAY'
-
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
 export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
-
-export const RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
+export const  RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
 export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
-
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
-
-export const INCREASE_LIKES_FOR_ARTWORK= 'INCREASE_LIKES_FOR_ARTWORK'
-export const DECREASE_LIKES_FOR_ARTWORK= 'DECREASE_LIKES_FOR_ARTWORK'
-
-export const ADD_LIKED_ARTWORK = 'ADD_LIKED_ARTWORK'
-export const REMOVE_LIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
-
-export const ADD_DISLIKED_ARTWORK = 'ADD_DISLIKED_ARTWORK'
-export const REMOVE_DISLIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
-
-export const ADD_SOLVED_ARTWORK = 'ADD_SOLVED_ARTWORK'
-export const REMOVE_SOLVED_ARTWORK = 'REMOVE_SOLVED_ARTWORK'
 
 // ACTION CREATORS
 interface AddArtDisplayAction {
@@ -107,8 +88,7 @@ interface GotAllCampusesAction {
   payload: any
 }
 
-
-// kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
+//this would ideally pull from database, but for now will rely on localStorage until this history can be connected to User History. That is why I kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
 interface GotPastArtDisplaysAction {
   type: typeof GET_PAST_ART_DISPLAYS,
   payload: ArtDisplay[]
@@ -129,61 +109,12 @@ interface RerenderArtDisplaysAction{
   payload: any
 }
 
-//Removes from user and from local app
 interface RemoveArtDisplayAction{
   type: typeof REMOVE_ART_DISPLAY,
   payload: ArtDisplay
 }
 
-//Increases Artwork field
-interface IncreaseLikesForArtworkAction {
-  type: typeof INCREASE_LIKES_FOR_ARTWORK
-  payload: any //artworkId
-}
-
-//Decreases from Artwork field
-interface DecreaseLikesForArtworkAction {
-  type: typeof DECREASE_LIKES_FOR_ARTWORK
-  payload: any //artworkId
-}
-
-//Adds to User field
-interface AddLikedArtworkAction{
-  type: typeof ADD_LIKED_ARTWORK,
-  payload: ArtDisplay
-}
-
-//Removes from User field
-interface RemoveLikedArtworkAction{
-  type: typeof REMOVE_LIKED_ARTWORK,
-  payload: ArtDisplay
-}
-
-//Adds to User field
-interface AddDislikedArtworkAction{
-  type: typeof ADD_DISLIKED_ARTWORK,
-  payload: ArtDisplay
-}
-
-//Removes from User field
-interface RemoveDislikedArtworkAction{
-  type: typeof REMOVE_DISLIKED_ARTWORK,
-  payload: ArtDisplay
-}
-
-interface AddSolvedArtworkAction{
-  type: typeof ADD_SOLVED_ARTWORK,
-  payload: ArtDisplay
-}
-
-interface RemoveSolvedArtworkAction{
-  type: typeof REMOVE_SOLVED_ARTWORK,
-  payload: ArtDisplay
-}
-
-
-
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -248,22 +179,10 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
   }
 }
 
-export function increaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
-  return {
-    type: INCREASE_LIKES_FOR_ARTWORK,
-    payload: artworkId
-  }
-}
 
-//Makes a call to the database to increment by 1 the likes of an artwork, also updates locally by dispatching
-export const increaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
-  await con.increaseLikesForArtworkById(artworkId)
-  dispatch(increaseLikesForArtwork(artworkId))
-}
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
-
 
 
 //Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
@@ -278,7 +197,7 @@ export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
 };
 
 //retrieves Scanned Art from database
-export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
+export const fetchScannedArtDisplay = (qrCodeText: string, user:any) => async (dispatch: any) => {
   try{
   //"cuny-campus-art-" -> 16 characters
   //"campus-art-" -> 11 characters
@@ -324,22 +243,19 @@ export const fetchAllCampuses = () => async (dispatch: any) => {
 
 //Remove ArtDisplay from the database, as well as locally
 export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async (dispatch: any) => {
+  con.user = user;
+  //remove from database
+  console.log("before", con.user)
 
-  //remove from database if user is signed in
-  if (user) {
-    con.user = user;
-    const data = await con.removeScannedArtworkFromUser([artwork.id]);
-    await con.syncRemoteToLocalUser()
-    //reload artworks
-    console.log("after", con.user)
-    dispatch(fetchPastArtworks(con.user))
-  }
+  const data = await con.removeScannedArtworkFromUser([artwork.id]);
+  await con.syncRemoteToLocalUser()
+  //reload artworks
+  console.log("after", con.user)
+  dispatch(fetchPastArtworks(con.user))
 
-  // remove from store locally
   dispatch(removeArtDisplay(artwork))
 
 }
-
 
 /****** SETTING UP INITIAL STATE ***********/
 
@@ -349,7 +265,7 @@ const defaultCurrentArtDisplay = {
   artist: 'Frédéric Thery',
   year: '2020',
   campus: 'Brooklyn College',
-  primary_image: { url: require('../assets/images/frederic-thiery-new-york-city.jpg'), alternativeText: `Porte St Denis` },
+  primary_image: { url: 'https://media3.carredartistes.com/us/18076-large_default/xunique-contemporary-artwork-frederic-thiery-new-york-city.jpg.pagespeed.ic.45OGoX0QKY.jpg" alt="gallery 1', alternativeText: `Porte St Denis` },
   other_images: [
     { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566319340/bf154f4dac1b717cbb33730d656942ab770c24901577ab681fd46cea97c5ecf3a/A", alternativeText: "Petit marché" },
     { url: "https://thumbs.nosto.com/quick/carredaristesus/8/566318950/ece2915fbc817e011d922b80c2b77700ff103a74a707724342da12f16f169d13a/A", alternativeText: "Porte St Denis" }
@@ -357,9 +273,6 @@ const defaultCurrentArtDisplay = {
   ],
   description: 'Inspired by a painter father, Frédéric was interested from a very early age in drawing and painting. He studied fine arts at the University of Aix-en-Provence. After graduation, he moved to southern Spain where he discovered various crafts: leather work, silk painting, jewellery making…By g in contact with these artisans he learned to make leather accessories (belts, bags) and experimented with cold enamel work (producing the same aesthetic effect as enamel, but without firing). He attended a workshop on porcelain painting to learn this technique and soon he experienced the urge to paint on canvas.',
   qr_code: '',
-  likes: 0,
-  artwork_type_clue: '',
-  clue : ''
 }
 
 //adding user so that it can retrieve info based on current user state
@@ -385,7 +298,6 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
       return {
         ...state,
         currentArtDisplay: action.payload,
-        //doesn't add duplicates to the history
         pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload],
         allArtDisplays: state.allArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.allArtDisplays] : [...state.allArtDisplays, action.payload]
       }
@@ -414,23 +326,9 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         //fetchPastArtworks, should update the past displays
       return {
         ...state,
-        // remove this artwork from gallery history
-        pastArtDisplays: state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id),
-        // If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
+        //If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
         currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay: state.currentArtDisplay
       }
-    case INCREASE_LIKES_FOR_ARTWORK:
-         //increase number of likes at particular index locally
-         console.log (state.pastArtDisplays, "IS THIS IT")
-         state.pastArtDisplays.forEach( (artDisplay:any) =>
-          {if(artDisplay.id === action.payload) artDisplay.likes++}
-         )
-       //  state.pastArtDisplays[index].likes = state.pastArtDisplays[index].likes++
-      return {...state,
-        pastArtDisplays: [...state.pastArtDisplays]
-      }
-    case DECREASE_LIKES_FOR_ARTWORK:
-        return {...state}
     default:
       return state
   }

@@ -5,6 +5,7 @@
 import React, {useState} from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import {
+  IonButton,
   IonCard,
   IonCol,
   IonContent,
@@ -111,19 +112,7 @@ const Home = (props: Props) => {
                 <h3 className="About-title"> <IonIcon size="large" icon={qrCode}/> Scan - Explore Student's Artwork</h3>
                 
                 <p>
-
-                CUNY Gallery is an app that showcases CUNY students' artwork
-                in an acccessible way through the scanning of QR codes located on
-                the artwork.
-
-
                   {" "}
-
-                  CUNY Gallery was created to showcase CUNY students' artwork in
-                  an accessible way through the scanning of QR codes located on artwork
-                  throughout different campuses. Students can submit their artwork and information
-                  using our form site and can be showcased on our application.
-
                   Start at the Scan tab/page to begin scanning QR codes located
                   on artwork throughout CUNY Campuses.
                 </p>
@@ -150,7 +139,6 @@ const Home = (props: Props) => {
                   Grow your own personal gallery! Previously scanned artwork will
                   appear here. Remove artwork you no longer want in your gallery 
                   and like your favorites! 
-
                 </p>
               </div>
             </IonRow>
@@ -202,11 +190,9 @@ const Home = (props: Props) => {
                 <h3 className="About-title"><IonIcon size="large" icon={map}/> Scavenger Hunt</h3>
                 
                 <p>
-
                   Discover Art & Your Campus. <br/>
                   Test your detective abilities! Try and find specific Artwork
                   around your campus using the clues provided.
-                  
                 </p>
               </div>
             </IonRow>
