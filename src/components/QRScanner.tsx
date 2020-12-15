@@ -6,8 +6,9 @@
  */
 
 
-import React, { createRef } from 'react';
-import { IonButton, IonIcon, IonToast } from '@ionic/react';
+
+import React, { createRef, useState } from 'react';
+import { IonButton, IonFab, IonFabButton, IonFooter, IonIcon, IonToast } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
 

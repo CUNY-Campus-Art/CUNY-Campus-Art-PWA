@@ -18,7 +18,8 @@ import {
   removeScannedArtDisplay,
   increaseLikesForArtworkDBcall
 } from '../store/artdisplay'
-import { analytics, heart, heartOutline, thumbsDown } from "ionicons/icons";
+
+import { analytics, heart, heartOutline, thumbsDown, heart, heartOutline } from "ionicons/icons";
 
 import {
   IonContent,
@@ -93,7 +94,7 @@ const Gallery = (props: Props) => {
       <IonHeader>
         <IonToolbar></IonToolbar>
         <IonToolbar>
-          <IonTitle>Your Gallery</IonTitle>
+          <IonTitle>Your Gallery </IonTitle>
         </IonToolbar>
         <IonToolbar>
           <IonTitle size="small">All Artwork You Have Scanned</IonTitle>
@@ -101,35 +102,11 @@ const Gallery = (props: Props) => {
       </IonHeader>
       <IonContent fullscreen>
 
-        {/* OLD GRID
-        <IonGrid>
-          <IonRow>
-            {pastArtDisplays.map((artDisplay: any, index: any) => (
-              <IonCol size="5" key={index}>
-                  {console.log(artDisplay)}
-                <IonCard>
-                  <IonImg className='artwork-tile img-size'
-                    onClick={() => selectAnArtwork(index)}
-                    src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
-                    alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
-                  <IonCardTitle>{artDisplay.title}</IonCardTitle>
-                  <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
-
-                 <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
-                    <IonIcon  icon={trash}></IonIcon>
-                  </IonButton>
-                  <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
-                    <IonIcon  icon={heart}></IonIcon>
-                  </IonButton>
-                </IonCard>
-                </IonCol>
-                ))}
-                </IonRow>
-                </IonGrid>*/}
 
         <IonList>
           {pastArtDisplays.map((artDisplay: any, index: any) => (
             <IonItem key={index}>
+
               <IonGrid>
                 <IonRow>
                   <IonCol className="center-text" size="5">
@@ -152,7 +129,9 @@ const Gallery = (props: Props) => {
                         onClick={() =>props.increaseLikesForArtwork(artDisplay.id)}
                         // onClick={handleLikes}
                       >
+
                         {likeartwork ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
+
                       </IonButton>
 
                       {/* Thumbs Down Icon */}

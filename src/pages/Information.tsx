@@ -21,10 +21,13 @@ import {
   IonLabel,
   IonSlide,
   IonSlides,
+  IonButton,
 } from "@ionic/react";
 import "./Information.css";
-import { informationCircleOutline, qrCodeSharp, } from "ionicons/icons";
-import placeHolderImage from '../assets/images/placeholder-image.jpg'
+
+import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
+
+
 import { RootState } from '../store'
 
 const mapState = (state: RootState) => ({
@@ -63,6 +66,16 @@ const Information = (props: Props) => {
   let currentArtDisplay = props.currentArtDisplay;
   console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
 
+
+  let slides = currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
+  console.log("slides", currentArtDisplay)
+
+  {/* logic needed in likeartwork : if (currentArtDisplay exist in user.liked_artworks) */}
+  const[likeartwork, setlikeartwork] = useState(false);
+  const handleLikes= ()=>{
+    likeartwork ? setlikeartwork(false) : setlikeartwork(true);
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -76,7 +89,23 @@ const Information = (props: Props) => {
       <IonContent>
         <IonCard>
           <IonCardHeader>
-            <IonCardSubtitle>{currentArtDisplay.artist}</IonCardSubtitle>
+            <IonCardSubtitle>{currentArtDisplay.artist}
+              {likeartwork ? (
+              <IonIcon 
+              className="heartPlacement"
+              onClick={handleLikes} 
+              icon={heart} 
+              size="large"
+              ></IonIcon>) :
+              (
+                <IonIcon 
+                className="heartPlacement"
+                onClick={handleLikes} 
+                icon={heartOutline} 
+                size="large"
+                ></IonIcon>)
+              }
+            </IonCardSubtitle>
             <IonCardTitle >{`${currentArtDisplay.title}, ${currentArtDisplay.year}`}</IonCardTitle>
           </IonCardHeader>
 
