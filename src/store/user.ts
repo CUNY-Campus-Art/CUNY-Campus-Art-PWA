@@ -1,9 +1,6 @@
 import axios from 'axios'
-import { Action } from 'redux'
-import { ThunkAction } from 'redux-thunk'
-import { StringLiteral } from 'typescript'
 import { RootState } from './index'
-import { StrapiApiConnection, axoisPostToStrapi } from './util'
+import { StrapiApiConnection } from './util'
 
 import { rerenderArtDisplays, fetchPastArtworks } from './artdisplay'
 /************ Type Checking State ************/
