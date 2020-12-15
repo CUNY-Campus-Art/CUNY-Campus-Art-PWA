@@ -17,7 +17,7 @@ import {
   ArtDisplay, 
   removeScannedArtDisplay 
 } from '../store/artdisplay'
-import { analytics, heart, heartOutline } from "ionicons/icons";
+import { heart, heartOutline } from "ionicons/icons";
 
 import {
   IonContent,
@@ -93,7 +93,7 @@ const Gallery = (props: Props) => {
       <IonHeader>
       <IonToolbar></IonToolbar>
         <IonToolbar>
-          <IonTitle>Your Gallery</IonTitle>
+          <IonTitle>Your Gallery </IonTitle>
         </IonToolbar>
         <IonToolbar>
           <IonTitle size="small">All Artwork You Have Scanned</IonTitle>
@@ -101,42 +101,6 @@ const Gallery = (props: Props) => {
       </IonHeader>
       <IonContent fullscreen>
 
-
-        {/* <IonGrid>
-          <IonRow>
-            {photos.map((photo,index) =>(
-              <IonCol size="3" key={index}>
-                <IonImg src={photo.webviewPath} />
-              </IonCol>
-            ))}
-          </IonRow>
-        </IonGrid> */}
-
-        {/* OLD GRID 
-        <IonGrid>
-          <IonRow>
-            {pastArtDisplays.map((artDisplay: any, index: any) => (
-              <IonCol size="5" key={index}>
-                  {console.log(artDisplay)}
-                <IonCard>
-                  <IonImg className='artwork-tile img-size'
-                    onClick={() => selectAnArtwork(index)}
-                    src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
-                    alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
-                  <IonCardTitle>{artDisplay.title}</IonCardTitle>
-                  <IonCardSubtitle>{artDisplay.artist}</IonCardSubtitle>
-
-                 <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
-                    <IonIcon  icon={trash}></IonIcon>
-                  </IonButton>
-                  <IonButton class="item-end" fill="outline" size="small" color="danger" onClick={() =>props.removeArtwork(props.currentUser, artDisplay)}>
-                    <IonIcon  icon={heart}></IonIcon>
-                  </IonButton>
-                </IonCard>
-                </IonCol>
-                ))}
-                </IonRow>
-                </IonGrid>*/}
 
         <IonList> 
             {pastArtDisplays.map((artDisplay: any, index: any) => (

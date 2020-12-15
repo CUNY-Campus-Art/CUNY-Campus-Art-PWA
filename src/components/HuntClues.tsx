@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
+import { IonGrid, IonRow, NavContext } from '@ionic/react';
+import { connect, ConnectedProps } from 'react-redux'
 import {
   IonItem,
   IonLabel,
@@ -20,12 +22,74 @@ import {
   medalOutline,
   bulbOutline,
 } from "ionicons/icons";
+import QRScanner from "../components/QRScanner"
 
-const HuntClues = () => {
+import { RootState } from '../store'
+import { fetchScannedArtDisplay } from '../store/artdisplay'
+import { addScannedArtDisplayToUserDB } from '../store/user'
+import { render } from "@testing-library/react";
+/* use the props currentArtDisplay and allArtDisplays to access state */
+const mapState = (state: RootState) => ({
+  currentArtDisplay: state.artDisplay.currentArtDisplay,
+  allArtDisplays: state.artDisplay.allArtDisplays,
+  user: state.user,
+  campuses: state.general.campuses
+})
+
+const mapDispatch = (dispatch: any) => ({
+  getScannedArtDisplay: (qrCodeText: string, user: any) => dispatch(fetchScannedArtDisplay(qrCodeText, user)),
+  addScannedArtDisplayToUserDB: (artworkId: any) => dispatch(addScannedArtDisplayToUserDB(artworkId)),
+})
+
+const connector = connect(mapState, mapDispatch)
+
+// The inferred type will look like:
+// {isOn: boolean, toggleOn: () => void}
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
+}
+
+const HuntClues = (props: Props) => {
+ 
+  // To redirect to Information tab using forward animation
+  const { navigate } = useContext(NavContext);
+  const redirect = useCallback(
+    () => navigate('/Information', 'forward'),
+    [navigate]
+  );
+
+  // Will be called from inside QR Scanner component when it extracts information from the QR Code.
+  // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting to the information tab
+
+  let [scanResult, setScanResult] = useState('');
+
+  let scanResultParent = async (qrCodeText: string) => {
+    scanResult = qrCodeText
+    setScanResult(scanResult) //updates local state
+    console.log('scan result: ', scanResult)
+    let id = await props.getScannedArtDisplay(scanResult, props.user)
+    await props.addScannedArtDisplayToUserDB(id);
+    redirect()
+  };
+
+  // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
+  // Checks whether scan state in child QRScanner component is active
+  let [scanState, setScanState] = useState(0);
+
+  let scanStateParent = (state: any) => {
+    setScanState(state)
+  }
+  let insideModal = (state: any) => {
+    insideModal(true)
+  }
+// const HuntClues = () => {
   
   const [showModal, setShowModal] = useState(false);
   const [showCorrectAlert, setShowCorrectAlert] = useState(false);
   const [showIncorrectAlert, setShowIncorrectAlert] = useState(false);
+
   return (
     <div>
       <IonList>
@@ -95,9 +159,10 @@ const HuntClues = () => {
 
               <IonList>
                 {/*TODO: add qr scanner to functionality to ionItem */}
-                <IonItem button color="primary">
+                <IonItem button color="primary" >
                   <IonIcon icon={qrCodeOutline} slot="start" />
                   <IonLabel>Scan Artwork</IonLabel>
+                  {/* <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} /> */}
                 </IonItem>
                 {/*Exit Modal button: */}
                 <IonItem
@@ -183,4 +248,4 @@ const HuntClues = () => {
   );
 };
 
-export default HuntClues;
+export default connector(HuntClues);
