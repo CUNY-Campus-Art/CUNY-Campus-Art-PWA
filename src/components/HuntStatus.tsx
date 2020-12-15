@@ -61,11 +61,13 @@ const HuntStatus = () => {
             <IonGrid>
                 <IonRow>
                     <IonCol size="4">
-                        <img
-                        className=" img-shape" 
+                        {/* if statement needed to change css border color */}
+                        <img 
+                        className="img-shape img-border-color" 
                         src= 
                         {require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")} 
                         alt="profile" />  
+                        
                     </IonCol>
                     <IonCol className="text-left" size="8">
                         <h3 className="statusTitle">Status: <IonText color="success">Beginner</IonText></h3>
