@@ -8,7 +8,7 @@
 
 .img-size{
   max-width: 250px;
-
+  margin: auto;
 }
 
 .align-right-row{
@@ -26,6 +26,7 @@ margin: .25em;
   margin: auto;
 }
 
-.likeHeart {
-  line-height: 50%;
+
+.iconSize{
+  font-size: 24px;
 }
