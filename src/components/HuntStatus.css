@@ -1,4 +1,44 @@
 .level-border{
     text: green;
     border: 15px solid rgb(190, 4, 4);
+    
+}
+.img-shape{
+    margin: auto;
+}
+.statusTitle{
+    color:#1D3A83;
+}
+.statusbar-end{
+    float: right;
+}
+.ribbon-size{
+    max-width:90px;
+}
+.segment-color{
+    background-color: #69bb7b;
+    color: white;
+}
+@media (max-width: 300px) {
+    .img-shape{
+        border-radius: 50%;
+        max-height: 70px;
+        max-width: 70px;
+    }
+}
+
+@media (min-width:300px) {
+    .img-shape{
+        border-radius: 50%;
+        height: 125px;
+        width: 125px;
+    }
+}
+
+@media (min-width:600px) {
+    .img-shape{
+        border-radius: 50%;
+        height: 175px;
+        width: 175px;
+    }
 }
