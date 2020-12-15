@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { connect, ConnectedProps } from 'react-redux'
+import { RootState } from '../store'
+import user, { getUser, logout, fetchUser } from '../store/user'
 import {
   IonItem,
   IonLabel,
@@ -21,8 +24,30 @@ import {
   bulbOutline,
 } from "ionicons/icons";
 
-const HuntClues = () => {
-  
+const mapState = (state: any) => ({
+  user: state.user.user,
+  total_points: state.user.user.total_points,
+  campus: state.user.user.campus,
+  campuses: state.general.campuses
+})
+
+const mapDispatch = (dispatch: any) => ({
+  fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
+  getUser: (user: any) => dispatch(getUser(user)),
+})
+
+const connector = connect(mapState, mapDispatch)
+
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
+}
+
+
+const HuntClues = (props: Props) => {
+
   const [showModal, setShowModal] = useState(false);
   const [showCorrectAlert, setShowCorrectAlert] = useState(false);
   const [showIncorrectAlert, setShowIncorrectAlert] = useState(false);
@@ -131,15 +156,15 @@ const HuntClues = () => {
 
               </IonList>
             </IonCard>
-          </IonModal> 
+          </IonModal>
           {/* END OF MODAL */}
-         
+
 
           {/* if the scan of qr code is correct show this alert: possibly add image to message*/}
           <IonAlert
           isOpen={showCorrectAlert}
           onDidDismiss={() => { setShowCorrectAlert(false); setShowModal(false);}}
-          header={'CORRECT!'} 
+          header={'CORRECT!'}
           subHeader={'congratulations'}
           message={"You have scannrd the correct artwork!  {/*number of points*/} has been added to your account" }
           buttons={[
@@ -183,4 +208,4 @@ const HuntClues = () => {
   );
 };
 
-export default HuntClues;
+export default connector(HuntClues);

@@ -3,7 +3,7 @@ import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import { RootState } from './index'
 import { StrapiApiConnection, axoisPostToStrapi } from './util'
-
+import { getUser } from './user'
 
 let con:StrapiApiConnection = new StrapiApiConnection();
 
@@ -25,7 +25,7 @@ export interface ArtDisplay {
   year: string
   qr_code: string
   campus: string
-  likes: number
+  likes: Number
   artwork_type_clue: string
   clue : any
 }
@@ -255,11 +255,78 @@ export function increaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
   }
 }
 
+export function decreaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
+  return {
+    type: DECREASE_LIKES_FOR_ARTWORK,
+    payload: artworkId
+  }
+}
+// add to user
+export function addLikedArtwork (artworkIdArray:any): ArtDisplayActionTypes{
+  return {
+    type: ADD_LIKED_ARTWORK,
+    payload: artworkIdArray
+  }
+}
+
+// remove from user
+export function removeLikedArtwork (artworkIdArray:any): ArtDisplayActionTypes{
+  return {
+    type: REMOVE_LIKED_ARTWORK,
+    payload: artworkIdArray
+  }
+}
+
 //Makes a call to the database to increment by 1 the likes of an artwork, also updates locally by dispatching
 export const increaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
   await con.increaseLikesForArtworkById(artworkId)
   dispatch(increaseLikesForArtwork(artworkId))
+
 }
+
+export const decreaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
+  let likes = await con.getArtworkById(artworkId)
+
+  if(likes.likes > 0) {
+    await con.decreaseLikesForArtworkById(artworkId)
+    dispatch(decreaseLikesForArtwork(artworkId))
+  }
+
+}
+
+
+export const addLikedArtworkDBcall = (artworkIdArray:any, user:any) => async (dispatch: any) => {
+    //acess user's like history, see if it's there, if not add to history and add to
+  con.user = user;
+ // await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
+
+  let alreadyAdded;
+
+  if(user && user.liked_artworks) alreadyAdded = user.liked_artworks.some((artwork:any )=> artwork.id === artworkIdArray[0])
+
+  if(alreadyAdded) return
+
+  if(user && !alreadyAdded) {
+    await con.addLikedArtworkToUser(artworkIdArray)
+    await dispatch(fetchPastArtworks(user))
+    dispatch(rerenderArtDisplays(user))
+   // await con.syncRemoteToLocalUser();
+    //await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
+    // dispatch(addLikedArtwork(artworkIdArray[0])) //add to user profile // this works
+
+  }
+}
+
+
+
+export const removeLikedArtworkDBcall = (artworkIdArray:any) => async (dispatch: any) => {
+  await con.removeDislikedArtworkFromUser(artworkIdArray)
+  dispatch(removeLikedArtwork(artworkIdArray))
+}
+
+
+
+
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
@@ -421,16 +488,18 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
       }
     case INCREASE_LIKES_FOR_ARTWORK:
          //increase number of likes at particular index locally
-         console.log (state.pastArtDisplays, "IS THIS IT")
          state.pastArtDisplays.forEach( (artDisplay:any) =>
-          {if(artDisplay.id === action.payload) artDisplay.likes++}
-         )
-       //  state.pastArtDisplays[index].likes = state.pastArtDisplays[index].likes++
+          {if(artDisplay.id === action.payload) artDisplay.likes++})
       return {...state,
         pastArtDisplays: [...state.pastArtDisplays]
       }
     case DECREASE_LIKES_FOR_ARTWORK:
-        return {...state}
+         //increase number of likes at particular index locally
+         state.pastArtDisplays.forEach( (artDisplay:any) =>
+          {if(artDisplay.id === action.payload && artDisplay.likes >= 1) artDisplay.likes--})
+      return {...state,
+        pastArtDisplays: [...state.pastArtDisplays]
+      }
     default:
       return state
   }

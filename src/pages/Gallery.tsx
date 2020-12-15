@@ -16,7 +16,9 @@ import {
   fetchPastArtworks,
   ArtDisplay,
   removeScannedArtDisplay,
-  increaseLikesForArtworkDBcall
+  addLikedArtworkDBcall,
+  increaseLikesForArtworkDBcall,
+  decreaseLikesForArtworkDBcall
 } from '../store/artdisplay'
 import { analytics, heart, heartOutline, thumbsDown } from "ionicons/icons";
 
@@ -42,13 +44,16 @@ const mapState = (state: any) => ({
   pastArtDisplays: state.artDisplay.pastArtDisplays,
   allArtDisplays: state.artDisplay.allArtDisplays,
   currentUser: state.user.user
+
 })
 
 const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getPastArtworks: (currentUser: any) => dispatch(fetchPastArtworks(currentUser)),
   removeArtwork: (user: any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId)),
-  increaseLikesForArtwork: (artworkId: any) => dispatch(increaseLikesForArtworkDBcall(artworkId))
+  addLikedArtwork: (artworkId: any, user:any) => dispatch(addLikedArtworkDBcall([artworkId], user)),
+  increaseLikesForArtwork: (artworkId: any) => dispatch(increaseLikesForArtworkDBcall(artworkId)),
+  decreaseLikesForArtwork: (artworkId: any) => dispatch(decreaseLikesForArtworkDBcall(artworkId))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -60,18 +65,19 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
+  const user = props.currentUser
 
-  useEffect(() => { if (props.currentUser) props.getPastArtworks(props.currentUser); }, []);
+  useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
   const pastArtDisplays = props.pastArtDisplays
   const changeCurrentArtDisplay = props.changeCurrentArtDisplay
 
   // To redirect to Information with forward animation
-  const { navigate } = useContext(NavContext);
+  const { navigate } = useContext(NavContext)
   const redirect = useCallback(
     () => navigate('/Information', 'forward'),
     [navigate]
-  );
+  )
 
   //When user clicks artwork, updates currentArtDislay, and redirects user to Information tab
   const selectAnArtwork = (index: number) => {
@@ -149,7 +155,10 @@ const Gallery = (props: Props) => {
                         fill="outline"
                         size="small"
                         color="danger"
-                        onClick={() =>props.increaseLikesForArtwork(artDisplay.id)}
+                        onClick={() => props.addLikedArtwork([artDisplay.id], user)}
+                        //onClick={() => props.increaseLikesForArtwork(artDisplay.id)}
+
+
                         // onClick={handleLikes}
                       >
                         {likeartwork ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
@@ -160,7 +169,8 @@ const Gallery = (props: Props) => {
                         fill="outline"
                         size="small"
                         color="primary"
-                        onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
+
+                        onClick={() => props.decreaseLikesForArtwork(artDisplay.id)}
                       >
                         <IonIcon color="medium" icon={thumbsDown}></IonIcon>
                       </IonButton>
