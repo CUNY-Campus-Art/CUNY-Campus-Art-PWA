@@ -5,6 +5,11 @@
 }
 .img-shape{
     margin: auto;
+    
+}
+.img-border-color{
+    border: 5px solid green;
+
 }
 .statusTitle{
     color:#1D3A83;
