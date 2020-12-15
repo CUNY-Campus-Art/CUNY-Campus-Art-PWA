@@ -1,3 +1,7 @@
+// HuntStatus component includes user status on the scavenger hunt :
+// user profile picture, status level, total points, status bar.
+// Also includes info about different status level and 
+// clues that the user has previously solved
 import React, {useState} from "react";
 import { getUser, logout, fetchUser } from '../store/user'
 import { connect, ConnectedProps } from 'react-redux'
@@ -6,7 +10,7 @@ import {
   IonCard,
   IonCol,
   IonGrid,
-  IonImg,
+  IonIcon,
   IonItem,
   IonLabel,
   IonProgressBar,
@@ -17,6 +21,7 @@ import {
   IonThumbnail,
 } from "@ionic/react";
 import './HuntStatus.css';
+import  {colorPaletteOutline, medalOutline, ribbonOutline} from "ionicons/icons";
 
 const mapState = (state: RootState) => ({
     currentUser: state.user.user,
@@ -38,7 +43,6 @@ type Props = PropsFromRedux & {
   // backgroundColor: string
 }
 
-
 const HuntStatus = () => {  
     const [showUserStatus, setShowUserStatus] = useState(true);
     const [showSolvedClues, setShowSolvedClues] = useState(false);
@@ -52,17 +56,16 @@ const HuntStatus = () => {
     };
       return (
           <div>
+        {/* Card contains user information: profile picture. status level, total points, progress on level */}
         <IonCard>
             <IonGrid>
                 <IonRow>
                     <IonCol size="4">
-                        
-                            <img
-                            className=" img-shape" 
-                            src= 
-                            {require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")} 
-                            alt="profile" />  
-                        
+                        <img
+                        className=" img-shape" 
+                        src= 
+                        {require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")} 
+                        alt="profile" />  
                     </IonCol>
                     <IonCol className="text-left" size="8">
                         <h3 className="statusTitle">Status: <IonText color="success">Beginner</IonText></h3>
@@ -73,15 +76,16 @@ const HuntStatus = () => {
                         <IonText color="danger" className="statusbar-end">100</IonText>
                     </IonCol>
                 </IonRow>
-            </IonGrid>
-                
+            </IonGrid> 
         </IonCard>
+
+        {/* Start of segment section - levels / solved clues */}
         <IonSegment scrollable className="segment-color" value={showUserStatus ? "levels" : "solved"}  >
                 <IonSegmentButton value="levels" onClick={handleUserStatus}>
-                    <IonLabel className="segment-color">Levels</IonLabel>
+                    <IonLabel className="segment-color">Levels </IonLabel>  <IonIcon icon={ribbonOutline}/>
                 </IonSegmentButton>
                 <IonSegmentButton value="solved" onClick={handleSolvedClues}>
-                    <IonLabel className="segment-color" >Solved Clues</IonLabel>
+                    <IonLabel className="segment-color" >Solved Clues</IonLabel> <IonIcon icon={colorPaletteOutline}/>
                 </IonSegmentButton>
             </IonSegment>
             {/* ************** shows status levels *************** */}
