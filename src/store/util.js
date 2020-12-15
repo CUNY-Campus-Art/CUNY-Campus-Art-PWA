@@ -154,6 +154,48 @@ export class StrapiApiConnection {
     return returnData
   }
 
+  /*increaseLikesForArtworkById
+  Function to increase a artworks likes count by 1
+  Accepts:
+   - id - artwork id
+  Returns: api request reponse
+  */
+ increaseLikesForArtworkById = async (id) => {
+  this.updateLikeForArtworkById(id, 1);
+}
+
+/*decreaseLikesForArtworkById
+Function to decrease a artworks likes count by 1
+Accepts:
+ - id - artwork id
+Returns: api request reponse
+*/
+decreaseLikesForArtworkById = async (id) => {
+  this.updateLikeForArtworkById(id, 2);
+}
+
+/*updateLikeForArtworkById
+Function to update a artworks likes count by 1
+Accepts:
+ - id - artwork id
+ - typeOfUpdate - integer - 1 to increase, 2 to decrease
+Returns: api request reponse
+*/
+updateLikeForArtworkById = async (id, typeOfUpdate) => {
+  const sendConfig = {
+    headers: {
+      'Authorization': "Bearer " + this.authToken,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const sendData = JSON.stringify({id: id, type: typeOfUpdate});
+  let response = await this.axiosPutToStrapi(this.strapiUrl + "/user/likeartwork", sendData, sendConfig);
+  console.log(response);
+  return response;
+}
+
+
   /* deleteArtworkById
   Function calls to strapi API to delete a artwork entry
   Accepts:

@@ -8,13 +8,24 @@
 
 .img-size{
   max-width: 250px;
-  
+
 }
 
 .align-right-row{
   direction: rtl;
   margin-top: 2rem;
+  flex-wrap: none;
 }
+
+.align-right-row ion-button {
+margin: .25em;
+}
+
 .center-text{
+  text-align: center;
   margin: auto;
+}
+
+.likeHeart {
+  line-height: 50%;
 }

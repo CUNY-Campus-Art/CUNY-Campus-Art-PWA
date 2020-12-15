@@ -25,6 +25,9 @@ export interface ArtDisplay {
   year: string
   qr_code: string
   campus: string
+  likes: number
+  artwork_type_clue: string
+  clue : any
 }
 
 
@@ -58,14 +61,21 @@ export interface ArtDisplaysState {
 
 // ACTION TYPES
 export const CHANGE_CURRENT_ART_DISPLAY = 'CHANGE_CURRENT_ART_DISPLAY'
+
 export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const REMOVE_ART_DISPLAY = 'REMOVE_ART_DISPLAY'
+
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
 export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
-export const  RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
+
+export const RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
 export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
+
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
+
+export const INCREASE_LIKES_FOR_ARTWORK= 'INCREASE_LIKES_FOR_ARTWORK'
+export const DECREASE_LIKES_FOR_ARTWORK= 'DECREASE_LIKES_FOR_ARTWORK'
 
 export const ADD_LIKED_ARTWORK = 'ADD_LIKED_ARTWORK'
 export const REMOVE_LIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
@@ -97,7 +107,8 @@ interface GotAllCampusesAction {
   payload: any
 }
 
-//this would ideally pull from database, but for now will rely on localStorage until this history can be connected to User History. That is why I kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
+
+// kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
 interface GotPastArtDisplaysAction {
   type: typeof GET_PAST_ART_DISPLAYS,
   payload: ArtDisplay[]
@@ -118,12 +129,61 @@ interface RerenderArtDisplaysAction{
   payload: any
 }
 
+//Removes from user and from local app
 interface RemoveArtDisplayAction{
   type: typeof REMOVE_ART_DISPLAY,
   payload: ArtDisplay
 }
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction
+//Increases Artwork field
+interface IncreaseLikesForArtworkAction {
+  type: typeof INCREASE_LIKES_FOR_ARTWORK
+  payload: any //artworkId
+}
+
+//Decreases from Artwork field
+interface DecreaseLikesForArtworkAction {
+  type: typeof DECREASE_LIKES_FOR_ARTWORK
+  payload: any //artworkId
+}
+
+//Adds to User field
+interface AddLikedArtworkAction{
+  type: typeof ADD_LIKED_ARTWORK,
+  payload: ArtDisplay
+}
+
+//Removes from User field
+interface RemoveLikedArtworkAction{
+  type: typeof REMOVE_LIKED_ARTWORK,
+  payload: ArtDisplay
+}
+
+//Adds to User field
+interface AddDislikedArtworkAction{
+  type: typeof ADD_DISLIKED_ARTWORK,
+  payload: ArtDisplay
+}
+
+//Removes from User field
+interface RemoveDislikedArtworkAction{
+  type: typeof REMOVE_DISLIKED_ARTWORK,
+  payload: ArtDisplay
+}
+
+interface AddSolvedArtworkAction{
+  type: typeof ADD_SOLVED_ARTWORK,
+  payload: ArtDisplay
+}
+
+interface RemoveSolvedArtworkAction{
+  type: typeof REMOVE_SOLVED_ARTWORK,
+  payload: ArtDisplay
+}
+
+
+
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -188,10 +248,22 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
   }
 }
 
+export function increaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
+  return {
+    type: INCREASE_LIKES_FOR_ARTWORK,
+    payload: artworkId
+  }
+}
 
+//Makes a call to the database to increment by 1 the likes of an artwork, also updates locally by dispatching
+export const increaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
+  await con.increaseLikesForArtworkById(artworkId)
+  dispatch(increaseLikesForArtwork(artworkId))
+}
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
+
 
 
 //Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
@@ -268,6 +340,7 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
 
 }
 
+
 /****** SETTING UP INITIAL STATE ***********/
 
 const defaultCurrentArtDisplay = {
@@ -284,6 +357,9 @@ const defaultCurrentArtDisplay = {
   ],
   description: 'Inspired by a painter father, Frédéric was interested from a very early age in drawing and painting. He studied fine arts at the University of Aix-en-Provence. After graduation, he moved to southern Spain where he discovered various crafts: leather work, silk painting, jewellery making…By g in contact with these artisans he learned to make leather accessories (belts, bags) and experimented with cold enamel work (producing the same aesthetic effect as enamel, but without firing). He attended a workshop on porcelain painting to learn this technique and soon he experienced the urge to paint on canvas.',
   qr_code: '',
+  likes: 0,
+  artwork_type_clue: '',
+  clue : ''
 }
 
 //adding user so that it can retrieve info based on current user state
@@ -343,6 +419,18 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         // If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
         currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay: state.currentArtDisplay
       }
+    case INCREASE_LIKES_FOR_ARTWORK:
+         //increase number of likes at particular index locally
+         console.log (state.pastArtDisplays, "IS THIS IT")
+         state.pastArtDisplays.forEach( (artDisplay:any) =>
+          {if(artDisplay.id === action.payload) artDisplay.likes++}
+         )
+       //  state.pastArtDisplays[index].likes = state.pastArtDisplays[index].likes++
+      return {...state,
+        pastArtDisplays: [...state.pastArtDisplays]
+      }
+    case DECREASE_LIKES_FOR_ARTWORK:
+        return {...state}
     default:
       return state
   }
