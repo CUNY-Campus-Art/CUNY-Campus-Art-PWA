@@ -132,8 +132,8 @@ const Gallery = (props: Props) => {
                         fill="outline"
                         size="small"
                         color="danger"
-                        onClick={() => props.addLikedArtwork([artDisplay.id], user)}
-                        //onClick={() => props.increaseLikesForArtwork(artDisplay.id)}
+                        //onClick={() => props.addLikedArtwork([artDisplay.id], user)}
+                        onClick={() => props.increaseLikesForArtwork(artDisplay.id)}
 
 
                         // onClick={handleLikes}
