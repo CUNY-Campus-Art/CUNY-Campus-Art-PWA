@@ -84,7 +84,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
   parseQRCode(code: String) {
     console.log("parseQRCode")
-    if(code.startsWith('campus-art-'))
+    if(code.startsWith('https://cuny-gallery.web.app/cuny-campus-art-'|| 'campus-art' || 'campus-art-'))
         return true
     else {
       console.log ('invalid qr code')
