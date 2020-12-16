@@ -10,11 +10,12 @@ CUNY Campus Art aims to promote art (including student art) on CUNY campuses. We
 - We are in the process of gamifying this app, by creating a Scavenger Hunt in which students can solve clues
 
 You can test what we have so far with these QR Codes.
-<img src="Girl With Pearl Earring updated QR Code.png" width="300"/>
 
-<img src="Mona Lisa Updated QR Code.png" width="300"/>
+* <img src="Girl With Pearl Earring updated QR Code.png" width="300"/>
 
-<img src="Birth of Venus updated QR Codes.png" width="300"/>
+* <img src="Mona Lisa Updated QR Code.png" width="300"/>
+
+* <img src="Birth of Venus updated QR Codes.png" width="300"/>
 
 
 ## Update 12/16/20 - Mary and Jamila
