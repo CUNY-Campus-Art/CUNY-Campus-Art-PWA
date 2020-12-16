@@ -33,10 +33,11 @@
   margin-right: 10px;
 }
 
-#stop-button{
+
+/* Added for stop button that was not floating.  */
+/* #stop-button{
   margin-top: 20px;
   margin-left: 25%;
   position: fixed;
   z-index: 100;
-
-}
+} */
