@@ -1,13 +1,26 @@
 # CUNY-Campus-Art-PWA
 
-You can test our PWA by visting the following link:<a href="https://cuny-gallery.web.app/"> https://cuny-gallery.web.app/ </a>
+You can test CUNY Gallery, our PWA app, by visting the following link:<a href="https://cuny-gallery.web.app/"> https://cuny-gallery.web.app/ </a>
 
-Our CUNY Campus Art PWA aims to promote art on CUNY campuses. We chose to make it a PWA so that a student would not need to download any app and can use the site directly.
+CUNY Campus Art aims to promote art (including student art) on CUNY campuses. We chose to make it a PWA so that a student would not need to download any app and can use the site directly.
 - It allows the student to scan a QR code associated with an artwork to retrieve more information about it.
   - The app has a built in personalized QR scanner that student can use to scan.
   - The student also has the option of uploading a picture that has the QR code.
 - Student can create an account, login, and a history of scanned artworks can be saved as well as removed.
 - We are in the process of gamifying this app, by creating a Scavenger Hunt in which students can solve clues
+
+You can test what we have so far with these QR Codes.
+<img src="Girl With Pearl Earring updated QR Code.png" width="300"/>
+
+<img src="Mona Lisa Updated QR Code.png" width="300"/>
+
+<img src="Birth of Venus updated QR Codes.png" width="300"/>
+
+
+## Update 12/16/20 - Mary and Jamila
+* This app has been quite polished up. We've added a scavenger hunt components and ui. We are working on adding in functionality for the scavenger hunt and like details. Here is a working demo of what we have so far:
+
+* tbd - insert gif or video link
 
 ## Update A - 10/2/2020 - ML
 
@@ -50,12 +63,6 @@ React-Redux has now been incorpated into this app to make it easier to manage st
 Firebase Link for app is:
 (To add)
 
-You can test what we have so far with these QR Codes.
-<img src="Girl with a Pearl Earring qr-code-by-id.png" width="300"/>
-
-<img src="Mona Lisa qr-code-by-id.png" width="300"/>
-
-<img src="The Birth of Venus qr-code-by-id.png" width="300"/>
 
 ## Update 10/19/20 - ML - Adding UI Components
 

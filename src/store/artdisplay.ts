@@ -347,9 +347,11 @@ export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
 //retrieves Scanned Art from database
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
   try{
+  //"https://cuny-gallery.web.app/cuny-campus-art-
   //"cuny-campus-art-" -> 16 characters
   //"campus-art-" -> 11 characters
   let artworkId =
+     qrCodeText.startsWith("https://cuny-gallery.web.app/cuny-campus-art-") ? qrCodeText.slice(45) :
      qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
      qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11): '';
 

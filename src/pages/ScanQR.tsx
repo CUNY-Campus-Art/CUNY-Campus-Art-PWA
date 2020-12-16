@@ -62,6 +62,7 @@ const ScanQR = (props: Props) => {
     console.log('scan result: ', scanResult)
     let id = await props.getScannedArtDisplay(scanResult)
     if(props.user) await props.addScannedArtDisplayToUserDB(id);
+    scanStateParent(false)
     redirect()
   };
 
