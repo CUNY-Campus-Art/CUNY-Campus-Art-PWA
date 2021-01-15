@@ -515,6 +515,7 @@ updateLikeForArtworkById = async (id, typeOfUpdate) => {
     )
 
     this.user = returnData.data
+    localStorage.setItem('user', JSON.stringify(this.user)); // save specific fields from user
     return returnData
   }
 
