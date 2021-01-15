@@ -377,11 +377,10 @@ export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
 
   // save ids of liked artworks
   let likedArtworkIds = con.user.liked_artworks.map((likedArtwork:any) => likedArtwork.id)
-  console.log("NOW: ", likedArtworkIds)
 
   // save ids of disliked artworks
   let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork:any) => dislikedArtwork.id)
-  console.log("NOW: ", likedArtworkIds)
+
 
   // looks through artworks:
   // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
@@ -411,8 +410,16 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
 
 
       const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
-data.liked = false;
-data.disliked = false;
+
+
+        // save ids of liked artworks
+  let likedArtworkIds = con.user.liked_artworks.map((likedArtwork:any) => likedArtwork.id)
+
+  // save ids of disliked artworks
+  let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork:any) => dislikedArtwork.id)
+
+  data.liked = likedArtworkIds.includes(data.id) ? true : false
+  data.disliked = dislikedArtworkIds.includes(data.id) ? true: false
   //const data = await con.getArtworkById(artworkId)
 
   console.log("getArtworkById", data);
@@ -512,8 +519,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         ...state,
         currentArtDisplay: action.payload,
         //doesn't add duplicates to the history
-        pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload],
-        allArtDisplays: state.allArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.allArtDisplays] : [...state.allArtDisplays, action.payload]
+        pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload]
       }
     case GET_PAST_ART_DISPLAYS:
       return {...state,

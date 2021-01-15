@@ -35,9 +35,9 @@ const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay
 })
 
-const mapDispatch = {
+const mapDispatch = (dispatch: any) => ({
 
-}
+})
 
 const connector = connect(mapState, mapDispatch)
 
@@ -125,6 +125,7 @@ const Information = (props: Props) => {
               </IonSlide>
 
               {/* If there are other images post them to slideshow as well*/}
+              {console.log(currentArtDisplay.other_images)}
               {currentArtDisplay.other_images ? currentArtDisplay.other_images.map((image, index )=> <IonSlide key={'slide'+ index }>
                 <img src={image.url} alt={image.alternativeText} />
               </IonSlide>) : ''}
