@@ -148,7 +148,7 @@ try {
       scanned_artworks: con.user.scanned_artworks,
       total_points: con.user.total_points,
       liked_artworks: con.user.liked_artworks,
-      disliked_artworks: con.user.dislike_artworks,
+      disliked_artworks: con.user.disliked_artworks,
       solved_artworks: con.user.solved_artworks
     }
 

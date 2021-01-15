@@ -21,7 +21,7 @@ import {
   decreaseLikesForArtworkDBcall
 } from '../store/artdisplay'
 
-import { analytics, heart, heartOutline, thumbsDown } from "ionicons/icons";
+import { analytics, heart, heartOutline, heartDislike, heartDislikeOutline, thumbsDown } from "ionicons/icons";
 
 import {
   IonContent,
@@ -128,31 +128,31 @@ const Gallery = (props: Props) => {
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
 
                     <IonRow className="align-right-row">
+
+
                       <IonButton
                         fill="outline"
                         size="small"
                         color="danger"
                         //onClick={() => props.addLikedArtwork([artDisplay.id], user)}
                         onClick={() => props.increaseLikesForArtwork(artDisplay.id)}
-
-
                         // onClick={handleLikes}
                       >
-
-                        {likeartwork ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
+                        {artDisplay.liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
 
                       </IonButton>
 
                       {/* Thumbs Down Icon */}
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        color="primary"
+                 <IonButton
+                                            fill="outline"
+                                            size="small"
+                                            color="primary"
 
-                        onClick={() => props.decreaseLikesForArtwork(artDisplay.id)}
-                      >
-                        <IonIcon color="medium" icon={thumbsDown}></IonIcon>
-                      </IonButton>
+                                            onClick={() => props.decreaseLikesForArtwork(artDisplay.id)}
+                                          >
+                                            {artDisplay.disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
+                                          </IonButton>
+
 
                       {/* Trash Icon */}
                       <IonButton

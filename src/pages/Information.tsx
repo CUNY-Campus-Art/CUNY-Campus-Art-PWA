@@ -2,7 +2,7 @@
  * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
  */
 
-import React,{ useContext, useCallback, useState} from "react";
+import React,{ useContext, useCallback, useState, useEffect} from "react";
 import { NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 import {
@@ -54,6 +54,13 @@ const slideOpts = {
 };
 
 const Information = (props: Props) => {
+  const [state, setState] = useState({});
+  useEffect(() => {
+    return () => {
+      setState({});
+    };
+}, []);
+
 
     // To redirect to QR scan tab using backward animation
     const { navigate } = useContext(NavContext);
@@ -90,7 +97,7 @@ const Information = (props: Props) => {
         <IonCard>
           <IonCardHeader>
             <IonCardSubtitle>{currentArtDisplay.artist}
-              {likeartwork ? (
+              {currentArtDisplay.liked ? (
               <IonIcon
               className="heartPlacement"
               onClick={handleLikes}
