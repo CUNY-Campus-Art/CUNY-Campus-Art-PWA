@@ -25,7 +25,9 @@ export interface ArtDisplay {
   year: string
   qr_code: string
   campus: string
-  likes: Number
+  likes: Number //Overall likes
+  liked: boolean // Specific to user (locally derived)
+  disliked: boolean // Specific to user (locally derived)
   artwork_type_clue: string
   clue : any
 }
@@ -248,6 +250,7 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
   }
 }
 
+
 export function increaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
   return {
     type: INCREASE_LIKES_FOR_ARTWORK,
@@ -277,6 +280,37 @@ export function removeLikedArtwork (artworkIdArray:any): ArtDisplayActionTypes{
   }
 }
 
+// Goal: Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
+export const clickLikeButton = (artworkId:any, user:any) => async (dispatch: any) => {
+  con.user = user;
+ // await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
+
+  // Access user's like history, check if artwork is already there.
+  let alreadyAdded;
+  if(user && user.liked_artworks) alreadyAdded = user.liked_artworks.some((artwork:any )=> artwork.id === artworkId)
+
+
+  let artwork = await con.getArtworkById(artworkId)
+
+  if(artwork.likes > 0) {
+    await con.increaseLikesForArtworkById(artworkId)
+    dispatch(increaseLikesForArtwork(artworkId))
+  }
+}
+
+// Helper Function
+const addToLikes = () => {
+
+}
+
+const removeFromDislikes = () => {
+
+}
+
+export const clickDislikeButton = (artworkId:any) => async (dispatch: any) => {
+
+}
+
 //Makes a call to the database to increment by 1 the likes of an artwork, also updates locally by dispatching
 export const increaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
   await con.increaseLikesForArtworkById(artworkId)
@@ -285,9 +319,9 @@ export const increaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch:
 }
 
 export const decreaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
-  let likes = await con.getArtworkById(artworkId)
+  let artwork = await con.getArtworkById(artworkId)
 
-  if(likes.likes > 0) {
+  if(artwork.likes > 0) {
     await con.decreaseLikesForArtworkById(artworkId)
     dispatch(decreaseLikesForArtwork(artworkId))
   }
@@ -332,16 +366,36 @@ export const removeLikedArtworkDBcall = (artworkIdArray:any) => async (dispatch:
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
-
-//Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
-
+/** fetchPastArtworks
+ * fetches user's past artworks information and addes on like and disliked status for each artwork
+ * @param userInfo
+ */
 export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
   con.user = userInfo;
   await con.syncRemoteToLocalUser()
-  let data:any = userInfo.scanned_artworks ? userInfo.scanned_artworks : defaultCurrentArtDisplay;
-  console.log(data)
-  dispatch(gotPastArtDisplays(data))
-  return data;
+  let artworks:any = con.user.scanned_artworks ? con.user.scanned_artworks : defaultCurrentArtDisplay;
+
+  // save ids of liked artworks
+  let likedArtworkIds = con.user.liked_artworks.map((likedArtwork:any) => likedArtwork.id)
+  console.log("NOW: ", likedArtworkIds)
+
+  // save ids of disliked artworks
+  let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork:any) => dislikedArtwork.id)
+  console.log("NOW: ", likedArtworkIds)
+
+  // looks through artworks:
+  // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
+  // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
+  // 'liked' value is manually derived added here, info not directly in database
+   artworks = artworks.map((artwork:any) => {
+     likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false
+     dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false
+     return artwork
+   })
+
+  console.log(artworks)
+  dispatch(gotPastArtDisplays(artworks))
+  return artworks;
 };
 
 //retrieves Scanned Art from database
@@ -357,7 +411,8 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
 
 
       const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
-
+data.liked = false;
+data.disliked = false;
   //const data = await con.getArtworkById(artworkId)
 
   console.log("getArtworkById", data);
@@ -427,6 +482,8 @@ const defaultCurrentArtDisplay = {
   description: 'Inspired by a painter father, Frédéric was interested from a very early age in drawing and painting. He studied fine arts at the University of Aix-en-Provence. After graduation, he moved to southern Spain where he discovered various crafts: leather work, silk painting, jewellery making…By g in contact with these artisans he learned to make leather accessories (belts, bags) and experimented with cold enamel work (producing the same aesthetic effect as enamel, but without firing). He attended a workshop on porcelain painting to learn this technique and soon he experienced the urge to paint on canvas.',
   qr_code: '',
   likes: 0,
+  liked: false,
+  disliked: false,
   artwork_type_clue: '',
   clue : ''
 }
