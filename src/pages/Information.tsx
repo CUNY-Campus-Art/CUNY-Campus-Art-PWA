@@ -54,13 +54,6 @@ const slideOpts = {
 };
 
 const Information = (props: Props) => {
-  const [state, setState] = useState({});
-  useEffect(() => {
-    return () => {
-      setState({});
-    };
-}, []);
-
 
     // To redirect to QR scan tab using backward animation
     const { navigate } = useContext(NavContext);
@@ -73,9 +66,7 @@ const Information = (props: Props) => {
   let currentArtDisplay = props.currentArtDisplay;
   console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
 
-
-  let slides = currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
-  console.log("slides", currentArtDisplay)
+  let slidesComp = props.currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
 
   {/* logic needed in likeartwork : if (currentArtDisplay exist in user.liked_artworks) */}
   const[likeartwork, setlikeartwork] = useState(false);
@@ -119,16 +110,11 @@ const Information = (props: Props) => {
           <IonCardContent>
 
           {/* Slide show of images uploaded for the artwork */}
-          <IonSlides  pager={true} options={slideOpts}>
-              <IonSlide key={'slidefirst'}>
-                <img src={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.url : ''} alt={currentArtDisplay.primary_image ? currentArtDisplay.primary_image.alternativeText: ''} />
-              </IonSlide>
-
-              {/* If there are other images post them to slideshow as well*/}
-              {console.log(currentArtDisplay.other_images)}
-              {currentArtDisplay.other_images ? currentArtDisplay.other_images.map((image, index )=> <IonSlide key={'slide'+ index }>
+          <IonSlides  pager={true} options={slideOpts}  key={slidesComp.map(slide => slide.url).join('_')}>
+            {slidesComp.map((image, index )=> <IonSlide key={image.url}>
                 <img src={image.url} alt={image.alternativeText} />
-              </IonSlide>) : ''}
+              </IonSlide>)}
+
             </IonSlides>
 
           </IonCardContent>
