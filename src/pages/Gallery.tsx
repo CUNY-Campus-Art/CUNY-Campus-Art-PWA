@@ -16,6 +16,7 @@ import {
   fetchPastArtworks,
   ArtDisplay,
   removeScannedArtDisplay,
+  clickLikeButton,
   addLikedArtworkDBcall,
   increaseLikesForArtworkDBcall,
   decreaseLikesForArtworkDBcall
@@ -52,6 +53,8 @@ const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getPastArtworks: (currentUser: any) => dispatch(fetchPastArtworks(currentUser)),
   removeArtwork: (user: any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId)),
+  clickLikeButton: (user:any, artworkId:any) => dispatch(clickLikeButton(user, artworkId)),
+  //clickDislikeButton
   addLikedArtwork: (artworkId: any, user:any) => dispatch(addLikedArtworkDBcall([artworkId], user)),
   increaseLikesForArtwork: (artworkId: any) => dispatch(increaseLikesForArtworkDBcall(artworkId)),
   decreaseLikesForArtwork: (artworkId: any) => dispatch(decreaseLikesForArtworkDBcall(artworkId))
@@ -135,7 +138,7 @@ const Gallery = (props: Props) => {
                         size="small"
                         color="danger"
                         //onClick={() => props.addLikedArtwork([artDisplay.id], user)}
-                        onClick={() => props.increaseLikesForArtwork(artDisplay.id)}
+                        onClick={() => props.clickLikeButton(user, artDisplay)}
                         // onClick={handleLikes}
                       >
                         {artDisplay.liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}

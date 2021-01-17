@@ -110,7 +110,7 @@ const Information = (props: Props) => {
           <IonCardContent>
 
           {/* Slide show of images uploaded for the artwork */}
-          <IonSlides  pager={true} options={slideOpts}  key={slidesComp.map(slide => slide.url).join('_')}>
+          <IonSlides pager={true} options={slideOpts}  key={slidesComp.map(slide => slide.url).join('_')}>
             {slidesComp.map((image, index )=> <IonSlide key={image.url}>
                 <img src={image.url} alt={image.alternativeText} />
               </IonSlide>)}

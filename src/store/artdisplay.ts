@@ -5,7 +5,7 @@ import { RootState } from './index'
 import { StrapiApiConnection, axoisPostToStrapi } from './util'
 import { getUser } from './user'
 
-let con:StrapiApiConnection = new StrapiApiConnection();
+let con: StrapiApiConnection = new StrapiApiConnection();
 
 
 /************ Type Checking State ************/
@@ -29,7 +29,7 @@ export interface ArtDisplay {
   liked: boolean // Specific to user (locally derived)
   disliked: boolean // Specific to user (locally derived)
   artwork_type_clue: string
-  clue : any
+  clue: any
 }
 
 
@@ -76,8 +76,8 @@ export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
 
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 
-export const INCREASE_LIKES_FOR_ARTWORK= 'INCREASE_LIKES_FOR_ARTWORK'
-export const DECREASE_LIKES_FOR_ARTWORK= 'DECREASE_LIKES_FOR_ARTWORK'
+export const INCREASE_LIKES_FOR_ARTWORK = 'INCREASE_LIKES_FOR_ARTWORK'
+export const DECREASE_LIKES_FOR_ARTWORK = 'DECREASE_LIKES_FOR_ARTWORK'
 
 export const ADD_LIKED_ARTWORK = 'ADD_LIKED_ARTWORK'
 export const REMOVE_LIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
@@ -126,13 +126,13 @@ interface ResetArtDisplaysAction {
 }
 
 
-interface RerenderArtDisplaysAction{
+interface RerenderArtDisplaysAction {
   type: typeof RERENDER_ART_DISPLAYS,
   payload: any
 }
 
 //Removes from user and from local app
-interface RemoveArtDisplayAction{
+interface RemoveArtDisplayAction {
   type: typeof REMOVE_ART_DISPLAY,
   payload: ArtDisplay
 }
@@ -150,35 +150,35 @@ interface DecreaseLikesForArtworkAction {
 }
 
 //Adds to User field
-interface AddLikedArtworkAction{
+interface AddLikedArtworkAction {
   type: typeof ADD_LIKED_ARTWORK,
   payload: ArtDisplay
 }
 
 //Removes from User field
-interface RemoveLikedArtworkAction{
+interface RemoveLikedArtworkAction {
   type: typeof REMOVE_LIKED_ARTWORK,
   payload: ArtDisplay
 }
 
 //Adds to User field
-interface AddDislikedArtworkAction{
+interface AddDislikedArtworkAction {
   type: typeof ADD_DISLIKED_ARTWORK,
   payload: ArtDisplay
 }
 
 //Removes from User field
-interface RemoveDislikedArtworkAction{
+interface RemoveDislikedArtworkAction {
   type: typeof REMOVE_DISLIKED_ARTWORK,
   payload: ArtDisplay
 }
 
-interface AddSolvedArtworkAction{
+interface AddSolvedArtworkAction {
   type: typeof ADD_SOLVED_ARTWORK,
   payload: ArtDisplay
 }
 
-interface RemoveSolvedArtworkAction{
+interface RemoveSolvedArtworkAction {
   type: typeof REMOVE_SOLVED_ARTWORK,
   payload: ArtDisplay
 }
@@ -221,7 +221,7 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
   }
 }
 
-export function rerenderArtDisplays(userInfo:any): ArtDisplayActionTypes {
+export function rerenderArtDisplays(userInfo: any): ArtDisplayActionTypes {
   return {
     type: RERENDER_ART_DISPLAYS,
     payload: userInfo
@@ -235,7 +235,7 @@ export function resetArtDisplays(): ArtDisplayActionTypes {
   }
 }
 
-export function removeArtDisplay(artDisplay:ArtDisplay): ArtDisplayActionTypes {
+export function removeArtDisplay(artDisplay: ArtDisplay): ArtDisplayActionTypes {
   return {
     type: REMOVE_ART_DISPLAY,
     payload: artDisplay
@@ -251,21 +251,21 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
 }
 
 
-export function increaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
+export function increaseLikesForArtwork(artworkId: any): ArtDisplayActionTypes {
   return {
     type: INCREASE_LIKES_FOR_ARTWORK,
     payload: artworkId
   }
 }
 
-export function decreaseLikesForArtwork (artworkId:any): ArtDisplayActionTypes {
+export function decreaseLikesForArtwork(artworkId: any): ArtDisplayActionTypes {
   return {
     type: DECREASE_LIKES_FOR_ARTWORK,
     payload: artworkId
   }
 }
 // add to user
-export function addLikedArtwork (artworkIdArray:any): ArtDisplayActionTypes{
+export function addLikedArtwork(artworkIdArray: any): ArtDisplayActionTypes {
   return {
     type: ADD_LIKED_ARTWORK,
     payload: artworkIdArray
@@ -273,89 +273,11 @@ export function addLikedArtwork (artworkIdArray:any): ArtDisplayActionTypes{
 }
 
 // remove from user
-export function removeLikedArtwork (artworkIdArray:any): ArtDisplayActionTypes{
+export function removeLikedArtwork(artworkIdArray: any): ArtDisplayActionTypes {
   return {
     type: REMOVE_LIKED_ARTWORK,
     payload: artworkIdArray
   }
-}
-
-// Goal: Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
-export const clickLikeButton = (artworkId:any, user:any) => async (dispatch: any) => {
-  con.user = user;
- // await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
-
-  // Access user's like history, check if artwork is already there.
-  let alreadyAdded;
-  if(user && user.liked_artworks) alreadyAdded = user.liked_artworks.some((artwork:any )=> artwork.id === artworkId)
-
-
-  let artwork = await con.getArtworkById(artworkId)
-
-  if(artwork.likes > 0) {
-    await con.increaseLikesForArtworkById(artworkId)
-    dispatch(increaseLikesForArtwork(artworkId))
-  }
-}
-
-// Helper Function
-const addToLikes = () => {
-
-}
-
-const removeFromDislikes = () => {
-
-}
-
-export const clickDislikeButton = (artworkId:any) => async (dispatch: any) => {
-
-}
-
-//Makes a call to the database to increment by 1 the likes of an artwork, also updates locally by dispatching
-export const increaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
-  await con.increaseLikesForArtworkById(artworkId)
-  dispatch(increaseLikesForArtwork(artworkId))
-
-}
-
-export const decreaseLikesForArtworkDBcall = (artworkId:any) => async (dispatch: any) => {
-  let artwork = await con.getArtworkById(artworkId)
-
-  if(artwork.likes > 0) {
-    await con.decreaseLikesForArtworkById(artworkId)
-    dispatch(decreaseLikesForArtwork(artworkId))
-  }
-
-}
-
-
-export const addLikedArtworkDBcall = (artworkIdArray:any, user:any) => async (dispatch: any) => {
-    //acess user's like history, see if it's there, if not add to history and add to
-  con.user = user;
- // await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
-
-  let alreadyAdded;
-
-  if(user && user.liked_artworks) alreadyAdded = user.liked_artworks.some((artwork:any )=> artwork.id === artworkIdArray[0])
-
-  if(alreadyAdded) return
-
-  if(user && !alreadyAdded) {
-    await con.addLikedArtworkToUser(artworkIdArray)
-    await dispatch(fetchPastArtworks(user))
-    dispatch(rerenderArtDisplays(user))
-   // await con.syncRemoteToLocalUser();
-    //await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
-    // dispatch(addLikedArtwork(artworkIdArray[0])) //add to user profile // this works
-
-  }
-}
-
-
-
-export const removeLikedArtworkDBcall = (artworkIdArray:any) => async (dispatch: any) => {
-  await con.removeDislikedArtworkFromUser(artworkIdArray)
-  dispatch(removeLikedArtwork(artworkIdArray))
 }
 
 
@@ -370,27 +292,27 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
  * fetches user's past artworks information and addes on like and disliked status for each artwork
  * @param userInfo
  */
-export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
+export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
   con.user = userInfo;
   await con.syncRemoteToLocalUser()
-  let artworks:any = con.user.scanned_artworks ? con.user.scanned_artworks : defaultCurrentArtDisplay;
+  let artworks: any = con.user.scanned_artworks ? con.user.scanned_artworks : defaultCurrentArtDisplay;
 
   // save ids of liked artworks
-  let likedArtworkIds = con.user.liked_artworks.map((likedArtwork:any) => likedArtwork.id)
+  let likedArtworkIds = con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id)
 
   // save ids of disliked artworks
-  let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork:any) => dislikedArtwork.id)
+  let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id)
 
 
   // looks through artworks:
   // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
   // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
   // 'liked' value is manually derived added here, info not directly in database
-   artworks = artworks.map((artwork:any) => {
-     likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false
-     dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false
-     return artwork
-   })
+  artworks = artworks.map((artwork: any) => {
+    likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false
+    dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false
+    return artwork
+  })
 
   console.log(artworks)
   dispatch(gotPastArtDisplays(artworks))
@@ -399,37 +321,37 @@ export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
 
 //retrieves Scanned Art from database
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
-  try{
-  //"https://cuny-gallery.web.app/cuny-campus-art-
-  //"cuny-campus-art-" -> 16 characters
-  //"campus-art-" -> 11 characters
-  let artworkId =
-     qrCodeText.startsWith("https://cuny-gallery.web.app/cuny-campus-art-") ? qrCodeText.slice(45) :
-     qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
-     qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11): '';
+  try {
+    //"https://cuny-gallery.web.app/cuny-campus-art-
+    //"cuny-campus-art-" -> 16 characters
+    //"campus-art-" -> 11 characters
+    let artworkId =
+      qrCodeText.startsWith("https://cuny-gallery.web.app/cuny-campus-art-") ? qrCodeText.slice(45) :
+        qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
+          qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11) : '';
 
 
-      const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
+    const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
 
 
-        // save ids of liked artworks
-  let likedArtworkIds = con.user.liked_artworks.map((likedArtwork:any) => likedArtwork.id)
+    // save ids of liked artworks
+    let likedArtworkIds = con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id)
 
-  // save ids of disliked artworks
-  let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork:any) => dislikedArtwork.id)
+    // save ids of disliked artworks
+    let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id)
 
-  data.liked = likedArtworkIds.includes(data.id) ? true : false
-  data.disliked = dislikedArtworkIds.includes(data.id) ? true: false
-  //const data = await con.getArtworkById(artworkId)
+    data.liked = likedArtworkIds.includes(data.id) ? true : false
+    data.disliked = dislikedArtworkIds.includes(data.id) ? true : false
+    //const data = await con.getArtworkById(artworkId)
 
-  console.log("getArtworkById", data);
-  dispatch(gotScannedArtDisplay(data))
+    console.log("getArtworkById", data);
+    dispatch(gotScannedArtDisplay(data))
 
-  return artworkId;
-     }
-     catch(error){
-       console.log(error)
-     }
+    return artworkId;
+  }
+  catch (error) {
+    console.log(error)
+  }
 
   //updates database
 };
@@ -472,6 +394,118 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
 }
 
 
+// Helper Function
+const removeFromLikes = async (artwork: any, dispatch: any) => {
+  // will toggle like button to neutral
+  artwork.liked = false;
+
+  // will remove from user's likes
+  await con.removeLikedArtworkFromUser([artwork.id])
+  ///dispatch(removeLikedArtwork(artwork.id))
+
+  // decrease artwork's overall likes
+  if (artwork.likes > 0) {
+    await con.decreaseLikesForArtworkById(artwork.id)
+    //dispatch(decreaseLikesForArtwork(artwork.id))
+  }
+}
+
+
+const removeFromDislikes = async (artwork: any) => {
+    // Toggle dislike button to off mode
+    artwork.disliked = false
+
+    // will remove from user's dislikes
+    await con.removeDislikedArtworkFromUser([artwork.id])
+    //dispatch(removeLikedArtwork(artwork.id))
+
+}
+
+// Goal: Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
+export const clickLikeButton = (user: any, artwork: any) => async (dispatch: any) => {
+  con.user = user;
+  // await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
+
+  // If artwork is already liked, remove from likes
+  if (user && artwork.liked) {
+    await removeFromLikes(artwork, dispatch)
+    dispatch(fetchPastArtworks(user))
+  } else {
+    if (user && !artwork.liked) {
+      // Add to Likes
+      artwork.liked = true;
+      await con.addLikedArtworkToUser([artwork.id])
+      // await dispatch(fetchPastArtworks(user))
+
+      // Increase artwork's overall likes
+      if (artwork.likes >= 0) {
+        await con.increaseLikesForArtworkById(artwork.id)
+        //dispatch(increaseLikesForArtwork(artwork.id))
+      }
+
+      if(artwork.disliked){
+        removeFromDislikes(artwork)
+      }
+    }
+  }
+  //await con.syncRemoteToLocalUser();
+  dispatch(fetchPastArtworks(user))
+ // dispatch(rerenderArtDisplays(user))
+}
+
+export const clickDislikeButton = (artworkId: any) => async (dispatch: any) => {
+
+}
+
+//Makes a call to the database to increment by 1 the likes of an artwork, also updates locally by dispatching
+export const increaseLikesForArtworkDBcall = (artworkId: any) => async (dispatch: any) => {
+  await con.increaseLikesForArtworkById(artworkId)
+  dispatch(increaseLikesForArtwork(artworkId))
+}
+
+export const decreaseLikesForArtworkDBcall = (artworkId: any) => async (dispatch: any) => {
+  let artwork = await con.getArtworkById(artworkId)
+
+  if (artwork.likes > 0) {
+    await con.decreaseLikesForArtworkById(artworkId)
+    dispatch(decreaseLikesForArtwork(artworkId))
+  }
+
+}
+
+
+export const addLikedArtworkDBcall = (artworkIdArray: any, user: any) => async (dispatch: any) => {
+  //acess user's like history, see if it's there, if not add to history and add to
+  con.user = user;
+  // await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
+
+  let alreadyAdded;
+
+  if (user && user.liked_artworks) alreadyAdded = user.liked_artworks.some((artwork: any) => artwork.id === artworkIdArray[0])
+
+  if (alreadyAdded) return
+
+  if (user && !alreadyAdded) {
+    await con.addLikedArtworkToUser(artworkIdArray)
+    await dispatch(fetchPastArtworks(user))
+    dispatch(rerenderArtDisplays(user))
+    // await con.syncRemoteToLocalUser();
+    //await dispatch(increaseLikesForArtworkDBcall(artworkIdArray[0])) //increase numbe of likes on artwork
+    // dispatch(addLikedArtwork(artworkIdArray[0])) //add to user profile // this works
+
+  }
+}
+
+
+
+export const removeLikedArtworkDBcall = (artworkIdArray: any) => async (dispatch: any) => {
+  await con.removeDislikedArtworkFromUser(artworkIdArray)
+  dispatch(removeLikedArtwork(artworkIdArray))
+}
+
+
+
+
 /****** SETTING UP INITIAL STATE ***********/
 
 const defaultCurrentArtDisplay = {
@@ -492,15 +526,16 @@ const defaultCurrentArtDisplay = {
   liked: false,
   disliked: false,
   artwork_type_clue: '',
-  clue : ''
+  clue: ''
 }
 
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays:  /*con.user ? con.user.scanned_artworks:*/ [defaultCurrentArtDisplay],
+  pastArtDisplays:  /*con.user ? con.user.scanned_artworks:*/[defaultCurrentArtDisplay],
   allArtDisplays: [defaultCurrentArtDisplay],
-  campuses: []}
+  campuses: []
+}
 
 
 /*********** TYPE CHECKING REDUCERS **********/
@@ -522,7 +557,8 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload]
       }
     case GET_PAST_ART_DISPLAYS:
-      return {...state,
+      return {
+        ...state,
         pastArtDisplays: [defaultCurrentArtDisplay, ...action.payload]
       }
     case GET_ALL_ART_DISPLAYS:
@@ -543,26 +579,26 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         ...state
       }
     case REMOVE_ART_DISPLAY:
-        //fetchPastArtworks, should update the past displays
+      //fetchPastArtworks, should update the past displays
       return {
         ...state,
         // remove this artwork from gallery history
         pastArtDisplays: state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id),
         // If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
-        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay: state.currentArtDisplay
+        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay : state.currentArtDisplay
       }
     case INCREASE_LIKES_FOR_ARTWORK:
-         //increase number of likes at particular index locally
-         state.pastArtDisplays.forEach( (artDisplay:any) =>
-          {if(artDisplay.id === action.payload) artDisplay.likes++})
-      return {...state,
+      //increase number of likes at particular index locally
+      state.pastArtDisplays.forEach((artDisplay: any) => { if (artDisplay.id === action.payload) artDisplay.likes++ })
+      return {
+        ...state,
         pastArtDisplays: [...state.pastArtDisplays]
       }
     case DECREASE_LIKES_FOR_ARTWORK:
-         //increase number of likes at particular index locally
-         state.pastArtDisplays.forEach( (artDisplay:any) =>
-          {if(artDisplay.id === action.payload && artDisplay.likes >= 1) artDisplay.likes--})
-      return {...state,
+      //increase number of likes at particular index locally
+      state.pastArtDisplays.forEach((artDisplay: any) => { if (artDisplay.id === action.payload && artDisplay.likes >= 1) artDisplay.likes-- })
+      return {
+        ...state,
         pastArtDisplays: [...state.pastArtDisplays]
       }
     default:
