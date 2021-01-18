@@ -27,16 +27,21 @@ import "./Information.css";
 
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
 
+import artdisplay, {
+  clickLikeButton,
+} from '../store/artdisplay'
+
 
 import { RootState } from '../store'
 
 const mapState = (state: RootState) => ({
+  user: state.user.user,
   campuses: state.general.campuses,
   currentArtDisplay: state.artDisplay.currentArtDisplay
 })
 
 const mapDispatch = (dispatch: any) => ({
-
+  clickLikeButton: (user:any, artworkId:any, fromGallery:boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -88,21 +93,24 @@ const Information = (props: Props) => {
         <IonCard>
           <IonCardHeader>
             <IonCardSubtitle>{currentArtDisplay.artist}
-              {currentArtDisplay.liked ? (
-              <IonIcon
-              className="heartPlacement"
-              onClick={handleLikes}
-              icon={heart}
-              size="large"
-              ></IonIcon>) :
-              (
-                <IonIcon
+            {/* Heart Button */}
+            <IonButton className="heartPlacement"
+                        fill="clear"
+                        size="small"
+                        color=""
+                        onClick={() => props.clickLikeButton(props.user, currentArtDisplay, false)}
+                        // onClick={handleLikes}
+                      >
+                        {currentArtDisplay.liked? (<IonIcon className='likeHeart' size='large' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' size='large' icon={heartOutline}></IonIcon>)}
+
+                      </IonButton>
+
+                {/* <IonIcon
                 className="heartPlacement"
-                onClick={handleLikes}
-                icon={heartOutline}
+                onClick={() => props.clickLikeButton(props.user, currentArtDisplay, false)}
+                icon={props.currentArtDisplay.liked ? heart: heartOutline}
                 size="large"
-                ></IonIcon>)
-              }
+                ></IonIcon>) */}
             </IonCardSubtitle>
             <IonCardTitle >{`${currentArtDisplay.title}, ${currentArtDisplay.year}`}</IonCardTitle>
           </IonCardHeader>
