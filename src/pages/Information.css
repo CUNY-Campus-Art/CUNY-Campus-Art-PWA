@@ -2,3 +2,12 @@
     float: right;
     color: red;
 }
+
+.heartPlacement:hover{
+    --background-hover:none;
+}
+
+.heartPlacement:active{
+    --background-activated-opacity:none;
+    --background-activated: none;
+}
