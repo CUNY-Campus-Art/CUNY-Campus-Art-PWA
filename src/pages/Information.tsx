@@ -27,14 +27,15 @@ import "./Information.css";
 
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
 
-import artdisplay, {
-  clickLikeButton,
+import  {
+  clickLikeButton, removeLikedArtwork,
 } from '../store/artdisplay'
 
 
 import { RootState } from '../store'
+import { createTrue } from "typescript";
 
-const mapState = (state: RootState) => ({
+const mapState = (state: any) => ({
   user: state.user.user,
   campuses: state.general.campuses,
   currentArtDisplay: state.artDisplay.currentArtDisplay
@@ -73,10 +74,8 @@ const Information = (props: Props) => {
 
   let slidesComp = props.currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
 
-  {/* logic needed in likeartwork : if (currentArtDisplay exist in user.liked_artworks) */}
-  const[likeartwork, setlikeartwork] = useState(false);
-  const handleLikes= ()=>{
-    likeartwork ? setlikeartwork(false) : setlikeartwork(true);
+  function  handleLikes() {
+    let result = props.clickLikeButton(props.user, currentArtDisplay, false);
   }
 
   return (
@@ -97,11 +96,9 @@ const Information = (props: Props) => {
             <IonButton className="heartPlacement"
                         fill="clear"
                         size="small"
-                        color=""
-                        onClick={() => props.clickLikeButton(props.user, currentArtDisplay, false)}
-                        // onClick={handleLikes}
+                        onClick={handleLikes}
                       >
-                        {currentArtDisplay.liked? (<IonIcon className='likeHeart' size='large' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' size='large' icon={heartOutline}></IonIcon>)}
+                        {currentArtDisplay.liked ? (<IonIcon slot="icon-only" size='large' icon={heart}></IonIcon>) : (<IonIcon slot="icon-only"  size='large' icon={heartOutline}></IonIcon>)}
 
                       </IonButton>
 

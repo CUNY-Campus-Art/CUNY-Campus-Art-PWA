@@ -427,7 +427,7 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
 // Goal: Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
 export const clickLikeButton = (user:any, artwork:any, fromGallery: boolean) => async (dispatch: any) => {
   con.user = user;
-
+  artwork= artwork;
   // If artwork is already liked, remove from likes
   if (user && artwork.liked) {
     await removeFromLikes(artwork)
@@ -451,8 +451,11 @@ export const clickLikeButton = (user:any, artwork:any, fromGallery: boolean) => 
   dispatch(fetchPastArtworks(user))
 
   //If the Like Button is clicked in the Information Tab
-  if(!fromGallery) {
-    dispatch(changeCurrentArtDisplay(artwork))
+
+  if(fromGallery === false) {
+    dispatch(changeCurrentArtDisplay({...artwork, liked: artwork.liked}))
+    console.log(artwork, 'in gallery yo')
+    return artwork;
   }
 
 }
@@ -477,6 +480,8 @@ export const clickDislikeButton = (user:any, artwork:any) => async (dispatch: an
   }
 
   dispatch(fetchPastArtworks(user))
+  dispatch(changeCurrentArtDisplay(artwork))
+
 }
 
 
@@ -520,11 +525,10 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
     //This changes the value of the current art to be displayed
     case CHANGE_CURRENT_ART_DISPLAY:
-      return { ...state, currentArtDisplay: action.payload }
+      return { ...state, currentArtDisplay: {...action.payload, liked: action.payload.liked} }
     //checks to see if artwork is already in history
     //duplicate items are not added
     //updates pastArtDisplay
-    //will soon remove updating allArtDisplays as that is meant to be a definitive source
     case GET_SCANNED_ART_DISPLAY:
       return {
         ...state,
