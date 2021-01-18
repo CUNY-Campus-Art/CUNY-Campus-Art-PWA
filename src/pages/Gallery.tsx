@@ -17,9 +17,7 @@ import {
   ArtDisplay,
   removeScannedArtDisplay,
   clickLikeButton,
-  addLikedArtworkDBcall,
-  increaseLikesForArtworkDBcall,
-  decreaseLikesForArtworkDBcall
+  clickDislikeButton
 } from '../store/artdisplay'
 
 import { analytics, heart, heartOutline, heartDislike, heartDislikeOutline, thumbsDown } from "ionicons/icons";
@@ -53,11 +51,8 @@ const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getPastArtworks: (currentUser: any) => dispatch(fetchPastArtworks(currentUser)),
   removeArtwork: (user: any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId)),
-  clickLikeButton: (user:any, artworkId:any) => dispatch(clickLikeButton(user, artworkId)),
-  //clickDislikeButton
-  addLikedArtwork: (artworkId: any, user:any) => dispatch(addLikedArtworkDBcall([artworkId], user)),
-  increaseLikesForArtwork: (artworkId: any) => dispatch(increaseLikesForArtworkDBcall(artworkId)),
-  decreaseLikesForArtwork: (artworkId: any) => dispatch(decreaseLikesForArtworkDBcall(artworkId))
+  clickLikeButton: (user:any, artworkId:any, fromGallery:boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery)),
+  clickDislikeButton: (user:any, artworkId:any) => dispatch(clickDislikeButton(user, artworkId)),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -137,8 +132,7 @@ const Gallery = (props: Props) => {
                         fill="outline"
                         size="small"
                         color="danger"
-                        //onClick={() => props.addLikedArtwork([artDisplay.id], user)}
-                        onClick={() => props.clickLikeButton(user, artDisplay)}
+                        onClick={() => props.clickLikeButton(user, artDisplay, true)}
                         // onClick={handleLikes}
                       >
                         {artDisplay.liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
@@ -151,7 +145,7 @@ const Gallery = (props: Props) => {
                                             size="small"
                                             color="primary"
 
-                                            onClick={() => props.decreaseLikesForArtwork(artDisplay.id)}
+                                            onClick={() => props.clickDislikeButton(user, artDisplay)}
                                           >
                                             {artDisplay.disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
                                           </IonButton>
