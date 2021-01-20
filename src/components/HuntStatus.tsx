@@ -28,7 +28,7 @@ import  {colorPaletteOutline, medalOutline, ribbonOutline} from "ionicons/icons"
 
 const mapState = (state: any) => ({
     user: state.user.user,
-    total_points: state.user.user.total_points,
+    totalPoints: state.user.user.total_points,
 })
 
 
@@ -57,19 +57,35 @@ const HuntStatus = (props:Props) => {
       setShowSolvedClues(true);
       setShowUserStatus(false);
 
-
-      let chart = {
+    };
+    let chart = {
         'Beginner': 0,
-        'Intermediate': 151,
-        'Expert' : 251
+        'Intermediate': 100,
+        'Expert' : 200
      }
 
-    };
     let user = props.user
-    let total_points = props.total_points
-    let currentLevel:string = total_points < 151 ? 'Beginner' :
-                              total_points < 251 ? 'Intermediate':
-                              'Expert'
+    let totalPoints = props.totalPoints
+
+    const getKeyValue =  (key: string) => (obj: Record<string, any>) => obj[key];
+
+     const getKey =(key: string) => (obj: Record<string, any>) => key;
+
+    console.log(totalPoints)
+    let currentStatus =
+      totalPoints < chart['Intermediate'] ? 'Beginner' :
+      totalPoints < chart['Expert'] ? 'Intermediate':
+      'Expert'
+
+      // For Percentage bar
+    let percentage = ((getKeyValue(currentStatus)(chart)) - totalPoints)/ (getKeyValue(currentStatus)(chart)+100 - (getKeyValue(currentStatus)(chart)))
+     console.log(percentage)
+
+     let colorTheme = currentStatus === 'Beginner' ? 'success'
+     : currentStatus === 'Intermediate'? 'danger'
+     : currentStatus === 'Expert' ? 'warning'
+     : 'success';
+
       return (
           <div>
         {/* Card contains user information: profile picture. status level, total points, progress on level */}
@@ -87,12 +103,12 @@ const HuntStatus = (props:Props) => {
 
                     </IonCol>
                     <IonCol className="text-left" size="8">
-                        <h3 className="statusTitle">Status: <IonText color="success">{currentLevel}</IonText></h3>
-                        <h4 className="statusTitle">Total Points:<IonText color="success"> 50 points</IonText></h4>
+                        <h3 className="statusTitle">Status: <IonText color={colorTheme}>{currentStatus}</IonText></h3>
+                        <h4 className="statusTitle">Total Points:<IonText color={colorTheme}> {totalPoints}</IonText></h4>
                         <br/>
-                        <IonProgressBar color="success" value={0.5}></IonProgressBar>
-                        <IonText color="success">0</IonText>
-                        <IonText color="danger" className="statusbar-end">100</IonText>
+                        <IonProgressBar color={"success"} value={percentage}></IonProgressBar>
+                        <IonText color={colorTheme}>{getKeyValue(currentStatus)(chart)}</IonText>
+                        <IonText color={colorTheme} className="statusbar-end">{getKeyValue(currentStatus)(chart)+100}</IonText>
                     </IonCol>
                 </IonRow>
             </IonGrid>
