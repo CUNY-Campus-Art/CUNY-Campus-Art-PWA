@@ -7,6 +7,7 @@ import React, {useState} from "react";
 import { getUser, logout, fetchUser } from '../store/user'
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
+import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 import {
   IonCard,
   IonCol,
@@ -71,7 +72,6 @@ const HuntStatus = (props:Props) => {
 
      const getKey =(key: string) => (obj: Record<string, any>) => key;
 
-    console.log(totalPoints)
     let currentStatus =
       totalPoints < chart['Intermediate'] ? 'Beginner' :
       totalPoints < chart['Expert'] ? 'Intermediate':
@@ -79,7 +79,7 @@ const HuntStatus = (props:Props) => {
 
       // For Percentage bar
     let percentage = ((getKeyValue(currentStatus)(chart)) - totalPoints)/ (getKeyValue(currentStatus)(chart)+100 - (getKeyValue(currentStatus)(chart)))
-     console.log(percentage)
+
 
      let colorTheme = currentStatus === 'Beginner' ? 'success'
      : currentStatus === 'Intermediate'? 'danger'
@@ -96,10 +96,11 @@ const HuntStatus = (props:Props) => {
                     <IonCol size="4">
                         {/* if statement needed to change css border color */}
                         <img
-                        className="img-shape img-border-color"
-                        src=
-                        {require("../assets/images/christopher-campbell-rDEOVtE7vOs-unsplash.jpg")}
-                        alt="profile" />
+                        className="img-shape"
+                        style={{border: `5px solid ${colorTheme === 'success' ? '#006600' : colorTheme === 'danger' ? '#da3434' : '#e7ca0d'}`}}
+                        src={user.profile_picture ? user.profile_picture.url : defaultProfilePicture}
+                        alt="profile"
+                        />
 
                     </IonCol>
                     <IonCol className="text-left" size="8">

@@ -39,6 +39,7 @@ export const LOGIN_ERROR = 'LOGIN_ERROR'
 export const SIGNUP_ERROR = 'SIGNUP_ERROR'
 export const ADD_POINTS = 'ADD_POINTS'
 export const REMOVE_POINTS = 'REMOVE_POINTS'
+export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
 // INITIAL STATE
 
@@ -94,6 +95,11 @@ export const removeUser = () => ({ type: REMOVE_USER })
 export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
 
+export const addUnsolvedArtworks = (artworks:any) => ({
+  type: ADD_UNSOLVED_ARTWORKS,
+  payload: artworks
+})
+
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
@@ -106,23 +112,47 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 //   }
 // }
 
-export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", file: any = '') => async (dispatch: any) => {
-  let status = await con.createUser(email, pw, username, firstName, lastName, file)
-  console.log("success", con.user)
+const getUnsolvedArtworks = async (user: any) => {
 
-  let newUser = {
+  let artworks = await con.getArtworkWithCluesforCampusById(1)
+
+  let solvedArtworksIds = user.solved_artworks.map((artwork: any) => artwork.id);
+
+  let unsolvedArtworks = artworks.filter((artwork: any) => !solvedArtworksIds.includes(artwork.id))
+
+  return unsolvedArtworks;
+}
+
+const formatUser = async (user: any) => {
+  let formattedUser = {
     user_name: con.user.username,
     first_name: con.user.first_name,
     last_name: con.user.last_name,
     email: con.user.email,
     profile_picture: con.user.profile_picture,
-    campus: con.user.campus,
+    campus: con.user.campus ? con.user.campus.campus_name : '',
+    campusId: con.user.campus ? con.user.campus.campusid : '',
+    scanned_artworks: con.user.scanned_artworks,
     total_points: con.user.total_points,
     liked_artworks: con.user.liked_artworks,
     disliked_artworks: con.user.dislike_artworks,
-    solved_artworks: con.user.solved_artworks
+    solved_artworks: con.user.solved_artworks,
+    unsolved_artworks: ''
   }
 
+  formattedUser.unsolved_artworks = await getUnsolvedArtworks(formattedUser)
+
+  console.log(formattedUser.unsolved_artworks, "UNSOLVED")
+
+  return formattedUser;
+}
+
+export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", file: any = '') => async (dispatch: any) => {
+  let status = await con.createUser(email, pw, username, firstName, lastName, file)
+  console.log("success", con.user)
+
+  let newUser = await formatUser(con.user)
+  dispatch(addUnsolvedArtworks(newUser.unsolved_artworks))
   dispatch(getUser(newUser))
 
   //If there is a user assigned that means user was successfully added to database, so return true
@@ -132,41 +162,29 @@ export const signupNewUser = (email: string, pw: string, username: string, first
 
 /* modified loginAndGetToken functioning most recent 12/9 */
 export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
-try {
-  let returnData: any = await con.loginUser(id, pw)
+  try {
+    let returnData: any = await con.loginUser(id, pw)
 
-  if (returnData.status === 200) {
+    if (returnData.status === 200) {
 
-    let user = {
-      user_name: con.user.username,
-      first_name: con.user.first_name,
-      last_name: con.user.last_name,
-      email: con.user.email,
-      profile_picture: con.user.profile_picture,
-      campus: con.user.campus ? con.user.campus.campus_name : '',
-      campusId: con.user.campus ? con.user.campus.campusid : '',
-      scanned_artworks: con.user.scanned_artworks,
-      total_points: con.user.total_points,
-      liked_artworks: con.user.liked_artworks,
-      disliked_artworks: con.user.disliked_artworks,
-      solved_artworks: con.user.solved_artworks
+      let user = await formatUser(con.user)
+      dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+
+      localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
+      localStorage.setItem('user', JSON.stringify(user)); // save specific fields from user
+      console.log('You have been successfully logged in. You will be redirected in a few seconds...')
+      dispatch(getUser(returnData.data.user))
+      dispatch(fetchPastArtworks(returnData.data.user))
     }
 
-    localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
-    localStorage.setItem('user', JSON.stringify(user)); // save specific fields from user
-    console.log('You have been successfully logged in. You will be redirected in a few seconds...')
-    dispatch(getUser(returnData.data.user))
-    dispatch(fetchPastArtworks(returnData.data.user))
+    if (returnData.status === -1) {
+      console.log('Incorrect username or password')
+      dispatch(loginError())
+    }
   }
-
-  if (returnData.status === -1) {
-    console.log('Incorrect username or password')
+  catch (error) {
     dispatch(loginError())
   }
-}
-catch(error) {
-   dispatch(loginError())
-}
 
 }
 
@@ -213,7 +231,7 @@ const defaultUser =
   authToken: authToken,
   error: '',
   total_points: currentUser.total_points,
-  solved_artworks: '',
+  solved_artworks: currentUser.solved_artworks,
   unsolved_artworks: ''
 }
 
@@ -228,6 +246,8 @@ export default function (state = defaultUser, action: any) {
       return { ...state, user: '', authToken: '', campus: '', error: '' };
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
+    case ADD_UNSOLVED_ARTWORKS:
+      return {...state, unsolved_artworks: action.payload}
     default:
       return state
   }
