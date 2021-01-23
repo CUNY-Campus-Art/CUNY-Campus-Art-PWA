@@ -117,11 +117,11 @@ const HuntStatus = (props:Props) => {
 
         {/* Start of segment section - levels / solved clues */}
         <IonSegment scrollable className="segment-color" value={showUserStatus ? "levels" : "solved"}  >
-                <IonSegmentButton value="levels" onClick={handleUserStatus}>
-                    <IonLabel className="segment-color">Levels </IonLabel>  <IonIcon icon={ribbonOutline}/>
+                <IonSegmentButton className="segment-color" value="levels" onClick={handleUserStatus}>
+                    <IonLabel>Levels </IonLabel>  <IonIcon icon={ribbonOutline}/>
                 </IonSegmentButton>
-                <IonSegmentButton value="solved" onClick={handleSolvedClues}>
-                    <IonLabel className="segment-color" >Solved Clues</IonLabel> <IonIcon icon={colorPaletteOutline}/>
+                <IonSegmentButton className="segment-color" value="solved" onClick={handleSolvedClues}>
+                    <IonLabel>Solved Clues</IonLabel> <IonIcon icon={colorPaletteOutline}/>
                 </IonSegmentButton>
             </IonSegment>
             {/* ************** shows status levels *************** */}

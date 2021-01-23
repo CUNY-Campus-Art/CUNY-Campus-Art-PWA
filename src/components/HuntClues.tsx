@@ -90,8 +90,11 @@ const HuntClues = (props: Props) => {
   let insideModal = (state: any) => {
     insideModal(true)
   }
-// const HuntClues = () => {
 
+  // Set states for Modal
+  let [categoryState, setCategoryState] = useState('')
+  let [pointsState, setPointsState] = useState('')
+  let [clueState, setClueState] = useState('')
 
   const [showModal, setShowModal] = useState(false);
   const [showCorrectAlert, setShowCorrectAlert] = useState(false);
@@ -113,55 +116,32 @@ const HuntClues = (props: Props) => {
           <p>{artwork.clue? artwork.clue.Clue: ''}</p>
         </IonLabel>
 
-        {/* modal component showing the clue and buttons to solve or go back */}
-        <IonModal isOpen={showModal}>
-          {/* repeated information */}
-          <h3>{artwork.artwork_type_clue? artwork.artwork_type_clue:''}</h3>
-          <p>{artwork.points}</p>
-          <p>{artwork.clue}</p>
-          {/* to do <IonButton>Scan Artwork</IonButton> */}
-          <IonButton onClick={() => setShowModal(false)}>Go Back</IonButton>
-        </IonModal>
-
-        <IonButton onClick={() => setShowModal(true)}>Solve</IonButton>
+        <IonButton onClick={() => {
+          setCategoryState(artwork.artwork_type_clue? artwork.artwork_type_clue:'')
+          setPointsState(artwork.clue ? artwork.clue.Points : '')
+          setClueState(artwork.clue ? artwork.clue.Clue : '')
+          setShowModal(true)}}>
+            Solve
+        </IonButton>
       </IonItem>
         )}
-
-        {/* SECOND CLUE */}
-        <IonItem>
-          {/* <IonThumbnail slot="start"> */}
-          {/* <img src="https://d26jxt5097u8sr.cloudfront.net/s3fs-public/styles/width_1200/public/1969_345_bird1-205x300.jpg?itok=OD7VW8c4" /> */}
-          {/* </IonThumbnail> */}
-          <IonLabel>
-            <h3>New World and Old World cultures</h3>
-            <p>10 POINTS</p>
-            <p>
-              The scene may show a rescue from a pirate attack, common along the
-              west coast of South America in the 1700s.
-            </p>
-          </IonLabel>
-          <IonButton onClick={() => setShowModal(true)}>Solve</IonButton>
-
 
         {/* ION MODAL COMPONENT (POP UP FOR CLUE): */}
           <IonModal isOpen={showModal}>
             <IonCard>
               <IonCardHeader>
                 <IonCardSubtitle>Category <IonIcon icon={colorPalette}></IonIcon></IonCardSubtitle>
-                <IonCardTitle>New World and Old World cultures</IonCardTitle>
+                <IonCardTitle>{categoryState}</IonCardTitle>
               </IonCardHeader>
 
               <IonCardContent className="clue">
                 <IonCardSubtitle> Clue <IonIcon icon={bulbOutline}></IonIcon></IonCardSubtitle>
-                <IonCardTitle>
-                  The scene may show a rescue from a pirate attack, common along
-                  the west coast of South America in the 1700s.
-                </IonCardTitle>
+                <IonCardTitle>{clueState}</IonCardTitle>
               </IonCardContent>
 
               <IonCardHeader>
                 <IonCardSubtitle> Award <IonIcon icon={medalOutline}></IonIcon></IonCardSubtitle>
-                <IonCardTitle> 10 Points </IonCardTitle>
+                <IonCardTitle> {pointsState} Points </IonCardTitle>
               </IonCardHeader>
 
               <IonList>
@@ -249,7 +229,7 @@ const HuntClues = (props: Props) => {
             }
             ]}
         /> {/*ion alert - incorrect*/}
-        </IonItem>
+
       </IonList>
     </div>
   );

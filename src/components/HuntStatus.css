@@ -1,11 +1,11 @@
 .level-border{
     text: green;
     border: 15px solid rgb(190, 4, 4);
-    
+
 }
 .img-shape{
     margin: auto;
-    
+
 }
 .img-border-color{
     border: 5px solid green;
@@ -21,9 +21,16 @@
     max-width:90px;
 }
 .segment-color{
-    background-color: #69bb7b;
-    color: white;
+    /* background-color: #69bb7b;
+    color: white; */
+    --background: #69bb7b;
+    --background-checked: #69bb7b;
+    --background-focused: #69bb7b;
+    --indicator-color: #69bb7b;
+    --indicator-box-shadow: 0 0 1px 0 #3880ff;
+    --color-checked: #3880ff
 }
+
 @media (max-width: 300px) {
     .img-shape{
         border-radius: 50%;
