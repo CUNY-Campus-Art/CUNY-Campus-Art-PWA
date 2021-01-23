@@ -109,7 +109,9 @@ const ScanQR = (props: Props) => {
           </IonGrid>
         </IonCard>
         {/* Pass scanStateParent function so that child can update state of parent :) */}
+        <IonCard class="QR-Scanner-card">
         <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+        </IonCard>
       </IonContent>
     </IonPage>
   );

@@ -69,8 +69,9 @@ const ScavengerHunt = (props: Props) => {
             <IonTitle className="ion-text-center">Scavenger Hunt</IonTitle>
             </IonToolbar>
         </IonHeader>
-        <IonContent>
+      <IonContent>
         {/* value sets checked segment button based on which is clicked */}
+        {user? <React.Fragment>
             <IonSegment value={showClues ? "clues" : "status"}>
                 <IonSegmentButton value="clues" onClick={handleClues}>
                     <IonLabel>Clues</IonLabel>
@@ -85,7 +86,7 @@ const ScavengerHunt = (props: Props) => {
 
         {/* ************** shows Status for scavenger hunt of User *************** */}
         <div> {showStatus ? (user ? (<HuntStatus /> ): (<Login />)) : <p></p>}</div>
-
+        </React.Fragment>: <Login/>}
       </IonContent>
     </IonPage>
   );
