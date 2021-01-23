@@ -24,6 +24,7 @@ import {
   medalOutline,
   bulbOutline,
 } from "ionicons/icons";
+
 import QRScanner from "../components/QRScanner"
 
 import { RootState } from '../store'
@@ -102,8 +103,8 @@ const HuntClues = (props: Props) => {
 
   return (
     <div>
+      {scanState ? <div id="black-scanner-bg"></div> : ''}
       <IonList>
-        {/* Possibly map clues to list : {artworks.map((artworks.clue, i) => (<IonItem key = {i}> <IonImg src = {artworks.clue}/> </IonItem>))} */}
         {user && user.unsolved_artworks && user.unsolved_artworks.map ((artwork:any, index:any) =>
         <IonItem key={index}>
 
@@ -146,11 +147,9 @@ const HuntClues = (props: Props) => {
 
               <IonList>
                 {/*TODO: add qr scanner to functionality to ionItem */}
-                <IonItem button color="primary" >
-                  <IonIcon icon={qrCodeOutline} slot="start" />
-                  <IonLabel>Scan Artwork</IonLabel>
-                  {/* <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} /> */}
-                </IonItem>
+
+                <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+
                 {/*Exit Modal button: */}
                 <IonItem
                   button

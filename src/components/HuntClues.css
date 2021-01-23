@@ -13,7 +13,7 @@
 }
 
 .button-height{
-  /* height: 50px; */
+  height: 50px;
 }
 
 
@@ -28,12 +28,11 @@
 
 
 
-.qr-button {
+.qr-buttons {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
-.ion-margin-bottom{
-  margin-bottom: 5px;
-}
 
 /* Added for stop button that was not floating.  */
 /* #stop-button{
