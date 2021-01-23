@@ -35,7 +35,8 @@ import { StringDecoder } from "string_decoder";
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   allArtDisplays: state.artDisplay.allArtDisplays,
-  user: state.user,
+  user: state.user.user,
+  unsolved_artworks: state.user.unsolved_artworks,
   campuses: state.general.campuses
 })
 
@@ -55,6 +56,7 @@ type Props = PropsFromRedux & {
 }
 
 const HuntClues = (props: Props) => {
+  let user = props.user;
 
   // To redirect to Information tab using forward animation
   const { navigate } = useContext(NavContext);
@@ -99,31 +101,31 @@ const HuntClues = (props: Props) => {
     <div>
       <IonList>
         {/* Possibly map clues to list : {artworks.map((artworks.clue, i) => (<IonItem key = {i}> <IonImg src = {artworks.clue}/> </IonItem>))} */}
-        <IonItem>
-          {/* <IonThumbnail slot="start">
-          <img src= {require("../assets/images/bluesClues.jpg")} />
-        </IonThumbnail> */}
-          <IonLabel>
-            {/* CATEGORY */}
-            <h3>artworks.artwork_type_clue: Modern Art</h3>
-            {/* AMOUNT OF POINTS AWARDED IF SOLVED */}
-            <p>artworks.points: 10 POINTS</p>
-            {/* THE CLUE */}
-            <p>artworks.clue: Find me near a water fountain in the music department</p>
-          </IonLabel>
+        {user && user.unsolved_artworks && user.unsolved_artworks.map ((artwork:any, index:any) =>
+        <IonItem key={index}>
 
-          {/* modal component showing the clue and buttons to solve or go back */}
-          <IonModal isOpen={showModal}>
-            {/* repeated information */}
-            <h3>artworks.artwork_type_clue: Modern Art</h3>
-            <p>artworks.points: 10 POINTS</p>
-            <p>artworks.clue: Find me near a water fountain in the music department</p>
-            {/* to do <IonButton>Scan Artwork</IonButton> */}
-            <IonButton onClick={() => setShowModal(false)}>Go Back</IonButton>
-          </IonModal>
+        <IonLabel>
+          {/* CATEGORY */}
+          <h3>{artwork.artwork_type_clue? artwork.artwork_type_clue:''}</h3>
+          {/* AMOUNT OF POINTS AWARDED IF SOLVED */}
+          <p>{artwork.clue? artwork.clue.Points: ''} Points</p>
+          {/* THE CLUE */}
+          <p>{artwork.clue? artwork.clue.Clue: ''}</p>
+        </IonLabel>
 
-          <IonButton onClick={() => setShowModal(true)}>Solve</IonButton>
-        </IonItem>
+        {/* modal component showing the clue and buttons to solve or go back */}
+        <IonModal isOpen={showModal}>
+          {/* repeated information */}
+          <h3>{artwork.artwork_type_clue? artwork.artwork_type_clue:''}</h3>
+          <p>{artwork.points}</p>
+          <p>{artwork.clue}</p>
+          {/* to do <IonButton>Scan Artwork</IonButton> */}
+          <IonButton onClick={() => setShowModal(false)}>Go Back</IonButton>
+        </IonModal>
+
+        <IonButton onClick={() => setShowModal(true)}>Solve</IonButton>
+      </IonItem>
+        )}
 
         {/* SECOND CLUE */}
         <IonItem>

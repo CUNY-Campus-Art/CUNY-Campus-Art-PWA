@@ -78,7 +78,7 @@ const HuntStatus = (props:Props) => {
       'Expert'
 
       // For Percentage bar
-    let percentage = ((getKeyValue(currentStatus)(chart)) - totalPoints)/ (getKeyValue(currentStatus)(chart)+100 - (getKeyValue(currentStatus)(chart)))
+    let percentage = (totalPoints%100) / (getKeyValue(currentStatus)(chart)+100 - (getKeyValue(currentStatus)(chart)))
 
 
      let colorTheme = currentStatus === 'Beginner' ? 'success'

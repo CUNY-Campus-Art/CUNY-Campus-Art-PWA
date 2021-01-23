@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
-import { getUser, logout, fetchUser } from '../store/user'
+import { getUser, logout, fetchUser, initializeUser } from '../store/user'
 import './Profile.css';
 import { Login } from '../components/Login'
 import {
@@ -29,6 +29,7 @@ const mapState = (state: RootState) => ({
 const mapDispatch = (dispatch: any) => ({
   fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
   getUser: (user: any) => dispatch(getUser(user)),
+  initializeUser: (user: any) => dispatch(initializeUser(user))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -42,6 +43,8 @@ type Props = PropsFromRedux & {
 
 
 const ScavengerHunt = (props: Props) => {
+
+  useEffect(() => { if (user) props.initializeUser(props.currentUser); }, []);
 
   let user = props.currentUser;
   let campus = props.campus;

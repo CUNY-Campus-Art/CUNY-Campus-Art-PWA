@@ -65,31 +65,13 @@ export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 
 // ACTION CREATORS
-interface AddArtDisplayAction {
-  type: typeof ADD_ART_DISPLAY,
-  payload: ArtDisplay
-}
 
-interface ChangeCurrentArtDisplayAction {
-  type: typeof CHANGE_CURRENT_ART_DISPLAY,
-  payload: ArtDisplay
-}
-
-interface GotScannedArtDisplayAction {
-  type: typeof GET_SCANNED_ART_DISPLAY,
-  payload: ArtDisplay
-}
 
 interface GotAllCampusesAction {
   type: typeof GET_ALL_CAMPUSES
   payload: any
 }
 
-//this would ideally pull from database, but for now will rely on localStorage until this history can be connected to User History. That is why I kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
-interface GotPastArtDisplaysAction {
-  type: typeof GET_PAST_ART_DISPLAYS,
-  payload: ArtDisplay[]
-}
 
 interface GotAllArtDisplaysAction {
   type: typeof GET_ALL_ART_DISPLAYS
@@ -106,34 +88,10 @@ interface RerenderArtDisplaysAction{
   payload: any
 }
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | GotAllCampusesAction
-
-//This action only changes current art display, but does not modify state otherwise
-export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
-
-//This action will ensure that artdisplay gets added, and that current display changes as well
-export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes {
-  return {
-    type: ADD_ART_DISPLAY,
-    payload: newArtDisplay
-  }
-}
-
-export function gotScannedArtDisplay(scannedArtDisplay: ArtDisplay): ArtDisplayActionTypes {
-  return {
-    type: GET_SCANNED_ART_DISPLAY,
-    payload: scannedArtDisplay
-  }
-}
+export type ArtDisplayActionTypes = GotAllArtDisplaysAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | GotAllCampusesAction
 
 
-export function gotPastArtDisplays
-  (artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
-  return {
-    type: GET_PAST_ART_DISPLAYS,
-    payload: artDisplays
-  }
-}
+
 //Invoked after fetching all art displays from database
 export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
   return {
@@ -170,39 +128,7 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
-//Right now, this is not persistent. Will incorporate rely on local storage. Ideally supposed to be Invoked after fetching all user's past art displays from database
 
-export const fetchPastArtworks = (userInfo:any) => async (dispatch: any) => {
-  let data = ''
-  dispatch(gotPastArtDisplays(userInfo.user.scanned_artworks))
-  return data;
-};
-
-//retrieves Scanned Art from database
-export const fetchScannedArtDisplay = (qrCodeText: string, user:any) => async (dispatch: any) => {
-  try{
-  //"cuny-campus-art-" -> 16 characters
-  //"campus-art-" -> 11 characters
-  let artworkId =
-     qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
-     qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11): '';
-
-
-      const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
-
-  //const data = await con.getArtworkById(artworkId)
-
-  console.log("getArtworkById", data);
-  dispatch(gotScannedArtDisplay(data))
-
-  return artworkId;
-     }
-     catch(error){
-       console.log(error)
-     }
-
-  //updates database
-};
 
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
 export const fetchAllArtworks = () => async (dispatch: any) => {
