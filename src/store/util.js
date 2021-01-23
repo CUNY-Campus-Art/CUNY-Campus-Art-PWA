@@ -9,6 +9,7 @@ export class StrapiApiConnection {
     if (!authToken && !user && !!localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
       this.authToken = JSON.parse(localStorage.getItem('jwt'))
+      this.unsolved = JSON.parse(localStorage.getItem('unsolved'))
       //this.syncRemoteToLocalUser()
       //updates local user to be up to date with the database
     } else {
@@ -498,6 +499,7 @@ updateLikeForArtworkById = async (id, typeOfUpdate) => {
     return this.authToken
   }
 
+
   /* syncRemoteToLocalUser
   Function to get user profile data from api and update local user object;
   Returns:user object from api
@@ -513,6 +515,7 @@ updateLikeForArtworkById = async (id, typeOfUpdate) => {
       this.strapiUrl + '/users/profile',
       sendConfig
     )
+
 
     this.user = returnData.data
     localStorage.setItem('user', JSON.stringify(this.user)); // save specific fields from user

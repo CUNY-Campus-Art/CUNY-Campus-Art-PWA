@@ -43,14 +43,64 @@ export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
 // INITIAL STATE
 
+
+const getUnsolvedArtworks = async (user: any) => {
+
+  let artworks = await con.getArtworkWithCluesforCampusById(1)
+
+  let solvedArtworksIds = user.solved_artworks.map((artwork: any) => artwork.id);
+
+  //filter out solved artwords and artworks that don't have a clue attached
+  let unsolvedArtworks = artworks.filter((artwork: any) => !solvedArtworksIds.includes(artwork.id) && artwork.clue)
+
+  return unsolvedArtworks;
+}
+
+const formatUser = async (user: any) => {
+  let formattedUser = {
+    user_name: con.user.username,
+    first_name: con.user.first_name,
+    last_name: con.user.last_name,
+    email: con.user.email,
+    profile_picture: con.user.profile_picture,
+    campus: con.user.campus ? con.user.campus.campus_name : '',
+    campusId: con.user.campus ? con.user.campus.campusid : '',
+    scanned_artworks: con.user.scanned_artworks,
+    total_points: con.user.total_points,
+    liked_artworks: con.user.liked_artworks,
+    disliked_artworks: con.user.dislike_artworks,
+    solved_artworks: con.user.solved_artworks,
+    unsolved_artworks: []
+  }
+
+  formattedUser.unsolved_artworks = await getUnsolvedArtworks(formattedUser)
+
+  console.log(formattedUser.unsolved_artworks, "UNSOLVED")
+
+  return formattedUser;
+}
+
+
+export const initializeUser = (user:any) => async (dispatch: any) => {
+
+  let user = await formatUser(con.user)
+  dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+  dispatch(getUser(user))
+
+}
+
 // Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty
-
-
 let con: StrapiApiConnection = new StrapiApiConnection();
 if (con.user) {
   con.syncRemoteToLocalUser()
+  initializeUser(con.user)
+
   //localStorage.setItem('user', JSON.stringify(con.user))
 };
+
+
+
+
 
 /*
 As of now 11/17, integrated directly in util.js class
@@ -112,40 +162,7 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 //   }
 // }
 
-const getUnsolvedArtworks = async (user: any) => {
 
-  let artworks = await con.getArtworkWithCluesforCampusById(1)
-
-  let solvedArtworksIds = user.solved_artworks.map((artwork: any) => artwork.id);
-
-  let unsolvedArtworks = artworks.filter((artwork: any) => !solvedArtworksIds.includes(artwork.id))
-
-  return unsolvedArtworks;
-}
-
-const formatUser = async (user: any) => {
-  let formattedUser = {
-    user_name: con.user.username,
-    first_name: con.user.first_name,
-    last_name: con.user.last_name,
-    email: con.user.email,
-    profile_picture: con.user.profile_picture,
-    campus: con.user.campus ? con.user.campus.campus_name : '',
-    campusId: con.user.campus ? con.user.campus.campusid : '',
-    scanned_artworks: con.user.scanned_artworks,
-    total_points: con.user.total_points,
-    liked_artworks: con.user.liked_artworks,
-    disliked_artworks: con.user.dislike_artworks,
-    solved_artworks: con.user.solved_artworks,
-    unsolved_artworks: ''
-  }
-
-  formattedUser.unsolved_artworks = await getUnsolvedArtworks(formattedUser)
-
-  console.log(formattedUser.unsolved_artworks, "UNSOLVED")
-
-  return formattedUser;
-}
 
 export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", file: any = '') => async (dispatch: any) => {
   let status = await con.createUser(email, pw, username, firstName, lastName, file)
@@ -172,9 +189,10 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
 
       localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
       localStorage.setItem('user', JSON.stringify(user)); // save specific fields from user
+      localStorage.setItem('unsolved', JSON.stringify(user.unsolved_artworks));
       console.log('You have been successfully logged in. You will be redirected in a few seconds...')
-      dispatch(getUser(returnData.data.user))
-      dispatch(fetchPastArtworks(returnData.data.user))
+      dispatch(getUser(user))
+      dispatch(fetchPastArtworks(user))
     }
 
     if (returnData.status === -1) {
@@ -232,7 +250,7 @@ const defaultUser =
   error: '',
   total_points: currentUser.total_points,
   solved_artworks: currentUser.solved_artworks,
-  unsolved_artworks: ''
+  unsolved_artworks: currentUser.unsolved
 }
 
 
