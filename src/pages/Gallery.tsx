@@ -66,7 +66,7 @@ type Props = PropsFromRedux & {
 const Gallery = (props: Props) => {
   const user = props.currentUser
 
-  useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
+ // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
   const pastArtDisplays = props.pastArtDisplays
   const changeCurrentArtDisplay = props.changeCurrentArtDisplay

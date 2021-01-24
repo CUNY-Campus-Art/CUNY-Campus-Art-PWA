@@ -25,6 +25,7 @@ import {
   bulbOutline,
 } from "ionicons/icons";
 
+import './HuntClues.css'
 import QRScanner from "../components/QRScanner"
 
 import { RootState } from '../store'
@@ -37,13 +38,13 @@ const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
   allArtDisplays: state.artDisplay.allArtDisplays,
   user: state.user.user,
-  unsolved_artworks: state.user.unsolved_artworks,
+  unsolved_artworks: state.artDisplay.unsolvedArtDisplays,
   campuses: state.general.campuses
 })
 
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
-  addScannedArtDisplayToUserDB: (artworkId: any) => dispatch(addScannedArtDisplayToUserDB(artworkId)),
+  addScannedArtDisplayToUserDB: (user:any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -62,7 +63,7 @@ const HuntClues = (props: Props) => {
   // To redirect to Information tab using forward animation
   const { navigate } = useContext(NavContext);
   const redirect = useCallback(
-    () => navigate('/Information', 'forward'),
+    () => navigate('/Information', 'back'),
     [navigate]
   );
 
@@ -77,7 +78,7 @@ const HuntClues = (props: Props) => {
     setScanResult(scanResult) //updates local state
     console.log('scan result: ', scanResult)
     let id = await props.getScannedArtDisplay(scanResult)
-    await props.addScannedArtDisplayToUserDB(id);
+    await props.addScannedArtDisplayToUserDB(user, id);
     redirect()
   };
 
@@ -101,9 +102,10 @@ const HuntClues = (props: Props) => {
   const [showCorrectAlert, setShowCorrectAlert] = useState(false);
   const [showIncorrectAlert, setShowIncorrectAlert] = useState(false);
 
+  //if(scanState) setShowModal(false)
+
   return (
     <div>
-      {scanState ? <div id="black-scanner-bg"></div> : ''}
       <IonList>
         {user && user.unsolved_artworks && user.unsolved_artworks.map ((artwork:any, index:any) =>
         <IonItem key={index}>
@@ -128,8 +130,10 @@ const HuntClues = (props: Props) => {
         )}
 
         {/* ION MODAL COMPONENT (POP UP FOR CLUE): */}
+
           <IonModal isOpen={showModal}>
             <IonCard>
+            {scanState ? <div className="modal-scanner-bg"></div> : ''}
               <IonCardHeader>
                 <IonCardSubtitle>Category <IonIcon icon={colorPalette}></IonIcon></IonCardSubtitle>
                 <IonCardTitle>{categoryState}</IonCardTitle>
@@ -147,8 +151,11 @@ const HuntClues = (props: Props) => {
 
               <IonList>
                 {/*TODO: add qr scanner to functionality to ionItem */}
-
-                <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+                <IonCard class="QR-Scanner-card">
+                <QRScanner name="QR-Scanner"
+                stylingMargins={"qr-scanner-clues-tab"}
+                scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+                </IonCard>
 
                 {/*Exit Modal button: */}
                 <IonItem

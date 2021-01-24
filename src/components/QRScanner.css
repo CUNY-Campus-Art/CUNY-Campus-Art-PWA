@@ -1,11 +1,13 @@
-#video-scanner{
-  position: fixed;
-  top: 56px; /* 56px seems to be the height of the Ion Header*/
-  top: 25vh;
-  width: 100vw;   /* this makes camera maintain proportions */
-  left: 0;
 
-  z-index: 100;
+
+
+.video-scanner{
+  position: fixed;
+  /* top: 56px; /* 56px seems to be the height of the Ion Header*/
+  top: 30vh;
+  left: 0;
+  width: 100vw; /* this makes camera maintain proportions */
+  z-index: 101;
 }
 
 #invalid-qr-toast{
@@ -16,9 +18,9 @@
   /* height: 50px; */
 }
 
-
-#black-scanner-bg {
-  z-index: 50;
+.black-scanner-bg {
+  z-index: 100;
+  top:0px;
   position: fixed;
   float: left;
   height: 100vh;
@@ -28,17 +30,10 @@
 
 
 
-.qr-button {
-}
-
-.ion-margin-bottom{
-  margin-bottom: 5px;
-}
-
 /* Added for stop button that was not floating.  */
-/* #stop-button{
-  margin-top: 20px;
+/* #stop-button{ */
+  /* margin-top: 20px;
   margin-left: 25%;
-  position: fixed;
-  z-index: 100;
-} */
+  position: fixed; */
+  /* z-index: 30000; */
+/* } */

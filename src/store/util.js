@@ -8,7 +8,7 @@ export class StrapiApiConnection {
     // Checks if anything in local storage, relevant for when app initially loads or refreshes
     if (!authToken && !user && !!localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
-      this.authToken = JSON.parse(localStorage.getItem('jwt'))
+     this.authToken = JSON.parse(localStorage.getItem('jwt'))
       this.unsolved = JSON.parse(localStorage.getItem('unsolved'))
       //this.syncRemoteToLocalUser()
       //updates local user to be up to date with the database
