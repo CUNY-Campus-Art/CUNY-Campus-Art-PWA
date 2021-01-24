@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { StrapiApiConnection } from './util'
-
+import { getUser, formatUser, initializeUser } from './user'
 let con: StrapiApiConnection = new StrapiApiConnection();
 
 
@@ -438,10 +438,10 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
 
 }
 
-// Goal: Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
+//  Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
 export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) => async (dispatch: any) => {
   con.user = user;
-  
+
   // If artwork is already liked, remove from likes
   if (user && artwork.liked) {
     await removeFromLikes(artwork)
@@ -474,6 +474,7 @@ export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) =
 
 }
 
+//  Toggles Dislike Button on and off. Add to user's dislikes. And undoes if clicked again.
 export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: any) => {
 
   con.user = user;
@@ -498,6 +499,15 @@ export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: 
 
 }
 
+export const addSolvedArtwork = (user:any, artworkId:any) => async (dispatch:any) => {
+  con.user = user;
+  await con.addSolvedArtworkToUser([artworkId])
+  await con.syncRemoteToLocalUser()
+  user = await formatUser(con.user)
+  dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+  dispatch(getUser({...user, unsolved_artworks: user.unsolved_artworks}))
+
+}
 
 
 

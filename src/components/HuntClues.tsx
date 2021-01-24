@@ -30,7 +30,7 @@ import './HuntClues.css'
 import QRScanner from "../components/QRScanner"
 
 import { RootState } from '../store'
-import { fetchScannedArtDisplay } from '../store/artdisplay'
+import { fetchScannedArtDisplay, addSolvedArtwork } from '../store/artdisplay'
 import { addScannedArtDisplayToUserDB } from '../store/user'
 // import { render } from "@testing-library/react";
 // import { StringDecoder } from "string_decoder";
@@ -46,7 +46,8 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
-  addScannedArtDisplayToUserDB: (user: any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId))
+  addScannedArtDisplayToUserDB: (user: any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId)),
+  addSolvedArtwork: (user:any, artworkId:any) => dispatch(addSolvedArtwork(user, artworkId))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -118,6 +119,9 @@ const HuntClues = (props: Props) => {
       setShowModal(false)
       setShowCorrectAlert(true)
       //of course if this is true, next need to add to solved artworks
+
+      await props.addSolvedArtwork(user, id)
+
     } else {
       setShowIncorrectAlert(true)
     }
@@ -179,26 +183,6 @@ const HuntClues = (props: Props) => {
             </IonCardHeader>
 
             <IonList>
-              {/*TODO: add qr scanner to functionality to ionItem */}
-
-              {/* temporary ion items to be implemented when scan qr logic is added: */}
-              <IonItem
-                button
-                color="danger"
-                onClick={() => setShowCorrectAlert(true)}
-              >
-                <IonIcon icon={arrowBackCircleOutline} slot="start" />
-                <IonLabel>IF CORRECT</IonLabel>
-              </IonItem>
-
-              <IonItem
-                button
-                color="danger"
-                onClick={() => setShowIncorrectAlert(true)}
-              >
-                <IonIcon icon={arrowBackCircleOutline} slot="start" />
-                <IonLabel>IF INCORRECT</IonLabel>
-              </IonItem>
 
 
             </IonList>

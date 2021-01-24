@@ -52,7 +52,7 @@ const getUnsolvedArtworks = async (user: any) => {
   return unsolvedArtworks;
 }
 
-const formatUser = async (user: any) => {
+export const formatUser = async (user: any) => {
   let formattedUser = {
     user_name: con.user.username,
     first_name: con.user.first_name,
@@ -137,7 +137,7 @@ interface SignupErrorAction {
   type: typeof SIGNUP_ERROR
 }
 
-export const getUser = (user: User) => ({ type: GET_USER, user })
+export const getUser = (user: User) => ({ type: GET_USER, payload: user })
 export const removeUser = () => ({ type: REMOVE_USER })
 export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
@@ -248,6 +248,7 @@ const defaultUser =
   error: '',
   total_points: currentUser.total_points,
   solved_artworks: currentUser.solved_artworks,
+  //unsolved_artworks: currentUser.unsolved_artworks
 }
 
 
@@ -256,7 +257,7 @@ const defaultUser =
 export default function (state = defaultUser, action: any) {
   switch (action.type) {
     case GET_USER:
-      return { ...state, user: action.user, error: '' }
+      return { ...state, user: action.payload, error: '' }
     case REMOVE_USER:
       return { user: '', authToken: '', campus: '', error: '', total_points: '', solved_artworks: [] };
     case LOGIN_ERROR:
