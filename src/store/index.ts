@@ -1,5 +1,5 @@
 
-import { createStore, combineReducers, Middleware, applyMiddleware } from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
 
 import { composeWithDevTools } from 'redux-devtools-extension'
 import ReduxThunk from 'redux-thunk'

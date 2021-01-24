@@ -4,9 +4,8 @@
 // Also includes info about different status level and
 // clues that the user has previously solved
 import React, {useState} from "react";
-import { getUser, logout, fetchUser } from '../store/user'
+import { getUser, fetchUser } from '../store/user'
 import { connect, ConnectedProps } from 'react-redux'
-import { RootState } from '../store'
 import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 import {
   IonCard,
@@ -24,7 +23,7 @@ import {
 } from "@ionic/react";
 import './HuntStatus.css';
 
-import { attachProps } from "@ionic/react/dist/types/components/utils";
+//import { attachProps } from "@ionic/react/dist/types/components/utils";
 import  {colorPaletteOutline, medalOutline, ribbonOutline} from "ionicons/icons";
 
 const mapState = (state: any) => ({
@@ -69,8 +68,6 @@ const HuntStatus = (props:Props) => {
     let totalPoints = props.totalPoints
 
     const getKeyValue =  (key: string) => (obj: Record<string, any>) => obj[key];
-
-     const getKey =(key: string) => (obj: Record<string, any>) => key;
 
     let currentStatus =
       totalPoints < chart['Intermediate'] ? 'Beginner' :

@@ -2,10 +2,10 @@
  * Profile.tsx - The Profile tsx currently displays a sample profile information section.
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
-import { getUser, logout, fetchUser } from '../store/user'
+import { getUser, fetchUser } from '../store/user'
 import './Profile.css';
 import { Login } from '../components/Login'
 import UserProfile from '../components/UserProfile'
@@ -47,9 +47,7 @@ type Props = PropsFromRedux & {
 const Profile = (props: Props) => {
 
   let user = props.currentUser;
-  let campus = props.campus;
 
-  // let =
   return (
     <IonPage className="container-fluid">
       <IonHeader>
@@ -64,17 +62,17 @@ const Profile = (props: Props) => {
           {/* Added the logout button here, but had to exclude
           the text attached by commenting out in AuthFormContainer.tsx  */}
           <IonButtons slot="primary">
-                {user ? (< Login />) : '' }
+            {user ? (< Login />) : ''}
           </IonButtons>
-          <IonTitle className="ion-text-center"> {user ? 'Profile' : 'Login' }</IonTitle>
+          <IonTitle className="ion-text-center"> {user ? 'Profile' : 'Login'}</IonTitle>
 
         </IonToolbar>
       </IonHeader>
 
       <IonContent>
-          {/*Made edit here to not show logoutbutton in ioncontent
+        {/*Made edit here to not show logoutbutton in ioncontent
           (show UserProfile) else show login container*/}
-        {user ? (<UserProfile />): (<Login />)}
+        {user ? (<UserProfile />) : (<Login />)}
 
       </IonContent>
     </IonPage>

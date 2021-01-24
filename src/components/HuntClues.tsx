@@ -1,6 +1,6 @@
 
 import React, { useCallback, useContext, useState } from "react";
-import { IonGrid, IonRow, NavContext } from '@ionic/react';
+import { NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 
 import {
@@ -19,7 +19,7 @@ import {
 } from "@ionic/react";
 import {
   arrowBackCircleOutline,
-  qrCodeOutline,
+  // qrCodeOutline,
   colorPalette,
   medalOutline,
   bulbOutline,
@@ -31,8 +31,9 @@ import QRScanner from "../components/QRScanner"
 import { RootState } from '../store'
 import { fetchScannedArtDisplay } from '../store/artdisplay'
 import { addScannedArtDisplayToUserDB } from '../store/user'
-import { render } from "@testing-library/react";
-import { StringDecoder } from "string_decoder";
+// import { render } from "@testing-library/react";
+// import { StringDecoder } from "string_decoder";
+
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
@@ -44,7 +45,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
-  addScannedArtDisplayToUserDB: (user:any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId))
+  addScannedArtDisplayToUserDB: (user: any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -107,133 +108,134 @@ const HuntClues = (props: Props) => {
   return (
     <div>
       <IonList>
-        {user && user.unsolved_artworks && user.unsolved_artworks.map ((artwork:any, index:any) =>
-        <IonItem key={index}>
+        {user && user.unsolved_artworks && user.unsolved_artworks.map((artwork: any, index: any) =>
+          <IonItem key={index}>
 
-        <IonLabel>
-          {/* CATEGORY */}
-          <h3>{artwork.artwork_type_clue? artwork.artwork_type_clue:''}</h3>
-          {/* AMOUNT OF POINTS AWARDED IF SOLVED */}
-          <p>{artwork.clue? artwork.clue.Points: ''} Points</p>
-          {/* THE CLUE */}
-          <p>{artwork.clue? artwork.clue.Clue: ''}</p>
-        </IonLabel>
+            <IonLabel>
+              {/* CATEGORY */}
+              <h3>{artwork.artwork_type_clue ? artwork.artwork_type_clue : ''}</h3>
+              {/* AMOUNT OF POINTS AWARDED IF SOLVED */}
+              <p>{artwork.clue ? artwork.clue.Points : ''} Points</p>
+              {/* THE CLUE */}
+              <p>{artwork.clue ? artwork.clue.Clue : ''}</p>
+            </IonLabel>
 
-        <IonButton onClick={() => {
-          setCategoryState(artwork.artwork_type_clue? artwork.artwork_type_clue:'')
-          setPointsState(artwork.clue ? artwork.clue.Points : '')
-          setClueState(artwork.clue ? artwork.clue.Clue : '')
-          setShowModal(true)}}>
-            Solve
+            <IonButton onClick={() => {
+              setCategoryState(artwork.artwork_type_clue ? artwork.artwork_type_clue : '')
+              setPointsState(artwork.clue ? artwork.clue.Points : '')
+              setClueState(artwork.clue ? artwork.clue.Clue : '')
+              setShowModal(true)
+            }}>
+              Solve
         </IonButton>
-      </IonItem>
+          </IonItem>
         )}
 
         {/* ION MODAL COMPONENT (POP UP FOR CLUE): */}
 
-          <IonModal isOpen={showModal}>
-            <IonCard>
+        <IonModal isOpen={showModal}>
+          <IonCard>
             {scanState ? <div className="modal-scanner-bg"></div> : ''}
-              <IonCardHeader>
-                <IonCardSubtitle>Category <IonIcon icon={colorPalette}></IonIcon></IonCardSubtitle>
-                <IonCardTitle>{categoryState}</IonCardTitle>
-              </IonCardHeader>
+            <IonCardHeader>
+              <IonCardSubtitle>Category <IonIcon icon={colorPalette}></IonIcon></IonCardSubtitle>
+              <IonCardTitle>{categoryState}</IonCardTitle>
+            </IonCardHeader>
 
-              <IonCardContent className="clue">
-                <IonCardSubtitle> Clue <IonIcon icon={bulbOutline}></IonIcon></IonCardSubtitle>
-                <IonCardTitle>{clueState}</IonCardTitle>
-              </IonCardContent>
+            <IonCardContent className="clue">
+              <IonCardSubtitle> Clue <IonIcon icon={bulbOutline}></IonIcon></IonCardSubtitle>
+              <IonCardTitle>{clueState}</IonCardTitle>
+            </IonCardContent>
 
-              <IonCardHeader>
-                <IonCardSubtitle> Award <IonIcon icon={medalOutline}></IonIcon></IonCardSubtitle>
-                <IonCardTitle> {pointsState} Points </IonCardTitle>
-              </IonCardHeader>
+            <IonCardHeader>
+              <IonCardSubtitle> Award <IonIcon icon={medalOutline}></IonIcon></IonCardSubtitle>
+              <IonCardTitle> {pointsState} Points </IonCardTitle>
+            </IonCardHeader>
 
-              <IonList>
-                {/*TODO: add qr scanner to functionality to ionItem */}
-                <IonCard class="QR-Scanner-card">
+            <IonList>
+              {/*TODO: add qr scanner to functionality to ionItem */}
+              <IonCard class="QR-Scanner-card">
                 <QRScanner name="QR-Scanner"
-                stylingMargins={"qr-scanner-clues-tab"}
-                scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
-                </IonCard>
+                  stylingMargins={"qr-scanner-clues-tab"}
+                  scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+              </IonCard>
 
-                {/*Exit Modal button: */}
-                <IonItem
-                  button
-                  color="secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  <IonIcon icon={arrowBackCircleOutline} slot="start" />
-                  <IonLabel>Go Back</IonLabel>
-                </IonItem>
+              {/*Exit Modal button: */}
+              <IonItem
+                button
+                color="secondary"
+                onClick={() => setShowModal(false)}
+              >
+                <IonIcon icon={arrowBackCircleOutline} slot="start" />
+                <IonLabel>Go Back</IonLabel>
+              </IonItem>
 
-                {/* temporary ion items to be implemented when scan qr logic is added: */}
-                <IonItem
-                  button
-                  color="danger"
-                  onClick={() => setShowCorrectAlert(true)}
-                >
-                  <IonIcon icon={arrowBackCircleOutline} slot="start" />
-                  <IonLabel>IF CORRECT</IonLabel>
-                </IonItem>
+              {/* temporary ion items to be implemented when scan qr logic is added: */}
+              <IonItem
+                button
+                color="danger"
+                onClick={() => setShowCorrectAlert(true)}
+              >
+                <IonIcon icon={arrowBackCircleOutline} slot="start" />
+                <IonLabel>IF CORRECT</IonLabel>
+              </IonItem>
 
-                <IonItem
-                  button
-                  color="danger"
-                  onClick={() => setShowIncorrectAlert(true)}
-                >
-                  <IonIcon icon={arrowBackCircleOutline} slot="start" />
-                  <IonLabel>IF INCORRECT</IonLabel>
-                </IonItem>
-
-
-              </IonList>
-            </IonCard>
-          </IonModal>
-          {/* END OF MODAL */}
+              <IonItem
+                button
+                color="danger"
+                onClick={() => setShowIncorrectAlert(true)}
+              >
+                <IonIcon icon={arrowBackCircleOutline} slot="start" />
+                <IonLabel>IF INCORRECT</IonLabel>
+              </IonItem>
 
 
-          {/* if the scan of qr code is correct show this alert: possibly add image to message*/}
-          <IonAlert
+            </IonList>
+          </IonCard>
+        </IonModal>
+        {/* END OF MODAL */}
+
+
+        {/* if the scan of qr code is correct show this alert: possibly add image to message*/}
+        <IonAlert
           isOpen={showCorrectAlert}
-          onDidDismiss={() => { setShowCorrectAlert(false); setShowModal(false);}}
+          onDidDismiss={() => { setShowCorrectAlert(false); setShowModal(false); }}
           header={'CORRECT!'}
           subHeader={'congratulations'}
-          message={"You have scannrd the correct artwork!  {/*number of points*/} has been added to your account" }
+          message={"You have scannrd the correct artwork!  {/*number of points*/} has been added to your account"}
           buttons={[
             {
-             text: 'Close',
-             handler: () =>{
-               console.log("confirm close");
-             }
+              text: 'Close',
+              handler: () => {
+                console.log("confirm close");
+              }
             }
-            ]}
+          ]}
         /> {/*ion alert - correct*/}
 
         {/* if the scan of qr code is correct show this alert: */}
-          <IonAlert
+        <IonAlert
           isOpen={showIncorrectAlert}
           onDidDismiss={() => { setShowIncorrectAlert(false) }}
           header={'SORRY, INCORRECT! '}
           subHeader={'Artwork scanned is incorrect'}
-          message={"you have selected the incorrect artwork! Please try again" }
+          message={"you have selected the incorrect artwork! Please try again"}
           buttons={[
             {
-             text: 'Exit to Clues',
-             role: 'cancel',
-             handler: () =>{
-               console.log("confirm close");
-               setShowModal(false);
-             }
+              text: 'Exit to Clues',
+              role: 'cancel',
+              handler: () => {
+                console.log("confirm close");
+                setShowModal(false);
+              }
             },
-             {
+            {
               text: 'Try Again',
-              handler: () =>{
+              handler: () => {
                 console.log("confirm try again");
                 setShowModal(true);
               }
             }
-            ]}
+          ]}
         /> {/*ion alert - incorrect*/}
 
       </IonList>

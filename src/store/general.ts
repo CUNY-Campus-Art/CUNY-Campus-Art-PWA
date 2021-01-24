@@ -1,11 +1,8 @@
 import axios from 'axios'
-import { Action } from 'redux'
-import { ThunkAction } from 'redux-thunk'
-import { RootState } from './index'
-import { StrapiApiConnection, axoisPostToStrapi } from './util'
+import { StrapiApiConnection } from './util'
 
 
-let con:StrapiApiConnection = new StrapiApiConnection();
+let con: StrapiApiConnection = new StrapiApiConnection();
 
 
 /************ Type Checking State ************/
@@ -60,7 +57,7 @@ export const ADD_ART_DISPLAY = 'ADD_ART_DISPLAY'
 export const GET_SCANNED_ART_DISPLAY = 'GET_SCANNED_ART_DISPLAY'
 export const GET_ALL_ART_DISPLAYS = 'GET_SCANNED_ART_DISPLAYS'
 export const GET_PAST_ART_DISPLAYS = 'GET_PAST_ART_DISPLAYS'
-export const  RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
+export const RESET_ART_DISPLAYS = 'RESET_ART_DISPLAYS'
 export const RERENDER_ART_DISPLAYS = 'RERENDER_ART_DISPLAYS'
 export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 
@@ -83,7 +80,7 @@ interface ResetArtDisplaysAction {
 }
 
 
-interface RerenderArtDisplaysAction{
+interface RerenderArtDisplaysAction {
   type: typeof RERENDER_ART_DISPLAYS,
   payload: any
 }
@@ -100,7 +97,7 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
   }
 }
 
-export function rerenderArtDisplays(userInfo:any): ArtDisplayActionTypes {
+export function rerenderArtDisplays(userInfo: any): ArtDisplayActionTypes {
   return {
     type: RERENDER_ART_DISPLAYS,
     payload: userInfo

@@ -7,16 +7,14 @@
 
 
 import React, { createRef } from 'react';
-import { IonButton, IonFab, IonFabButton, IonFooter, IonIcon, IonToast } from '@ionic/react';
+import { IonButton, IonFab, IonFabButton, IonIcon, IonToast } from '@ionic/react';
 import './QRScanner.css';
 import jsQR from 'jsqr';
 
 import {
-  folder, scan, stop, qrCodeOutline
+  folder, scan, stop
 } from "ionicons/icons";
 
-//For Camera Button:
-// import { usePhotoGallery } from "../hooks/usePhotoGallery";
 
 interface ContainerProps {
   name: string;
@@ -259,7 +257,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
         <IonButton
           className="ion-no-margin QR-button"
-          style={{marginBottom: '5px'}}
+          style={{ marginBottom: '5px' }}
           expand="block"
           size="large"
           id="scan-button"
@@ -272,7 +270,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
         <IonButton
           className="ion-no-margin QR-button"
-          style={{marginBottom: '5px'}}
+          style={{ marginBottom: '5px' }}
           expand="block"
           // size="medium"
           id="camera"

@@ -6,7 +6,7 @@ Makes use of the React Hook Form library to have values persist even after other
 To Dos: To add Form Validations. Once database values are updated, will have profile picture and campus id added to database as well.
 */
 
-import React, { useState, useContext, useCallback, useEffect} from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import { NavContext } from '@ionic/react';
 import {
   IonInput,
@@ -21,7 +21,6 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonCard
 } from "@ionic/react";
 import { connect } from 'react-redux';
 import { RootState } from '../store'
@@ -30,15 +29,13 @@ import ImageUpload from './HelperComponents/ImageUpload'
 import './Signup.css'
 import { signupNewUser, fetchUser } from '../store/user'
 import { fetchAllCampuses } from '../store/general'
-import { useForm, Controller } from "react-hook-form";
-import Input, { InputProps } from './input'
+import { useForm } from "react-hook-form";
+//import Input, { InputProps } from './input'
 import { object, string } from 'yup';
 
-const backendUrl = "https://dev-cms.cunycampusart.com";
-
-const providersNames = [
-  'google'
-];
+// const providersNames = [
+//   'google'
+// ];
 
 const mapSignup = (state: RootState) => {
   return {
@@ -94,7 +91,7 @@ const AuthForm = (props: any) => {
   console.log(isLogged)
 
 
-  const [listCampuses, setListCampuses] = useState<string[]>([]);
+  //const [listCampuses, setListCampuses] = useState<string[]>([]);
 
   //This value will correspond to an id from the Database that matches up with campus
   const [selectedCampus, setSelectedCampus] = useState<string>();

@@ -1,8 +1,5 @@
-import axios from 'axios'
-import { RootState } from './index'
 import { StrapiApiConnection } from './util'
-
-import { rerenderArtDisplays, fetchPastArtworks,addUnsolvedArtworks } from './artdisplay'
+import { fetchPastArtworks, addUnsolvedArtworks } from './artdisplay'
 /************ Type Checking State ************/
 
 export interface Image {
@@ -66,8 +63,8 @@ const formatUser = async (user: any) => {
     campusId: con.user.campus ? con.user.campus.campusid : '',
     scanned_artworks: con.user.scanned_artworks ? con.user.scanned_artworks : [],
     total_points: con.user.total_points,
-    liked_artworks: con.user.liked_artworks ? con.user.like_artworks: [],
-    disliked_artworks: con.user.dislike_artworks ? con.user.dislike_artworks: [],
+    liked_artworks: con.user.liked_artworks ? con.user.like_artworks : [],
+    disliked_artworks: con.user.dislike_artworks ? con.user.dislike_artworks : [],
     solved_artworks: con.user.solved_artworks ? con.user.solved_artworks : [],
     unsolved_artworks: []
   }
@@ -80,7 +77,7 @@ const formatUser = async (user: any) => {
 }
 
 
-export const initializeUser = (user:any) => async (dispatch: any) => {
+export const initializeUser = (user: any) => async (dispatch: any) => {
 
   let user = await formatUser(con.user)
   dispatch(addUnsolvedArtworks(user.unsolved_artworks))
@@ -151,7 +148,6 @@ export const signupError = () => ({ type: SIGNUP_ERROR })
 // })
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 // export const me = () => async dispatch => {
 //   try {
@@ -166,7 +162,7 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", file: any = '') => async (dispatch: any) => {
   let status = await con.createUser(email, pw, username, firstName, lastName, file)
-  console.log("success", con.user)
+  console.log("status", status)
 
   let newUser = await formatUser(con.user)
   dispatch((newUser.unsolved_artworks))
@@ -186,9 +182,9 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
 
       con.user = returnData.data.user;
       let user = await formatUser(con.user)
-       dispatch(addUnsolvedArtworks(user.unsolved_artworks))
-       dispatch(getUser(user))
-       dispatch(fetchPastArtworks(user))
+      dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+      dispatch(getUser(user))
+      dispatch(fetchPastArtworks(user))
       localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
       localStorage.setItem('user', JSON.stringify(con.user)); // save specific fields from user
       // localStorage.setItem('unsolved', JSON.stringify(user.unsolved_artworks));
@@ -208,7 +204,7 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
 }
 
 //This was added so that artwork could be added to database without any errors and duplicate con objets
-export const addScannedArtDisplayToUserDB = (user:any, artworkId: any) => async (dispatch: any) => {
+export const addScannedArtDisplayToUserDB = (user: any, artworkId: any) => async (dispatch: any) => {
   con.user = user
   await con.addScannedArtworkToUser([artworkId])
   await con.syncRemoteToLocalUser()
@@ -262,7 +258,7 @@ export default function (state = defaultUser, action: any) {
     case GET_USER:
       return { ...state, user: action.user, error: '' }
     case REMOVE_USER:
-      return { user: '', authToken: '', campus: '', error: '', total_points: '', solved_artworks: []};
+      return { user: '', authToken: '', campus: '', error: '', total_points: '', solved_artworks: [] };
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
     // case ADD_UNSOLVED_ARTWORKS:
