@@ -2,7 +2,7 @@
  * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
  */
 
-import React,{ useContext, useCallback, useState, useEffect} from "react";
+import React, { useContext, useCallback } from "react";
 import { NavContext } from '@ionic/react';
 import { connect, ConnectedProps } from 'react-redux'
 import {
@@ -27,13 +27,9 @@ import "./Information.css";
 
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
 
-import  {
-  clickLikeButton, removeLikedArtwork,
+import {
+  clickLikeButton
 } from '../store/artdisplay'
-
-
-import { RootState } from '../store'
-import { createTrue } from "typescript";
 
 const mapState = (state: any) => ({
   user: state.user.user,
@@ -42,7 +38,7 @@ const mapState = (state: any) => ({
 })
 
 const mapDispatch = (dispatch: any) => ({
-  clickLikeButton: (user:any, artworkId:any, fromGallery:boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery))
+  clickLikeButton: (user: any, artworkId: any, fromGallery: boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -61,48 +57,49 @@ const slideOpts = {
 
 const Information = (props: Props) => {
 
-    // To redirect to QR scan tab using backward animation
-    const { navigate } = useContext(NavContext);
-    const redirect = useCallback(
-      () => navigate('/ScanQR', 'back'),
-      [navigate]
-    );
+  // To redirect to QR scan tab using backward animation
+  const { navigate } = useContext(NavContext);
+  const redirect = useCallback(
+    () => navigate('/ScanQR', 'back'),
+    [navigate]
+  );
 
 
   let currentArtDisplay = props.currentArtDisplay;
   console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
 
-  let slidesComp = props.currentArtDisplay.other_images ? [ currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images ] : [currentArtDisplay.primary_image]
+  let slidesComp = props.currentArtDisplay.other_images ? [currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images] : [currentArtDisplay.primary_image]
 
-  function  handleLikes() {
-    let result = props.clickLikeButton(props.user, currentArtDisplay, false);
+  function handleLikes() {
+      let result = props.clickLikeButton(props.user, currentArtDisplay, false);
+      //Use the result in the future to make local state update faster
   }
 
   return (
     <IonPage>
       <IonHeader>
-          <IonToolbar></IonToolbar>
+        <IonToolbar></IonToolbar>
 
-          <IonToolbar>
-            <IonTitle className="ion-text-center">Artwork Information</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+        <IonToolbar>
+          <IonTitle className="ion-text-center">Artwork Information</IonTitle>
+        </IonToolbar>
+      </IonHeader>
 
       <IonContent>
         <IonCard>
           <IonCardHeader>
             <IonCardSubtitle>{currentArtDisplay.artist}
-            {/* Heart Button */}
-            <IonButton className="heartPlacement"
-                        fill="clear"
-                        size="small"
-                        onClick={handleLikes}
-                      >
-                        {currentArtDisplay.liked ? (<IonIcon slot="icon-only" size='large' icon={heart}></IonIcon>) : (<IonIcon slot="icon-only"  size='large' icon={heartOutline}></IonIcon>)}
+              {/* Heart Button */}
+              <IonButton className="heartPlacement"
+                fill="clear"
+                size="small"
+                onClick={handleLikes}
+              >
+                {currentArtDisplay.liked ? (<IonIcon slot="icon-only" size='large' icon={heart}></IonIcon>) : (<IonIcon slot="icon-only" size='large' icon={heartOutline}></IonIcon>)}
 
-                      </IonButton>
+              </IonButton>
 
-                {/* <IonIcon
+              {/* <IonIcon
                 className="heartPlacement"
                 onClick={() => props.clickLikeButton(props.user, currentArtDisplay, false)}
                 icon={props.currentArtDisplay.liked ? heart: heartOutline}
@@ -114,9 +111,9 @@ const Information = (props: Props) => {
 
           <IonCardContent>
 
-          {/* Slide show of images uploaded for the artwork */}
-          <IonSlides pager={true} options={slideOpts}  key={slidesComp.map(slide => slide.url).join('_')}>
-            {slidesComp.map((image, index )=> <IonSlide key={image.url}>
+            {/* Slide show of images uploaded for the artwork */}
+            <IonSlides pager={true} options={slideOpts} key={slidesComp.map(slide => slide.url).join('_')}>
+              {slidesComp.map((image, index) => <IonSlide key={image.url}>
                 <img src={image.url} alt={image.alternativeText} />
               </IonSlide>)}
 

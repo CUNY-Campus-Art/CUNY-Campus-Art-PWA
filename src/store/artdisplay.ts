@@ -1,9 +1,5 @@
 import axios from 'axios'
-import { Action } from 'redux'
-import { ThunkAction } from 'redux-thunk'
-import { RootState } from './index'
-import { StrapiApiConnection, axoisPostToStrapi } from './util'
-import { getUser } from './user'
+import { StrapiApiConnection } from './util'
 
 let con: StrapiApiConnection = new StrapiApiConnection();
 
@@ -188,7 +184,7 @@ interface RemoveSolvedArtworkAction {
 
 interface AddUnsolvedArtworksAction {
   type: typeof ADD_UNSOLVED_ARTWORKS,
-  payload: ArtDisplay []
+  payload: ArtDisplay[]
 }
 
 
@@ -221,7 +217,7 @@ export function gotPastArtDisplays
   }
 }
 
-export function addUnsolvedArtworks (artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
+export function addUnsolvedArtworks(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
   return {
     type: ADD_UNSOLVED_ARTWORKS,
     payload: artDisplays
@@ -313,7 +309,7 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
   let artworks: any = con.user.scanned_artworks ? con.user.scanned_artworks : [];
 
   // save ids of liked artworks
-  let likedArtworkIds = con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id): []
+  let likedArtworkIds = con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
 
   // save ids of disliked artworks
   let dislikedArtworkIds = con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
@@ -336,13 +332,13 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
 
 //retrieves Scanned Art from database
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
-      //"https://cuny-gallery.web.app/cuny-campus-art-
-    //"cuny-campus-art-" -> 16 characters
-    //"campus-art-" -> 11 characters
-    let artworkId =
-      qrCodeText.startsWith("https://cuny-gallery.web.app/cuny-campus-art-") ? qrCodeText.slice(45) :
-        qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
-          qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11) : '';
+  //"https://cuny-gallery.web.app/cuny-campus-art-
+  //"cuny-campus-art-" -> 16 characters
+  //"campus-art-" -> 11 characters
+  let artworkId =
+    qrCodeText.startsWith("https://cuny-gallery.web.app/cuny-campus-art-") ? qrCodeText.slice(45) :
+      qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
+        qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11) : '';
 
   try {
 
@@ -350,10 +346,10 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
 
 
     // save ids of liked artworks
-    let likedArtworkIds = con.user && con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id): []
+    let likedArtworkIds = con.user && con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
 
     // save ids of disliked artworks
-    let dislikedArtworkIds = con.user && con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id): []
+    let dislikedArtworkIds = con.user && con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
 
     data.liked = likedArtworkIds.includes(data.id) ? true : false
     data.disliked = dislikedArtworkIds.includes(data.id) ? true : false
@@ -396,7 +392,7 @@ export const fetchAllCampuses = () => async (dispatch: any) => {
 // Helper Function: removeFromLikes
 const removeFromLikes = async (artwork: any) => {
   // will toggle like button to neutral
-    artwork.liked = false;
+  artwork.liked = false;
 
   // decrease artwork's overall likes
   if (artwork.likes > 0) {
@@ -412,12 +408,12 @@ const removeFromLikes = async (artwork: any) => {
 
 // Helper Function: removeFromDislikes
 const removeFromDislikes = async (artwork: any) => {
-    // Toggle dislike button to off mode
-    artwork.disliked = false
+  // Toggle dislike button to off mode
+  artwork.disliked = false
 
-    // will remove from user's dislikes
-    await con.removeDislikedArtworkFromUser([artwork.id])
-    //dispatch(removeLikedArtwork(artwork.id))
+  // will remove from user's dislikes
+  await con.removeDislikedArtworkFromUser([artwork.id])
+  //dispatch(removeLikedArtwork(artwork.id))
 
 }
 
@@ -431,8 +427,8 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
     await con.syncRemoteToLocalUser()
     //reload artworks
     console.log("after", con.user)
-    if(artwork.liked) removeFromLikes(artwork)
-    if(artwork.disliked) removeFromDislikes (artwork)
+    if (artwork.liked) removeFromLikes(artwork)
+    if (artwork.disliked) removeFromDislikes(artwork)
     dispatch(fetchPastArtworks(con.user))
 
   }
@@ -443,9 +439,9 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
 }
 
 // Goal: Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
-export const clickLikeButton = (user:any, artwork:any, fromGallery: boolean) => async (dispatch: any) => {
+export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) => async (dispatch: any) => {
   con.user = user;
-  artwork= artwork;
+  
   // If artwork is already liked, remove from likes
   if (user && artwork.liked) {
     await removeFromLikes(artwork)
@@ -461,7 +457,7 @@ export const clickLikeButton = (user:any, artwork:any, fromGallery: boolean) => 
       artwork.liked = true;
       await con.addLikedArtworkToUser([artwork.id])
 
-      if(artwork.disliked){
+      if (artwork.disliked) {
         await removeFromDislikes(artwork)
       }
     }
@@ -470,15 +466,15 @@ export const clickLikeButton = (user:any, artwork:any, fromGallery: boolean) => 
 
   //If the Like Button is clicked in the Information Tab
 
-  if(fromGallery === false) {
-    dispatch(changeCurrentArtDisplay({...artwork, liked: artwork.liked}))
+  if (fromGallery === false) {
+    dispatch(changeCurrentArtDisplay({ ...artwork, liked: artwork.liked }))
     console.log(artwork, 'in gallery yo')
     return artwork;
   }
 
 }
 
-export const clickDislikeButton = (user:any, artwork:any) => async (dispatch: any) => {
+export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: any) => {
 
   con.user = user;
 
@@ -491,7 +487,7 @@ export const clickDislikeButton = (user:any, artwork:any) => async (dispatch: an
       artwork.disliked = true;
       await con.addDislikedArtworkToUser([artwork.id])
 
-      if(artwork.liked){
+      if (artwork.liked) {
         await removeFromLikes(artwork)
       }
     }
@@ -531,7 +527,7 @@ const defaultCurrentArtDisplay = {
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays:  con.user ? [defaultCurrentArtDisplay, ...con.user.scanned_artworks] : [defaultCurrentArtDisplay],
+  pastArtDisplays: con.user ? [defaultCurrentArtDisplay, ...con.user.scanned_artworks] : [defaultCurrentArtDisplay],
   allArtDisplays: [defaultCurrentArtDisplay],
   campuses: [],
   unsolvedArtDisplays: []
@@ -544,7 +540,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
     //This changes the value of the current art to be displayed
     case CHANGE_CURRENT_ART_DISPLAY:
-      return { ...state, currentArtDisplay: {...action.payload, liked: action.payload.liked} }
+      return { ...state, currentArtDisplay: { ...action.payload, liked: action.payload.liked } }
     //checks to see if artwork is already in history
     //duplicate items are not added
     //updates pastArtDisplay
@@ -601,8 +597,8 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         ...state,
         pastArtDisplays: [...state.pastArtDisplays]
       }
-   case ADD_UNSOLVED_ARTWORKS:
-        return {...state, unsolvedArtDisplays: [...action.payload]}
+    case ADD_UNSOLVED_ARTWORKS:
+      return { ...state, unsolvedArtDisplays: [...action.payload] }
     default:
       return state
   }

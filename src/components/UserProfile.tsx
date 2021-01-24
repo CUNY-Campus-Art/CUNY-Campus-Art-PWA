@@ -2,10 +2,10 @@
  * UserProfile.tsx - UserProfile display component displays the specific user's information if they are logged in.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../store";
-import { getUser, logout, fetchUser } from "../store/user";
+import { getUser, fetchUser } from "../store/user";
 import "./UserProfile.css";
 import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 
@@ -64,7 +64,7 @@ const UserProfile = (props: Props) => {
           alt="Avatar"
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
-        <IonCardSubtitle>{user.campus ? user.campus.campus_name : ''}</IonCardSubtitle>
+        <IonCardSubtitle>{campus ? campus.campus_name : ''}</IonCardSubtitle>
         {/* To do: decide to keep this button to open up to form or remove this button */}
         <IonButton fill="outline" slot="end">
           Edit

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from '../store'
-import { getUser, logout, fetchUser, initializeUser } from '../store/user'
+import { getUser, fetchUser, initializeUser } from '../store/user'
 import './Profile.css';
 import { Login } from '../components/Login'
 import {
@@ -16,8 +16,8 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import "./Home.css";
-import  HuntClues  from "../components/HuntClues"; //clues list component
-import  HuntStatus  from "../components/HuntStatus";  //user status component
+import HuntClues from "../components/HuntClues"; //clues list component
+import HuntStatus from "../components/HuntStatus";  //user status component
 
 const mapState = (state: RootState) => ({
   currentUser: state.user.user,
@@ -44,11 +44,12 @@ type Props = PropsFromRedux & {
 
 const ScavengerHunt = (props: Props) => {
 
+  // Loads clues
   useEffect(() => { if (user) props.initializeUser(props.currentUser); }, []);
 
   let user = props.currentUser;
-  let campus = props.campus;
-    // Set clues tab to be default opened
+
+  // Set clues tab default to opened
   const [showStatus, setShowStatus] = useState(false);
   const [showClues, setShowClues] = useState(true);
   const handleStatus = () => {
@@ -62,31 +63,31 @@ const ScavengerHunt = (props: Props) => {
 
   return (
     <IonPage className="container-fluid">
-        <IonHeader>
-            <IonToolbar></IonToolbar>
+      <IonHeader>
+        <IonToolbar></IonToolbar>
 
-            <IonToolbar>
-            <IonTitle className="ion-text-center">Scavenger Hunt</IonTitle>
-            </IonToolbar>
-        </IonHeader>
+        <IonToolbar>
+          <IonTitle className="ion-text-center">Scavenger Hunt</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
         {/* value sets checked segment button based on which is clicked */}
-        {user? <React.Fragment>
-            <IonSegment value={showClues ? "clues" : "status"}>
-                <IonSegmentButton value="clues" onClick={handleClues}>
-                    <IonLabel>Clues</IonLabel>
-                </IonSegmentButton>
-                <IonSegmentButton value="status" onClick={handleStatus}>
-                    <IonLabel>Status</IonLabel>
-                </IonSegmentButton>
-            </IonSegment>
+        {user ? <React.Fragment>
+          <IonSegment value={showClues ? "clues" : "status"}>
+            <IonSegmentButton value="clues" onClick={handleClues}>
+              <IonLabel>Clues</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="status" onClick={handleStatus}>
+              <IonLabel>Status</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
 
-        {/* ************** shows Clues for scavenger hunt *************** */}
-        <div>{showClues ? (<HuntClues/>) : (<p></p>)}</div>
+          {/* ************** shows Clues for scavenger hunt *************** */}
+          <div>{showClues ? (<HuntClues />) : (<p></p>)}</div>
 
-        {/* ************** shows Status for scavenger hunt of User *************** */}
-        <div> {showStatus ? (user ? (<HuntStatus /> ): (<Login />)) : <p></p>}</div>
-        </React.Fragment>: <Login/>}
+          {/* ************** shows Status for scavenger hunt of User *************** */}
+          <div> {showStatus ? (user ? (<HuntStatus />) : (<Login />)) : <p></p>}</div>
+        </React.Fragment> : <Login />}
       </IonContent>
     </IonPage>
   );

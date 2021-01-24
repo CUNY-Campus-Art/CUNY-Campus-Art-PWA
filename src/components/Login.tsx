@@ -7,22 +7,22 @@ Login.tsx -  Login/ Logout components
 
 */
 import './Login.css'
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { RootState } from '../store'
 import { fetchUser, logout } from '../store/user'
 import { rerenderArtDisplays, resetArtDisplays } from '../store/artdisplay'
 import { IonText, IonButton, IonCard } from '@ionic/react';
-const backendUrl = "https://dev-cms.cunycampusart.com";
 
-const providersNames = [
-  'google'
-];
+/** TODO: Perhaps add google oauth in the future */
+// const providersNames = [
+//   'google'
+// ];
 
 const LogoutButton = (props: any) => <IonButton color="dark" onClick={props.onClick} className="btn login_btn">Logout</IonButton>;
 
-const mapLogin = (state: RootState|any) => {
+const mapLogin = (state: RootState | any) => {
   return {
     name: 'login',
     displayName: 'Login',
@@ -72,7 +72,7 @@ const AuthForm = (props: any) => {
         <p>{'Log in to save your progress!'}</p>
 
         {/* Displays Login in form (username/ email) */}
-        {error ? <IonCard className="error-box"><IonText>{error}</IonText></IonCard>: ''}
+        {error ? <IonCard className="error-box"><IonText>{error}</IonText></IonCard> : ''}
         <form onSubmit={handleSubmit} name={name} className="form-group">
 
           {props.fields.map((field: any, index: any) =>

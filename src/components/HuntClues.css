@@ -1,6 +1,3 @@
-
-
-
 /* Added for stop button that was not floating.  */
 /* #stop-button{
   margin-top: 20px;
@@ -8,18 +5,18 @@
   position: fixed;
   z-index: 2000;
 } */
-.QR-Scanner-card{
+.QR-Scanner-card {
   box-shadow: 0 0 0 #fff;
 }
 
 .modal-scanner-bg {
   position: fixed;
-  height:  80vh;
+  height: 80vh;
   width: 100vw;
   background-color: black;
   z-index: 30000;
 }
 
-#QR-Scanner-Scavenger  {
+#QR-Scanner-Scavenger {
   z-index: 40001;
 }

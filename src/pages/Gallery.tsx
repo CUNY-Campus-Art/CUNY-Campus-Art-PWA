@@ -5,14 +5,12 @@
  * of past artworks the user has scanned locally.
  */
 
-import React, { useEffect, useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
-import { RootState } from '../store'
 import {
   changeCurrentArtDisplay,
-  fetchAllArtworks,
   fetchPastArtworks,
   ArtDisplay,
   removeScannedArtDisplay,
@@ -20,7 +18,7 @@ import {
   clickDislikeButton
 } from '../store/artdisplay'
 
-import { analytics, heart, heartOutline, heartDislike, heartDislikeOutline, thumbsDown } from "ionicons/icons";
+import { heart, heartOutline, heartDislike, heartDislikeOutline } from "ionicons/icons";
 
 import {
   IonContent,
@@ -51,8 +49,8 @@ const mapDispatch = (dispatch: any) => ({
   changeCurrentArtDisplay: (artwork: ArtDisplay) => dispatch(changeCurrentArtDisplay(artwork)),
   getPastArtworks: (currentUser: any) => dispatch(fetchPastArtworks(currentUser)),
   removeArtwork: (user: any, artworkId: any) => dispatch(removeScannedArtDisplay(user, artworkId)),
-  clickLikeButton: (user:any, artworkId:any, fromGallery:boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery)),
-  clickDislikeButton: (user:any, artworkId:any) => dispatch(clickDislikeButton(user, artworkId)),
+  clickLikeButton: (user: any, artworkId: any, fromGallery: boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery)),
+  clickDislikeButton: (user: any, artworkId: any) => dispatch(clickDislikeButton(user, artworkId)),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -66,11 +64,10 @@ type Props = PropsFromRedux & {
 const Gallery = (props: Props) => {
   const user = props.currentUser
 
- // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
+  // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
   const pastArtDisplays = props.pastArtDisplays
-  const changeCurrentArtDisplay = props.changeCurrentArtDisplay
-
+  
   // To redirect to Information with forward animation
   const { navigate } = useContext(NavContext)
   const redirect = useCallback(
@@ -133,22 +130,22 @@ const Gallery = (props: Props) => {
                         size="small"
                         color="danger"
                         onClick={() => props.clickLikeButton(user, artDisplay, true)}
-                        // onClick={handleLikes}
+                      // onClick={handleLikes}
                       >
                         {artDisplay.liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
 
                       </IonButton>
 
                       {/* Thumbs Down Icon */}
-                 <IonButton
-                                            fill="outline"
-                                            size="small"
-                                            color="primary"
+                      <IonButton
+                        fill="outline"
+                        size="small"
+                        color="primary"
 
-                                            onClick={() => props.clickDislikeButton(user, artDisplay)}
-                                          >
-                                            {artDisplay.disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
-                                          </IonButton>
+                        onClick={() => props.clickDislikeButton(user, artDisplay)}
+                      >
+                        {artDisplay.disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
+                      </IonButton>
 
 
                       {/* Trash Icon */}

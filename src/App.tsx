@@ -1,11 +1,10 @@
-import React, {useEffect} from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
   IonLabel,
   IonRouterOutlet,
-  IonRouterLink,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -13,14 +12,12 @@ import {
   IonToolbar,
   IonText,
   IonImg,
-  IonButton,
-  IonTitle, IonGrid, IonRow, IonCol, IonItemDivider
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Link } from 'react-router-dom';
 import { connect, ConnectedProps } from 'react-redux'
 import { RootState } from './store'
-import {fetchAllCampuses } from './store/general'
+import { fetchAllCampuses } from './store/general'
 
 //import Home from './pages/Home';
 import Home from './pages/Home'
@@ -30,7 +27,7 @@ import Information from './pages/Information';
 import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
 
-import { images, home, person, qrCodeOutline, menu, informationCircle, map } from 'ionicons/icons';
+import { images, home, person, qrCodeOutline, informationCircle, map } from 'ionicons/icons';
 import { Signup } from './components/Signup'
 import defaultProfilePicture from './assets/images/default-profile-pic-2.png'
 
@@ -57,14 +54,14 @@ import './theme/variables.css';
 import './App.css';
 
 /* Redux store - load essential variables when app initially loads, like user status, general store info, like all campuses, etc */
-const mapState= (state: RootState) => ({
-    currentUser: state.user.user, // if user is logged in will have a value
-    campuses: state.general.campuses
-    //error: state.user.error
+const mapState = (state: RootState) => ({
+  currentUser: state.user.user, // if user is logged in will have a value
+  campuses: state.general.campuses
+  //error: state.user.error
 })
 
 const mapDispatch = (dispatch: any) => ({
-   getAllCampuses: () => dispatch(fetchAllCampuses()),
+  getAllCampuses: () => dispatch(fetchAllCampuses()),
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -81,22 +78,22 @@ const App = (props: Props) => {
     <IonApp>
       <IonReactRouter>
         <IonHeader >
-              <link rel="preconnect" href="https://fonts.gstatic.com" />
-<link href="https://fonts.googleapis.com/css2?family=Clicker+Script&display=swap" rel="stylesheet" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <link href="https://fonts.googleapis.com/css2?family=Clicker+Script&display=swap" rel="stylesheet" />
           <IonToolbar className="top-bar" >
 
-          <Link to="/Home" slot="start" className="CUNY-title"><IonText className="ion-text-center CUNY-title"> CUNY <span style={{fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red'}}>Gallery</span></IonText></Link>
+            <Link to="/Home" slot="start" className="CUNY-title"><IonText className="ion-text-center CUNY-title"> CUNY <span style={{ fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red' }}>Gallery</span></IonText></Link>
 
 
-          <Link to="/Profile" slot="end">
+            <Link to="/Profile" slot="end">
               {/* Greet User By Name if logged in */}
-               {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
+              {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
 
-               {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
-              {props.currentUser ? <IonImg style={{height: '2em', width: '2em'}} src={props.currentUser.profile_picture ? props.currentUser.profile_picture.url: defaultProfilePicture} /> : <IonIcon color= "medium" icon={person} />}
+              {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
+              {props.currentUser ? <IonImg style={{ height: '2em', width: '2em' }} src={props.currentUser.profile_picture ? props.currentUser.profile_picture.url : defaultProfilePicture} /> : <IonIcon color="medium" icon={person} />}
 
             </Link>
-          {/* </IonTabs> */}
+            {/* </IonTabs> */}
           </IonToolbar>
         </IonHeader>
 
