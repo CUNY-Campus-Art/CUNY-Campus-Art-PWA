@@ -2,7 +2,7 @@ import axios from 'axios'
 import { RootState } from './index'
 import { StrapiApiConnection } from './util'
 
-import { rerenderArtDisplays, fetchPastArtworks } from './artdisplay'
+import { rerenderArtDisplays, fetchPastArtworks,addUnsolvedArtworks } from './artdisplay'
 /************ Type Checking State ************/
 
 export interface Image {
@@ -52,7 +52,6 @@ const getUnsolvedArtworks = async (user: any) => {
 
   //filter out solved artwords and artworks that don't have a clue attached
   let unsolvedArtworks = artworks.filter((artwork: any) => !solvedArtworksIds.includes(artwork.id) && artwork.clue)
-
   return unsolvedArtworks;
 }
 
@@ -65,11 +64,11 @@ const formatUser = async (user: any) => {
     profile_picture: con.user.profile_picture,
     campus: con.user.campus ? con.user.campus.campus_name : '',
     campusId: con.user.campus ? con.user.campus.campusid : '',
-    scanned_artworks: con.user.scanned_artworks,
+    scanned_artworks: con.user.scanned_artworks ? con.user.scanned_artworks : [],
     total_points: con.user.total_points,
-    liked_artworks: con.user.liked_artworks,
-    disliked_artworks: con.user.dislike_artworks,
-    solved_artworks: con.user.solved_artworks,
+    liked_artworks: con.user.liked_artworks ? con.user.like_artworks: [],
+    disliked_artworks: con.user.dislike_artworks ? con.user.dislike_artworks: [],
+    solved_artworks: con.user.solved_artworks ? con.user.solved_artworks : [],
     unsolved_artworks: []
   }
 
@@ -86,6 +85,7 @@ export const initializeUser = (user:any) => async (dispatch: any) => {
   let user = await formatUser(con.user)
   dispatch(addUnsolvedArtworks(user.unsolved_artworks))
   dispatch(getUser(user))
+  dispatch(fetchPastArtworks(user))
 
 }
 
@@ -93,7 +93,7 @@ export const initializeUser = (user:any) => async (dispatch: any) => {
 let con: StrapiApiConnection = new StrapiApiConnection();
 if (con.user) {
   con.syncRemoteToLocalUser()
-  initializeUser(con.user)
+  //initializeUser(con.user)
 
   //localStorage.setItem('user', JSON.stringify(con.user))
 };
@@ -145,10 +145,10 @@ export const removeUser = () => ({ type: REMOVE_USER })
 export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
 
-export const addUnsolvedArtworks = (artworks:any) => ({
-  type: ADD_UNSOLVED_ARTWORKS,
-  payload: artworks
-})
+// export const addUnsolvedArtworks = (artworks:any) => ({
+//   type: ADD_UNSOLVED_ARTWORKS,
+//   payload: artworks
+// })
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
@@ -169,7 +169,7 @@ export const signupNewUser = (email: string, pw: string, username: string, first
   console.log("success", con.user)
 
   let newUser = await formatUser(con.user)
-  dispatch(addUnsolvedArtworks(newUser.unsolved_artworks))
+  dispatch((newUser.unsolved_artworks))
   dispatch(getUser(newUser))
 
   //If there is a user assigned that means user was successfully added to database, so return true
@@ -184,15 +184,16 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
 
     if (returnData.status === 200) {
 
+      con.user = returnData.data.user;
       let user = await formatUser(con.user)
-      dispatch(addUnsolvedArtworks(user.unsolved_artworks))
-
+       dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+       dispatch(getUser(user))
+       dispatch(fetchPastArtworks(user))
       localStorage.setItem('jwt', JSON.stringify(returnData.data.jwt));
-      localStorage.setItem('user', JSON.stringify(user)); // save specific fields from user
-      localStorage.setItem('unsolved', JSON.stringify(user.unsolved_artworks));
+      localStorage.setItem('user', JSON.stringify(con.user)); // save specific fields from user
+      // localStorage.setItem('unsolved', JSON.stringify(user.unsolved_artworks));
       console.log('You have been successfully logged in. You will be redirected in a few seconds...')
-      dispatch(getUser(user))
-      dispatch(fetchPastArtworks(user))
+
     }
 
     if (returnData.status === -1) {
@@ -207,10 +208,11 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
 }
 
 //This was added so that artwork could be added to database without any errors and duplicate con objets
-export const addScannedArtDisplayToUserDB = (artworkId: any) => async (dispatch: any) => {
-  await con.addScannedArtworkToUser([artworkId]);
-  await con.syncRemoteToLocalUser();
-  localStorage.setItem('user', JSON.stringify(con.user));
+export const addScannedArtDisplayToUserDB = (user:any, artworkId: any) => async (dispatch: any) => {
+  con.user = user
+  await con.addScannedArtworkToUser([artworkId])
+  await con.syncRemoteToLocalUser()
+  localStorage.setItem('user', JSON.stringify(con.user))
 }
 
 // export const auth = (email, password, method) => async dispatch => {
@@ -250,7 +252,6 @@ const defaultUser =
   error: '',
   total_points: currentUser.total_points,
   solved_artworks: currentUser.solved_artworks,
-  unsolved_artworks: currentUser.unsolved
 }
 
 
@@ -261,11 +262,11 @@ export default function (state = defaultUser, action: any) {
     case GET_USER:
       return { ...state, user: action.user, error: '' }
     case REMOVE_USER:
-      return { ...state, user: '', authToken: '', campus: '', error: '' };
+      return { user: '', authToken: '', campus: '', error: '', total_points: '', solved_artworks: []};
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
-    case ADD_UNSOLVED_ARTWORKS:
-      return {...state, unsolved_artworks: action.payload}
+    // case ADD_UNSOLVED_ARTWORKS:
+    //   return {...state, unsolved_artworks: action.payload}
     default:
       return state
   }

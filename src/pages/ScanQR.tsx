@@ -30,7 +30,7 @@ const mapState = (state: RootState) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
-  addScannedArtDisplayToUserDB: (artworkId: any) => dispatch(addScannedArtDisplayToUserDB(artworkId)),
+  addScannedArtDisplayToUserDB: (user:any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -44,6 +44,7 @@ type Props = PropsFromRedux & {
 }
 
 const ScanQR = (props: Props) => {
+  let user = props.user
   // To redirect to Information tab using forward animation
   const { navigate } = useContext(NavContext);
   const redirect = useCallback(
@@ -61,7 +62,7 @@ const ScanQR = (props: Props) => {
     setScanResult(scanResult) //updates local state
     console.log('scan result: ', scanResult)
     let id = await props.getScannedArtDisplay(scanResult)
-    if(props.user) await props.addScannedArtDisplayToUserDB(id);
+    if(user) await props.addScannedArtDisplayToUserDB(user, id);
     scanStateParent(false)
     redirect()
   };
@@ -79,7 +80,7 @@ const ScanQR = (props: Props) => {
   return (
     <IonPage>
       <IonContent>
-        {scanState ? <div id="black-scanner-bg"></div> : ''}
+        {scanState ? <div className="black-scanner-bg"></div> : ''}
         <IonHeader>
           <IonToolbar></IonToolbar>
 
@@ -87,7 +88,6 @@ const ScanQR = (props: Props) => {
             <div className="ion-text-center">Welcome!</div>
           </IonToolbar>
         </IonHeader>
-
 
         <IonCard class="ion-text-center">
           <IonGrid>
@@ -109,9 +109,9 @@ const ScanQR = (props: Props) => {
           </IonGrid>
         </IonCard>
         {/* Pass scanStateParent function so that child can update state of parent :) */}
-        <IonCard class="QR-Scanner-card">
-        <QRScanner name="QR-Scanner" scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
-        </IonCard>
+
+        <QRScanner name="QR-Scanner" stylingMargins={"qr-scanner-scan-section"} scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+
       </IonContent>
     </IonPage>
   );

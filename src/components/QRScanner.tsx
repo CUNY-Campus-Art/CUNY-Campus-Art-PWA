@@ -21,7 +21,8 @@ import {
 interface ContainerProps {
   name: string;
   scanResultParent: (qrcode: any) => void;
-  scanStateParent: (state: any) => void
+  scanStateParent: (state: any) => void;
+  stylingMargins: string;
 }
 
 interface ContainerState {
@@ -120,7 +121,6 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
   // scan() takes images from the camera stream and detects QR code
   async scan() {
-    console.log(this.canvas, "TESTING")
     if (this.videoElement.readyState === this.videoElement.HAVE_ENOUGH_DATA) {
       // if (this.loading) {
       //   await this.loading.dismiss();
@@ -239,12 +239,9 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     this.fileInput.click();
   }
 
-
   render() {
-    // console.log(this.videoElement, "jooo")
-
     return (
-      <div>
+      <div className={this.props.stylingMargins}>
         {/* <strong>{this.props.name}</strong> */}
 
 
@@ -260,9 +257,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         </IonFab> */}
 
 
-
         <IonButton
-          className="ion-no-margin"
+          className="ion-no-margin QR-button"
           style={{marginBottom: '5px'}}
           expand="block"
           size="large"
@@ -275,7 +271,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         </IonButton>
 
         <IonButton
-          className="ion-no-margin"
+          className="ion-no-margin QR-button"
           style={{marginBottom: '5px'}}
           expand="block"
           // size="medium"
@@ -300,7 +296,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
         <div id="scanner-section">
           {/* --Shows our camera stream-- */}
-          <video id="video-scanner" hidden={!this.state.scanActive} width="100%" ref={this.video} autoPlay={true} />
+          <video className="video-scanner" hidden={!this.state.scanActive} width="100%" ref={this.video} autoPlay={true} />
 
           {/* --Used to render the camera stream images-- */}
           <canvas hidden ref={this.canvas}></canvas>
@@ -336,7 +332,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
 
-      </div>
+      </ div>
 
     );
   }

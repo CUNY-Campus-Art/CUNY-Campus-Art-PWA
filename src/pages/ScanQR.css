@@ -6,3 +6,7 @@
 .QR-Scanner-card{
     box-shadow: 0 0 0 #fff;
 }
+
+.qr-scanner-scan-section {
+    margin: 10px;
+  }

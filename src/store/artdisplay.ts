@@ -46,6 +46,7 @@ export interface User {
 export interface ArtDisplaysState {
   currentArtDisplay: ArtDisplay
   pastArtDisplays: ArtDisplay[]
+  unsolvedArtDisplays: ArtDisplay[]
   allArtDisplays: ArtDisplay[]
   campuses: any[]
   // user: any
@@ -87,6 +88,8 @@ export const REMOVE_DISLIKED_ARTWORK = 'REMOVE_LIKED_ARTWORK'
 
 export const ADD_SOLVED_ARTWORK = 'ADD_SOLVED_ARTWORK'
 export const REMOVE_SOLVED_ARTWORK = 'REMOVE_SOLVED_ARTWORK'
+
+export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
 // ACTION CREATORS
 interface AddArtDisplayAction {
@@ -183,9 +186,13 @@ interface RemoveSolvedArtworkAction {
   payload: ArtDisplay
 }
 
+interface AddUnsolvedArtworksAction {
+  type: typeof ADD_UNSOLVED_ARTWORKS,
+  payload: ArtDisplay []
+}
 
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | AddUnsolvedArtworksAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -213,6 +220,14 @@ export function gotPastArtDisplays
     payload: artDisplays
   }
 }
+
+export function addUnsolvedArtworks (artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
+  return {
+    type: ADD_UNSOLVED_ARTWORKS,
+    payload: artDisplays
+  }
+}
+
 //Invoked after fetching all art displays from database
 export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
   return {
@@ -286,19 +301,22 @@ const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
 /** fetchPastArtworks
- * fetches user's past artworks information and addes on like and disliked status for each artwork
+ * fetches user's past artworks information and adds on like and disliked status for each artwork
  * @param userInfo
  */
 export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
   con.user = userInfo;
+
+  // if(con.user) {
+
   await con.syncRemoteToLocalUser()
-  let artworks: any = con.user.scanned_artworks ? con.user.scanned_artworks : defaultCurrentArtDisplay;
+  let artworks: any = con.user.scanned_artworks ? con.user.scanned_artworks : [];
 
   // save ids of liked artworks
-  let likedArtworkIds = con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id)
+  let likedArtworkIds = con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id): []
 
   // save ids of disliked artworks
-  let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id)
+  let dislikedArtworkIds = con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
 
 
   // looks through artworks:
@@ -318,8 +336,7 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
 
 //retrieves Scanned Art from database
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
-  try {
-    //"https://cuny-gallery.web.app/cuny-campus-art-
+      //"https://cuny-gallery.web.app/cuny-campus-art-
     //"cuny-campus-art-" -> 16 characters
     //"campus-art-" -> 11 characters
     let artworkId =
@@ -327,15 +344,16 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
         qrCodeText.startsWith("cuny-campus-art-") ? qrCodeText.slice(16) :
           qrCodeText.startsWith("campus-art") ? qrCodeText.slice(11) : '';
 
+  try {
 
     const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
 
 
     // save ids of liked artworks
-    let likedArtworkIds = con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id)
+    let likedArtworkIds = con.user && con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id): []
 
     // save ids of disliked artworks
-    let dislikedArtworkIds = con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id)
+    let dislikedArtworkIds = con.user && con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id): []
 
     data.liked = likedArtworkIds.includes(data.id) ? true : false
     data.disliked = dislikedArtworkIds.includes(data.id) ? true : false
@@ -513,9 +531,10 @@ const defaultCurrentArtDisplay = {
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays:  /*con.user ? con.user.scanned_artworks:*/[defaultCurrentArtDisplay],
+  pastArtDisplays:  con.user ? [defaultCurrentArtDisplay, ...con.user.scanned_artworks] : [defaultCurrentArtDisplay],
   allArtDisplays: [defaultCurrentArtDisplay],
-  campuses: []
+  campuses: [],
+  unsolvedArtDisplays: []
 }
 
 
@@ -553,6 +572,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         currentArtDisplay: defaultCurrentArtDisplay,
         pastArtDisplays: [defaultCurrentArtDisplay],
         allArtDisplays: [defaultCurrentArtDisplay],
+        unsolvedArtDisplays: []
       }
     case RERENDER_ART_DISPLAYS:
       return {
@@ -581,6 +601,8 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         ...state,
         pastArtDisplays: [...state.pastArtDisplays]
       }
+   case ADD_UNSOLVED_ARTWORKS:
+        return {...state, unsolvedArtDisplays: [...action.payload]}
     default:
       return state
   }
