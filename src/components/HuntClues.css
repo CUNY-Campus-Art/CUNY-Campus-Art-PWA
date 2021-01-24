@@ -14,9 +14,29 @@
   height: 80vh;
   width: 100vw;
   background-color: black;
-  z-index: 30000;
+  z-index: 2;
 }
 
-#QR-Scanner-Scavenger {
-  z-index: 40001;
+.qr-scanner-clues-tab, .modal-back-button{
+  margin: 5px 10px;
+}
+
+.qr-scanner-clues-tab .video-scanner {
+  top: 10vh;
+}
+
+.clues-modal{
+  --max-height: 80vh;
+}
+
+.hide-modal-card{
+  visibility: hidden;
+}
+
+.show-modal-card{
+  visibility: visible;
+}
+
+#stop-button{
+  visibility: shown;
 }

@@ -133,9 +133,9 @@ const HuntClues = (props: Props) => {
 
         {/* ION MODAL COMPONENT (POP UP FOR CLUE): */}
 
-        <IonModal isOpen={showModal}>
-          <IonCard>
-            {scanState ? <div className="modal-scanner-bg"></div> : ''}
+        <IonModal backdropDismiss={false} cssClass={'clues-modal'} isOpen={showModal}>
+          {scanState ? <div className="modal-scanner-bg"></div> : ''}
+          <IonCard className={scanState ? 'hide-modal-card' : 'show-modal-card'}>
             <IonCardHeader>
               <IonCardSubtitle>Category <IonIcon icon={colorPalette}></IonIcon></IonCardSubtitle>
               <IonCardTitle>{categoryState}</IonCardTitle>
@@ -153,21 +153,6 @@ const HuntClues = (props: Props) => {
 
             <IonList>
               {/*TODO: add qr scanner to functionality to ionItem */}
-              <IonCard class="QR-Scanner-card">
-                <QRScanner name="QR-Scanner"
-                  stylingMargins={"qr-scanner-clues-tab"}
-                  scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
-              </IonCard>
-
-              {/*Exit Modal button: */}
-              <IonItem
-                button
-                color="secondary"
-                onClick={() => setShowModal(false)}
-              >
-                <IonIcon icon={arrowBackCircleOutline} slot="start" />
-                <IonLabel>Go Back</IonLabel>
-              </IonItem>
 
               {/* temporary ion items to be implemented when scan qr logic is added: */}
               <IonItem
@@ -191,6 +176,19 @@ const HuntClues = (props: Props) => {
 
             </IonList>
           </IonCard>
+
+          <QRScanner name="QR-Scanner"
+            stylingMargins={"qr-scanner-clues-tab"}
+            scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+          {/*Exit Modal button: */}
+          <IonButton className={`modal-back-button ${scanState ? "hide-modal-card": 'show-modal-card'}` }
+            expand="block"
+            color="tertiary"
+            onClick={() => setShowModal(false)}
+          >
+            <IonIcon icon={arrowBackCircleOutline} slot="start" />
+            <IonLabel>Go Back</IonLabel>
+          </IonButton>
         </IonModal>
         {/* END OF MODAL */}
 
