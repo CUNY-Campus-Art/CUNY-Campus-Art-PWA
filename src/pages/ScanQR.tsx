@@ -67,6 +67,12 @@ const ScanQR = (props: Props) => {
     redirect()
   };
 
+  let handleFile;
+  let getHandleFile = (result:any) => {
+      handleFile = result;
+  }
+
+
   // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
   //Also causes div with blackground to fillup screen for better aesthetic during scan mode
   // Checks whether scan state in child QRScanner component is active
@@ -110,7 +116,8 @@ const ScanQR = (props: Props) => {
         </IonCard>
         {/* Pass scanStateParent function so that child can update state of parent :) */}
 
-        <QRScanner name="QR-Scanner" stylingMargins={"qr-scanner-scan-section"} scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+        <QRScanner key="scan-tab" name="QR-Scanner" stylingMargins={"qr-scanner-scan-section"} scanResultParent={scanResultParent} scanStateParent={scanStateParent}
+        getHandleFile={getHandleFile} />
 
       </IonContent>
     </IonPage>

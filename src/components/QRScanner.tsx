@@ -17,7 +17,8 @@ import {
 
 
 interface ContainerProps {
-  name: string;
+  name: string
+  getHandleFile: any;
   scanResultParent: (qrcode: any) => void;
   scanStateParent: (state: any) => void;
   stylingMargins: string;
@@ -33,7 +34,7 @@ interface ContainerState {
 class QRScanner extends React.Component<ContainerProps, ContainerState> {
   private video = createRef<HTMLVideoElement>();
   private canvas = createRef<HTMLCanvasElement>();
-  private fileInput: any;
+  public fileInput: any;
   // loading: HTMLIonLoadingElement = null;
 
   private canvasElement: any;
@@ -53,6 +54,8 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
       showInvalidQRToast: false
     }
 
+    this.stream = new Response();
+
     this.setShowInvalidQRToast = this.setShowInvalidQRToast.bind(this)
     this.startScan = this.startScan.bind(this)
     this.scan = this.scan.bind(this)
@@ -61,6 +64,9 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     this.uploadImage = this.uploadImage.bind(this)
     this.handleFile = this.handleFile.bind(this)
     this.parseQRCode = this.parseQRCode.bind(this)
+
+    this.props.getHandleFile(this.handleFile)
+
   }
 
   setShowInvalidQRToast(status: boolean) {
@@ -72,13 +78,14 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     this.canvasElement = this.canvas.current!
     this.videoElement = this.video.current!
     this.canvasContext = this.canvasElement.getContext('2d')
+    this.fileInput = document.getElementById(`file-input${this.props.stylingMargins}`)
   }
 
   async componentDidUpdate() {
     this.canvasElement = this.canvas.current!
     this.canvasContext = this.canvasElement.getContext('2d')
     this.videoElement = this.video.current!
-    this.fileInput = document.getElementById('file-input')
+    this.fileInput = document.getElementById(`file-input${this.props.stylingMargins}`)
   }
 
   parseQRCode(code: String) {
@@ -194,7 +201,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   // Handles uploaded image
   handleFile(event: React.ChangeEvent<HTMLElement>) {
     let file = this.fileInput.files.item(0);
-
+    console.log("GOOAL")
     var img = new Image();
     img.onload = () => {
       this.canvasContext.drawImage(img, 0, 0, this.canvasElement.width, this.canvasElement.height);
@@ -244,7 +251,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
 
 
         {/* -- Fallback for iOS PWA -- */}
-        <input id="file-input" type="file" accept="image/*;capture=camera" hidden onChange={this.handleFile} />
+        <input id={`file-inputqr-scanner-scan-section`} type="file" accept="image/*;capture=camera" hidden onChange={this.handleFile} />
 
 
         {/* --Trigger the file input-- */}

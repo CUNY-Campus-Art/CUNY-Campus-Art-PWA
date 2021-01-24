@@ -40,3 +40,7 @@
 #stop-button{
   visibility: shown;
 }
+
+.correct-alert {
+  --background: #e5e5e5;
+}

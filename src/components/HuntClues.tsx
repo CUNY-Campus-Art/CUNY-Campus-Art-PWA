@@ -23,6 +23,7 @@ import {
   colorPalette,
   medalOutline,
   bulbOutline,
+  warning
 } from "ionicons/icons";
 
 import './HuntClues.css'
@@ -69,19 +70,7 @@ const HuntClues = (props: Props) => {
   );
 
 
-  // Will be called from inside QR Scanner component when it extracts information from the QR Code.
-  // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting to the information tab
 
-  let [scanResult, setScanResult] = useState('');
-
-  let scanResultParent = async (qrCodeText: string) => {
-    scanResult = qrCodeText
-    setScanResult(scanResult) //updates local state
-    console.log('scan result: ', scanResult)
-    let id = await props.getScannedArtDisplay(scanResult)
-    await props.addScannedArtDisplayToUserDB(user, id);
-    redirect()
-  };
 
   // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
   // Checks whether scan state in child QRScanner component is active
@@ -94,16 +83,52 @@ const HuntClues = (props: Props) => {
     insideModal(true)
   }
 
-  // Set states for Modal
+  // Set states for Modal and selected artwork
   let [categoryState, setCategoryState] = useState('')
   let [pointsState, setPointsState] = useState('')
   let [clueState, setClueState] = useState('')
+  let [idState, setIdState] = useState(0)
+  let [titleState, setTitleState] = useState('')
 
   const [showModal, setShowModal] = useState(false);
   const [showCorrectAlert, setShowCorrectAlert] = useState(false);
   const [showIncorrectAlert, setShowIncorrectAlert] = useState(false);
 
-  //if(scanState) setShowModal(false)
+
+
+  // Will be called from inside QR Scanner component when it extracts information from the QR Code.
+  // Added async/ await so that state of the currentArtDisplay is able to adjust before redirecting to the information tab
+
+  let [scanResult, setScanResult] = useState('');
+
+  let handleFile:any;
+
+  let getHandleFile = (result:any) => {
+      handleFile = result
+  }
+
+  let scanResultParent = async (qrCodeText: string) => {
+    scanResult = qrCodeText
+    setScanResult(scanResult) //updates local state
+    let id = await props.getScannedArtDisplay(scanResult)
+    console.log(typeof idState, 'Hunts Clues scan result: ', id)
+
+    //If the id of the scanned artwork matached the id of the selected clue, close the modal and then show the 'correct'. Else, show 'incorrect' alert
+    if(Number(id) === idState) {
+      setShowModal(false)
+      setShowCorrectAlert(true)
+      //of course if this is true, next need to add to solved artworks
+    } else {
+      setShowIncorrectAlert(true)
+    }
+
+    await props.addScannedArtDisplayToUserDB(user, id);
+    //redirect()
+  };
+
+
+
+
 
   return (
     <div>
@@ -124,6 +149,8 @@ const HuntClues = (props: Props) => {
               setCategoryState(artwork.artwork_type_clue ? artwork.artwork_type_clue : '')
               setPointsState(artwork.clue ? artwork.clue.Points : '')
               setClueState(artwork.clue ? artwork.clue.Clue : '')
+              setIdState(artwork.id)
+              setTitleState(artwork.title)
               setShowModal(true)
             }}>
               Solve
@@ -177,9 +204,9 @@ const HuntClues = (props: Props) => {
             </IonList>
           </IonCard>
 
-          <QRScanner name="QR-Scanner"
+          <QRScanner key="clues-tab" name="QR-Scanner"
             stylingMargins={"qr-scanner-clues-tab"}
-            scanResultParent={scanResultParent} scanStateParent={scanStateParent} />
+            scanResultParent={scanResultParent} scanStateParent={scanStateParent} getHandleFile={getHandleFile} />
           {/*Exit Modal button: */}
           <IonButton className={`modal-back-button ${scanState ? "hide-modal-card": 'show-modal-card'}` }
             expand="block"
@@ -192,14 +219,19 @@ const HuntClues = (props: Props) => {
         </IonModal>
         {/* END OF MODAL */}
 
+        {/*  */}
+        <input id={`file-inputqr-scanner-clues-tab`} type="file" accept="image/*;capture=camera" hidden onChange={()=> handleFile()} />
+
+
 
         {/* if the scan of qr code is correct show this alert: possibly add image to message*/}
         <IonAlert
           isOpen={showCorrectAlert}
           onDidDismiss={() => { setShowCorrectAlert(false); setShowModal(false); }}
-          header={'CORRECT!'}
-          subHeader={'congratulations'}
-          message={"You have scannrd the correct artwork!  {/*number of points*/} has been added to your account"}
+          header={`CORRECT! ✅ `}
+          cssClass="correct-alert"
+          subHeader={titleState}
+          message={`Congrats! You have scanned the correct artwork! ${pointsState} points have been added to your account`}
           buttons={[
             {
               text: 'Close',
@@ -214,7 +246,7 @@ const HuntClues = (props: Props) => {
         <IonAlert
           isOpen={showIncorrectAlert}
           onDidDismiss={() => { setShowIncorrectAlert(false) }}
-          header={'SORRY, INCORRECT! '}
+          header={`SORRY, INCORRECT! ⚠️`}
           subHeader={'Artwork scanned is incorrect'}
           message={"you have selected the incorrect artwork! Please try again"}
           buttons={[
