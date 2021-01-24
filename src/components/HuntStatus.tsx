@@ -165,30 +165,32 @@ const HuntStatus = (props:Props) => {
             ) : (<p></p>)}</div>
 
             {/* ************** shows solved clues of User *************** */}
-            <div> {showSolvedClues ? (
-                <IonCard>
+
+               { showSolvedClues && <IonCard>
                     <IonGrid>
-                        <IonRow>
+
+                    {user && user.solved_artworks ? user.solved_artworks.map ( (artwork:any, index:any) =>
+                        <IonRow key={index}>
                             <IonCol size="3">
                                 <IonThumbnail>
                                     <img
-                                    src={require("../assets/images/bluesClues.png")}
-                                    alt="solved artwork"
-                                    />
+                      src={artwork.primary_image ? artwork.primary_image.url : ''}
+                      alt={artwork.primary_image ? artwork.primary_image.alternative : ''} />
+
                                 </IonThumbnail>
                             </IonCol>
                             <IonCol size="6">
-                                Clue: Above a Brown Bench where Books are stored
+                                Title: {artwork.title} <br />
+                                Clue: {artwork.clue.Clue}
                             </IonCol>
                             <IonCol size="3">
-                                Pts Earned: 50
+                                Pts Earned: {artwork.clue? artwork.clue.Points: ''}
                             </IonCol>
-                        </IonRow>
+                        </IonRow>): <p></p>}
                     </IonGrid>
                 </IonCard>
 
-               ) : (<p></p>)}</div>
-
+}
         </div>
     )
 

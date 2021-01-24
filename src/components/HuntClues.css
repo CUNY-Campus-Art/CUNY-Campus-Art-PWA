@@ -5,9 +5,6 @@
   position: fixed;
   z-index: 2000;
 } */
-.QR-Scanner-card {
-  box-shadow: 0 0 0 #fff;
-}
 
 .modal-scanner-bg {
   position: fixed;
@@ -17,8 +14,12 @@
   z-index: 2;
 }
 
-.qr-scanner-clues-tab, .modal-back-button{
+.qr-scanner-clues-tab {
   margin: 5px 10px;
+}
+
+.modal-back-button{
+  margin: 0 10px;
 }
 
 .qr-scanner-clues-tab .video-scanner {
