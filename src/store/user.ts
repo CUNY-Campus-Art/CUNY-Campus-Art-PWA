@@ -12,12 +12,19 @@ export interface Campus {
 }
 
 export interface User {
-  user_name: string
-  first_name: string
-  last_name: string
-  email: string
-  profile_picture: Image
-  campus: Campus,
+  user_name: string,
+  first_name: string,
+  last_name: string,
+  email: string,
+  profile_picture: any,
+  campus: string,
+  campusId: any,
+  scanned_artworks: [],
+  total_points: number,
+  liked_artworks:[],
+  disliked_artworks:[],
+  solved_artworks:[],
+  unsolved_artworks: []
 }
 
 export interface UserState {
@@ -137,7 +144,12 @@ interface SignupErrorAction {
   type: typeof SIGNUP_ERROR
 }
 
-export const getUser = (user: User) => ({ type: GET_USER, payload: user })
+interface AddPointsToUserAction {
+  type: typeof ADD_POINTS
+  payload: number
+}
+
+export const getUser = (user: any) => ({ type: GET_USER, payload: user })
 export const removeUser = () => ({ type: REMOVE_USER })
 export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
@@ -165,7 +177,7 @@ export const signupNewUser = (email: string, pw: string, username: string, first
   console.log("status", status)
 
   let newUser = await formatUser(con.user)
-  dispatch((newUser.unsolved_artworks))
+  //dispatch((newUser.unsolved_artworks))
   dispatch(getUser(newUser))
 
   //If there is a user assigned that means user was successfully added to database, so return true
