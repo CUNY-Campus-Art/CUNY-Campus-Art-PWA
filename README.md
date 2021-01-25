@@ -11,11 +11,14 @@ CUNY Campus Art aims to promote art (including student art) on CUNY campuses. We
 
 You can test what we have so far with these QR Codes.
 
-* <img src="Girl With Pearl Earring updated QR Code.png" width="300"/>
+Girl With Pearl Earring
+* <img src="Girl with Pearl Earring 193 .png" width="300"/>
 
-* <img src="Mona Lisa Updated QR Code.png" width="300"/>
+Lilac Morning Mood
+* <img src="Lilac Morning Mood 195.png" width="300"/>
 
-* <img src="Birth of Venus updated QR Codes.png" width="300"/>
+Composition 8
+* <img src="Composition 8 194" width="300"/>
 
 
 ## Update 12/16/20 - Mary and Jamila

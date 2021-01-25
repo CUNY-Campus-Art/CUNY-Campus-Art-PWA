@@ -191,7 +191,7 @@ interface AddUnsolvedArtworksAction {
 export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | AddUnsolvedArtworksAction
 
 //This action only changes current art display, but does not modify state otherwise
-export const changeCurrentArtDisplay = (differentArtDisplay: ArtDisplay) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
+export const changeCurrentArtDisplay = (differentArtDisplay: any) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
 
 //This action will ensure that artdisplay gets added, and that current display changes as well
 export function addArtDisplay(newArtDisplay: ArtDisplay): ArtDisplayActionTypes {
