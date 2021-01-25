@@ -47,8 +47,8 @@ type Props = PropsFromRedux & {
 }
 
 const HuntStatus = (props:Props) => {
-    const [showUserStatus, setShowUserStatus] = useState(true);
-    const [showSolvedClues, setShowSolvedClues] = useState(false);
+    const [showUserStatus, setShowUserStatus] = useState(false);
+    const [showSolvedClues, setShowSolvedClues] = useState(true);
     const handleUserStatus = () => {
       setShowUserStatus(true);
       setShowSolvedClues(false);
@@ -166,10 +166,10 @@ const HuntStatus = (props:Props) => {
 
             {/* ************** shows solved clues of User *************** */}
 
-               { showSolvedClues && <IonCard>
+               { showSolvedClues && user.solved_artworks && <IonCard>
                     <IonGrid>
 
-                    {user && user.solved_artworks ? user.solved_artworks.map ( (artwork:any, index:any) =>
+                { user && user.solved_artworks ? user.solved_artworks.map ( (artwork:any, index:any) =>
                         <IonRow key={index}>
                             <IonCol size="3">
                                 <IonThumbnail>
@@ -186,7 +186,7 @@ const HuntStatus = (props:Props) => {
                             <IonCol size="3">
                                 Pts Earned: {artwork.clue? artwork.clue.Points: ''}
                             </IonCol>
-                        </IonRow>): <p></p>}
+                        </IonRow>):''}
                     </IonGrid>
                 </IonCard>
 

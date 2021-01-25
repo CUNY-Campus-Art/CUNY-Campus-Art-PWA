@@ -65,8 +65,6 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
     this.handleFile = this.handleFile.bind(this)
     this.parseQRCode = this.parseQRCode.bind(this)
 
-    this.props.getHandleFile(this.handleFile)
-
   }
 
   setShowInvalidQRToast(status: boolean) {
@@ -152,7 +150,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
         inversionAttempts: 'dontInvert'
       });
 
-      console.log(code);
+     // console.log(code);
 
       if (code) {
 
@@ -245,6 +243,7 @@ class QRScanner extends React.Component<ContainerProps, ContainerState> {
   }
 
   render() {
+    this.props.getHandleFile(this.handleFile)
     return (
       <div className={this.props.stylingMargins}>
         {/* <strong>{this.props.name}</strong> */}

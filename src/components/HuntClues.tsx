@@ -31,7 +31,7 @@ import QRScanner from "../components/QRScanner"
 
 import { RootState } from '../store'
 import { fetchScannedArtDisplay, addSolvedArtwork } from '../store/artdisplay'
-import { addScannedArtDisplayToUserDB } from '../store/user'
+import { addScannedArtDisplayToUserDB, initializeUser } from '../store/user'
 // import { render } from "@testing-library/react";
 // import { StringDecoder } from "string_decoder";
 
@@ -47,7 +47,8 @@ const mapState = (state: RootState) => ({
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
   addScannedArtDisplayToUserDB: (user: any, artworkId: any) => dispatch(addScannedArtDisplayToUserDB(user, artworkId)),
-  addSolvedArtwork: (user:any, artworkId:any) => dispatch(addSolvedArtwork(user, artworkId))
+  addSolvedArtwork: (user:any, artworkId:any, points:any) => dispatch(addSolvedArtwork(user, artworkId, points)),
+  initializeUser: (user:any) => dispatch(initializeUser(user))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -69,8 +70,6 @@ const HuntClues = (props: Props) => {
     () => navigate('/Information', 'back'),
     [navigate]
   );
-
-
 
 
   // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
@@ -120,13 +119,13 @@ const HuntClues = (props: Props) => {
       setShowCorrectAlert(true)
       //of course if this is true, next need to add to solved artworks
 
-      await props.addSolvedArtwork(user, id)
-
+       props.addSolvedArtwork(user, id, pointsState)
+      //await props.initializeUser(user)
     } else {
       setShowIncorrectAlert(true)
     }
 
-    await props.addScannedArtDisplayToUserDB(user, id);
+     props.addScannedArtDisplayToUserDB(user, id);
     //redirect()
   };
 
@@ -221,6 +220,7 @@ const HuntClues = (props: Props) => {
               text: 'Close',
               handler: () => {
                 console.log("confirm close");
+                props.initializeUser(user)
               }
             }
           ]}

@@ -499,13 +499,14 @@ export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: 
 
 }
 
-export const addSolvedArtwork = (user:any, artworkId:any) => async (dispatch:any) => {
+export const addSolvedArtwork = (user:any, artworkId:any, points:any) => async (dispatch:any) => {
   con.user = user;
   await con.addSolvedArtworkToUser([artworkId])
+  await con.addPointsToUser(points)
   await con.syncRemoteToLocalUser()
   user = await formatUser(con.user)
   dispatch(addUnsolvedArtworks(user.unsolved_artworks))
-  dispatch(getUser({...user, unsolved_artworks: user.unsolved_artworks}))
+  dispatch(getUser(user))
 
 }
 
@@ -608,7 +609,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         pastArtDisplays: [...state.pastArtDisplays]
       }
     case ADD_UNSOLVED_ARTWORKS:
-      return { ...state, unsolvedArtDisplays: [...action.payload] }
+      return { ...state, unsolvedArtDisplays: action.payload }
     default:
       return state
   }
