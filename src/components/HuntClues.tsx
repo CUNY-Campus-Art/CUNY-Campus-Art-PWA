@@ -133,7 +133,7 @@ const HuntClues = (props: Props) => {
   return (
     <div>
       <IonList>
-        {user && user.unsolved_artworks && user.unsolved_artworks.map((artwork: any, index: any) =>
+        {user.unsolved_artworks ? user.unsolved_artworks.map((artwork: any, index: any) =>
           <IonItem key={index}>
 
             <IonLabel>
@@ -156,10 +156,9 @@ const HuntClues = (props: Props) => {
               Solve
         </IonButton>
           </IonItem>
-        )}
+        ): <IonCard color="primary"><IonCardTitle class="ion-text-center">Congrats! You have solved all of our clues. Come back at a later time for more clues.</IonCardTitle></IonCard>}
 
-        {/* If there are no clues */}
-        { user.unsolved_artworks && <IonCard color="primary"><IonCardTitle class="ion-text-center">Congrats! You have solved all of our clues. Come back at a later time for more clues.</IonCardTitle></IonCard>}
+
 
         {/* ION MODAL COMPONENT (POP UP FOR CLUE): */}
 
