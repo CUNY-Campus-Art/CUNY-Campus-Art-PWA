@@ -3,8 +3,10 @@
 // user profile picture, status level, total points, status bar.
 // Also includes info about different status level and
 // clues that the user has previously solved
-import React, {useState} from "react";
+import React, {useState, useContext, useCallback}  from "react";
+import { IonImg, NavContext } from '@ionic/react';
 import { getUser, fetchUser } from '../store/user'
+import { changeCurrentArtDisplay } from '../store/artdisplay'
 import { connect, ConnectedProps } from 'react-redux'
 import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 import {
@@ -35,6 +37,7 @@ const mapState = (state: any) => ({
 const mapDispatch = (dispatch: any) => ({
   fetchUser: (username: string, pw: string) => dispatch(fetchUser(username, pw)),
   getUser: (user: any) => dispatch(getUser(user)),
+  changeCurrentArtDisplay: (artwork: any) => dispatch(changeCurrentArtDisplay(artwork))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -47,6 +50,23 @@ type Props = PropsFromRedux & {
 }
 
 const HuntStatus = (props:Props) => {
+
+      // To redirect to Information tab using forward animation
+  const { navigate } = useContext(NavContext);
+  const redirect = useCallback(
+    () => navigate('/Information', 'back'),
+    [navigate]
+  );
+  //When user clicks artwork, updates currentArtDislay, and redirects user to Information tab
+  const selectAnArtwork = (index: number) => {
+    let currentArtDisplayItem= user.solved_artworks[index]
+    console.log(typeof currentArtDisplayItem, "check link")
+    props.changeCurrentArtDisplay(currentArtDisplayItem)
+    //props.removeSelectedArtWork(user, selectedArtWork)
+    redirect()
+  }
+
+
     const [showUserStatus, setShowUserStatus] = useState(false);
     const [showSolvedClues, setShowSolvedClues] = useState(true);
     const handleUserStatus = () => {
@@ -173,7 +193,8 @@ const HuntStatus = (props:Props) => {
                         <IonRow key={index}>
                             <IonCol size="3">
                                 <IonThumbnail>
-                                    <img
+                                    <IonImg
+                                        onClick={() => selectAnArtwork(index)}
                       src={artwork.primary_image ? artwork.primary_image.url : ''}
                       alt={artwork.primary_image ? artwork.primary_image.alternative : ''} />
 

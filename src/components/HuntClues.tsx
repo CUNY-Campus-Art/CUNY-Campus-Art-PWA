@@ -16,6 +16,7 @@ import {
   IonCardSubtitle,
   IonCardTitle,
   IonAlert,
+  IonText
 } from "@ionic/react";
 import {
   arrowBackCircleOutline,
@@ -30,7 +31,7 @@ import './HuntClues.css'
 import QRScanner from "../components/QRScanner"
 
 import { RootState } from '../store'
-import { fetchScannedArtDisplay, addSolvedArtwork } from '../store/artdisplay'
+import { fetchScannedArtDisplay, addSolvedArtwork} from '../store/artdisplay'
 import { addScannedArtDisplayToUserDB, initializeUser } from '../store/user'
 // import { render } from "@testing-library/react";
 // import { StringDecoder } from "string_decoder";
@@ -70,7 +71,6 @@ const HuntClues = (props: Props) => {
     () => navigate('/Information', 'back'),
     [navigate]
   );
-
 
   // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
   // Checks whether scan state in child QRScanner component is active
@@ -113,14 +113,11 @@ const HuntClues = (props: Props) => {
     let id = await props.getScannedArtDisplay(scanResult)
     console.log(typeof idState, 'Hunts Clues scan result: ', id)
 
-    //If the id of the scanned artwork matached the id of the selected clue, close the modal and then show the 'correct'. Else, show 'incorrect' alert
+    //If the id of the scanned artwork matches id of selected clue, close the modal and then show the 'correct'. Else, show 'incorrect' alert
     if(Number(id) === idState) {
       setShowModal(false)
       setShowCorrectAlert(true)
-      //of course if this is true, next need to add to solved artworks
-
-       props.addSolvedArtwork(user, id, pointsState)
-      //await props.initializeUser(user)
+      props.addSolvedArtwork(user, id, pointsState)
     } else {
       setShowIncorrectAlert(true)
     }
@@ -160,6 +157,9 @@ const HuntClues = (props: Props) => {
         </IonButton>
           </IonItem>
         )}
+
+        {/* If there are no clues */}
+        { user.unsolved_artworks && <IonCard color="primary"><IonCardTitle class="ion-text-center">Congrats! You have solved all of our clues. Come back at a later time for more clues.</IonCardTitle></IonCard>}
 
         {/* ION MODAL COMPONENT (POP UP FOR CLUE): */}
 
