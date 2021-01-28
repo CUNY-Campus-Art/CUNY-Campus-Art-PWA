@@ -7,7 +7,8 @@ CUNY Campus Art aims to promote art (including student art) on CUNY campuses. We
   - The app has a built in personalized QR scanner that student can use to scan.
   - The student also has the option of uploading a picture that has the QR code.
 - Student can create an account, login, and a history of scanned artworks can be saved as well as removed.
-- We are in the process of gamifying this app, by creating a Scavenger Hunt in which students can solve clues
+- The app has been gamified by adding a Scavenger Hunt component. Students can solve clues and level up
+- A logged in User also has the option of liking or disliking an artwork
 
 You can test what we have so far with these QR Codes.
 
@@ -18,13 +19,20 @@ Lilac Morning Mood
 * <img src="Lilac Morning Mood 195.png" width="300"/>
 
 Composition 8
-* <img src="Composition 8 194" width="300"/>
+* <img src="Composition 8 194.png" width="300"/>
+
+Mona Lisa
+
+* <img src="Mona Lisa cuny_campus_art_166.png" width="300"/>
 
 
-## Update 12/16/20 - Mary and Jamila
-* This app has been quite polished up. We've added a scavenger hunt components and ui. We are working on adding in functionality for the scavenger hunt and like details. Here is a working demo of what we have so far:
 
-* tbd - insert gif or video link
+
+## Update 1/28/20 - Mary and Jamila
+* This app has been quite polished up. User can scan artworks whether they are logged in or not. We've added  scavenger hunt functionality, as well as like/ dislike functionality for when user is logged in. Here is a working demo of what we have so far:
+<a href="https://cuny-gallery.web.app/Gallery
+"> https://cuny-gallery.web.app/Gallery
+ </a>
 
 ## Update A - 10/2/2020 - ML
 
