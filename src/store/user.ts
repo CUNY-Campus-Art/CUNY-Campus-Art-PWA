@@ -272,7 +272,7 @@ export default function (state = defaultUser, action: any) {
     case GET_USER:
       return { ...state, user: action.payload, error: '' }
     case REMOVE_USER:
-      return { user: '', authToken: '', campus: '', error: '', total_points: '', solved_artworks: [] };
+      return { user: '', authToken: '', error: '', total_points: '', solved_artworks: [] };
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
     // case ADD_UNSOLVED_ARTWORKS:

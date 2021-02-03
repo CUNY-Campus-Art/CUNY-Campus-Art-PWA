@@ -85,12 +85,14 @@ const App = (props: Props) => {
             <Link to="/Home" slot="start" className="CUNY-title"><IonText className="ion-text-center CUNY-title"> CUNY <span style={{ fontFamily: 'Clicker Script', fontWeight: 'bolder', fontSize: '1em', color: 'red' }}>Gallery</span></IonText></Link>
 
 
-            <Link to="/Profile" slot="end">
+
+            <Link className="top-profile-links" to="/Profile" slot="end">
               {/* Greet User By Name if logged in */}
               {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
-
               {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
+              <Link to="/ScavengerHunt"> <IonText>{props.currentUser.total_points}</IonText></Link>
               {props.currentUser ? <IonImg style={{ height: '2em', width: '2em' }} src={props.currentUser.profile_picture ? props.currentUser.profile_picture.url : defaultProfilePicture} /> : <IonIcon color="medium" icon={person} />}
+
 
             </Link>
             {/* </IonTabs> */}
