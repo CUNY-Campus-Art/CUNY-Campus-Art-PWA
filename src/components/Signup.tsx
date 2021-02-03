@@ -56,7 +56,7 @@ const mapSignup = (state: RootState) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, file)),
+    signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, campusId:any, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, campusId, file)),
     loginUser: (username:string, password:string) => dispatch(fetchUser(username, password)),
     getAllCampuses: () => dispatch(fetchAllCampuses()),
 
@@ -138,7 +138,7 @@ const AuthForm = (props: any) => {
       let firstName = nameHolder[0];
       let lastName =  nameHolder.length> 1 ? nameHolder.slice(1).join(' '): '';
       // imgData, selectedCampus:  values we still need to send to database somehow
-      let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, imgData)
+      let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, selectedCampus, imgData)
 
       //If user sucessfully signs up, have user logged in, and redirected to Profile tab
       //Once Profile Picture Upload is resolved. Should be able to replace result with result.sucess. For now result is based on whether con.user has a value (logic set in the user store)

@@ -11,6 +11,7 @@ import {
   IonPage,
   IonToolbar,
   IonCard,
+  IonToast
 } from "@ionic/react";
 import "./ScanQR.css";
 
@@ -57,14 +58,19 @@ const ScanQR = (props: Props) => {
 
   let [scanResult, setScanResult] = useState('');
 
+  //This will cover cases where outdated QR Codes (i.e. artworks that don't exist anymore) are scanned
+  const [showNotFoundToast, setNotFoundToast] = useState(false);
+
   let scanResultParent = async (qrCodeText: string) => {
     scanResult = qrCodeText
     setScanResult(scanResult) //updates local state
     console.log('scan result: ', scanResult)
     let id = await props.getScannedArtDisplay(scanResult)
-    if(user) await props.addScannedArtDisplayToUserDB(user, id);
+    if(user && id) await props.addScannedArtDisplayToUserDB(user, id);
     scanStateParent(false)
-    redirect()
+
+    if(!id) setNotFoundToast(true)
+    else redirect()
   };
 
   let handleFile;
@@ -119,6 +125,14 @@ const ScanQR = (props: Props) => {
         <QRScanner key="scan-tab" name="QR-Scanner" stylingMargins={"qr-scanner-scan-section"} scanResultParent={scanResultParent} scanStateParent={scanStateParent}
         getHandleFile={getHandleFile} />
 
+        <IonToast
+        position="middle"
+        color="warning"
+        isOpen={showNotFoundToast}
+        onDidDismiss={() => setNotFoundToast(false)}
+        message="Artwork not found! This artwork is currently not in our collection. Please try another QR code."
+        duration={1500}
+      />
       </IonContent>
     </IonPage>
   );

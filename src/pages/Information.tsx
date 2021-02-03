@@ -2,7 +2,7 @@
  * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
  */
 
-import React, { useContext, useCallback } from "react";
+import React, { useContext, useCallback, useState, useEffect} from "react";
 import { NavContext } from '@ionic/react';
 import { useParams } from "react-router-dom";
 import { connect, ConnectedProps } from 'react-redux'
@@ -23,6 +23,7 @@ import {
   IonSlide,
   IonSlides,
   IonButton,
+  IonToast
 } from "@ionic/react";
 import "./Information.css";
 
@@ -61,11 +62,18 @@ const slideOpts = {
 
 const Information = (props: Props) => {
 
+  const [showNotFoundToast, setNotFoundToast] = useState(false);
+
   const { id }: { id: string } = useParams();
 
-  if (id) {
-    props.getScannedArtDisplay(`cuny-campus-art-${id}`);
+  const getArtwork = async (id:string) => {
+    let extractedId = await props.getScannedArtDisplay(`cuny-campus-art-${id}`);
+    if(!extractedId) setNotFoundToast(true)
   }
+
+    useEffect(() => { if (id) getArtwork(id) }, []);
+
+
 
   // To redirect to QR scan tab using backward animation
   const { navigate } = useContext(NavContext);
@@ -149,6 +157,15 @@ const Information = (props: Props) => {
             <IonLabel class="ion-text-center">Scan Another Artwork</IonLabel>
           </IonItem>
         </IonCard>
+
+        <IonToast
+        position="middle"
+        color="warning"
+        isOpen={showNotFoundToast}
+        onDidDismiss={() => setNotFoundToast(false)}
+        message="Artwork not found! This artwork is currently not in our collection. Please try another QR code."
+        duration={1500}
+      />
 
       </IonContent>
     </IonPage>
