@@ -499,7 +499,7 @@ export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: 
 
 }
 
-export const addSolvedArtwork = (user:any, artworkId:any, points:any) => async (dispatch:any) => {
+export const addSolvedArtwork = (user: any, artworkId: any, points: any) => async (dispatch: any) => {
   con.user = user;
   await con.addSolvedArtworkToUser([artworkId])
   await con.addPointsToUser(points)
@@ -538,7 +538,7 @@ const defaultCurrentArtDisplay = {
 //adding user so that it can retrieve info based on current user state
 const initialState: ArtDisplaysState = {
   currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays: con.user ? [defaultCurrentArtDisplay, ...con.user.scanned_artworks] : [defaultCurrentArtDisplay],
+  pastArtDisplays: con.user ? [...con.user.scanned_artworks, defaultCurrentArtDisplay] : [defaultCurrentArtDisplay],
   allArtDisplays: [defaultCurrentArtDisplay],
   campuses: [],
   unsolvedArtDisplays: []
@@ -565,7 +565,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
     case GET_PAST_ART_DISPLAYS:
       return {
         ...state,
-        pastArtDisplays: [defaultCurrentArtDisplay, ...action.payload]
+        pastArtDisplays: [...action.payload, defaultCurrentArtDisplay]
       }
     case GET_ALL_ART_DISPLAYS:
       return { ...state, allArtDisplays: [...state.allArtDisplays, ...action.payload] }

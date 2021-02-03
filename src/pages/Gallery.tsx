@@ -67,7 +67,7 @@ const Gallery = (props: Props) => {
   // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
   const pastArtDisplays = props.pastArtDisplays
-  
+
   // To redirect to Information with forward animation
   const { navigate } = useContext(NavContext)
   const redirect = useCallback(
@@ -78,9 +78,9 @@ const Gallery = (props: Props) => {
   //When user clicks artwork, updates currentArtDislay, and redirects user to Information tab
   const selectAnArtwork = (index: number) => {
     let currentArtDisplayItem: ArtDisplay = pastArtDisplays[index]
-    console.log(typeof currentArtDisplayItem, "check link")
+
     props.changeCurrentArtDisplay(currentArtDisplayItem)
-    //props.removeSelectedArtWork(user, selectedArtWork)
+
     redirect()
   }
 
@@ -115,15 +115,14 @@ const Gallery = (props: Props) => {
                       onClick={() => selectAnArtwork(index)}
                       src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
                       alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
-                    <IonText color="medium">{artDisplay.likes} Likes</IonText>
+                    {artDisplay.id !== 'default' && <IonText color="medium">{artDisplay.likes} Likes</IonText>}
                   </IonCol>
 
                   <IonCol >
                     <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
 
-                    <IonRow className="align-right-row">
-
+                  {user && <IonRow className="align-right-row">
 
                       <IonButton
                         fill="outline"
@@ -149,15 +148,15 @@ const Gallery = (props: Props) => {
 
 
                       {/* Trash Icon */}
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        color="medium"
-                        onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
-                      >
-                        <IonIcon icon={trash}></IonIcon>
-                      </IonButton>
-                    </IonRow>
+  {artDisplay.id !== 'default' && <IonButton
+                      fill="outline"
+                      size="small"
+                      color="medium"
+                      onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
+                    >
+                      <IonIcon icon={trash}></IonIcon>
+                    </IonButton>}
+                    </IonRow>}
                   </IonCol>
                 </IonRow>
               </IonGrid>
