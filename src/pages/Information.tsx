@@ -4,6 +4,7 @@
 
 import React, { useContext, useCallback } from "react";
 import { NavContext } from '@ionic/react';
+import { useParams } from "react-router-dom";
 import { connect, ConnectedProps } from 'react-redux'
 import {
   IonContent,
@@ -28,7 +29,8 @@ import "./Information.css";
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
 
 import {
-  clickLikeButton
+  clickLikeButton,
+  fetchScannedArtDisplay
 } from '../store/artdisplay'
 
 const mapState = (state: any) => ({
@@ -38,6 +40,7 @@ const mapState = (state: any) => ({
 })
 
 const mapDispatch = (dispatch: any) => ({
+  getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
   clickLikeButton: (user: any, artworkId: any, fromGallery: boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery))
 })
 
@@ -55,7 +58,14 @@ const slideOpts = {
   speed: 400,
 };
 
+
 const Information = (props: Props) => {
+
+  const { id }: { id: string } = useParams();
+
+  if (id) {
+    props.getScannedArtDisplay(`cuny-campus-art-${id}`);
+  }
 
   // To redirect to QR scan tab using backward animation
   const { navigate } = useContext(NavContext);
@@ -71,8 +81,8 @@ const Information = (props: Props) => {
   let slidesComp = props.currentArtDisplay.other_images ? [currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images] : [currentArtDisplay.primary_image]
 
   function handleLikes() {
-      let result = props.clickLikeButton(props.user, currentArtDisplay, false);
-      //Use the result in the future to make local state update faster
+    let result = props.clickLikeButton(props.user, currentArtDisplay, false);
+    //Use the result in the future to make local state update faster
   }
 
   return (
