@@ -193,6 +193,7 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
     if (returnData.status === 200) {
 
       con.user = returnData.data.user;
+      con.authToken = returnData.data.jwt;
       let user = await formatUser(con.user)
       dispatch(addUnsolvedArtworks(user.unsolved_artworks))
       dispatch(getUser(user))

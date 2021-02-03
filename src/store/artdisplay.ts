@@ -494,8 +494,8 @@ export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: 
     }
   }
 
-  dispatch(fetchPastArtworks(user))
-  dispatch(changeCurrentArtDisplay(artwork))
+  await dispatch(fetchPastArtworks(user))
+  await dispatch(changeCurrentArtDisplay(artwork))
 
 }
 
