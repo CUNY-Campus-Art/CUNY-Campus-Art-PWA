@@ -122,9 +122,9 @@ const Gallery = (props: Props) => {
                     <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
 
-                  {user && <IonRow className="align-right-row">
+                 <IonRow className="align-right-row">
 
-                      <IonButton
+                      {user && <IonButton
                         fill="outline"
                         size="small"
                         color="danger"
@@ -133,10 +133,10 @@ const Gallery = (props: Props) => {
                       >
                         {artDisplay.liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
 
-                      </IonButton>
+                      </IonButton>}
 
                       {/* Thumbs Down Icon */}
-                      <IonButton
+                     {user && <IonButton
                         fill="outline"
                         size="small"
                         color="primary"
@@ -144,7 +144,7 @@ const Gallery = (props: Props) => {
                         onClick={() => props.clickDislikeButton(user, artDisplay)}
                       >
                         {artDisplay.disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
-                      </IonButton>
+                      </IonButton>}
 
 
                       {/* Trash Icon */}
@@ -156,7 +156,7 @@ const Gallery = (props: Props) => {
                     >
                       <IonIcon icon={trash}></IonIcon>
                     </IonButton>}
-                    </IonRow>}
+                    </IonRow>
                   </IonCol>
                 </IonRow>
               </IonGrid>

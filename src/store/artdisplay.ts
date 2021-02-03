@@ -362,6 +362,7 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
   }
   catch (error) {
     console.log(error)
+    return '' // So front end knows invalid artwork scanned
   }
 
   //updates database

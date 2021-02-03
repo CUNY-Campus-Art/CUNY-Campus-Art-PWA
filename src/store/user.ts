@@ -172,8 +172,8 @@ export const signupError = () => ({ type: SIGNUP_ERROR })
 
 
 
-export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", file: any = '') => async (dispatch: any) => {
-  let status = await con.createUser(email, pw, username, firstName, lastName, file)
+export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", campusId:string, file: any = '') => async (dispatch: any) => {
+  let status = await con.createUser(email, pw, username, firstName, lastName, campusId, file)
   console.log("status", status)
 
   let newUser = await formatUser(con.user)

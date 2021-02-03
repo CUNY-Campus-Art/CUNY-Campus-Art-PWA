@@ -371,6 +371,7 @@ Returns: api request reponse
     username,
     firstName = '',
     lastName = '',
+    campusId = '',
     file
   ) => {
     let error
@@ -382,6 +383,7 @@ Returns: api request reponse
         password: pw,
         first_name: firstName,
         last_name: lastName,
+        campus: campusId
       })
       .then((res) => {
         response = res.data
