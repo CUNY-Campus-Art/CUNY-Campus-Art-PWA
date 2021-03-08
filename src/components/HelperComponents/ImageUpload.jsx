@@ -33,7 +33,7 @@ function ImageUpload (props) {
         }) => (
           // write your building UI
           <div className="upload__image-wrapper">
-            <button
+            <button type="button"
               style={isDragging ? { color: "red" } : null}
               onClick={onImageUpload}
               {...dragProps}
@@ -46,8 +46,8 @@ function ImageUpload (props) {
               <div key={index} className="image-item">
                 <img src={image.data_url} alt="" width="100" />
                 <div className="image-item__btn-wrapper">
-                  <button onClick={() => onImageUpdate(index)}>Update</button>
-                  <button onClick={() => onImageRemove(index)}>Remove</button>
+                  <button type="button" onClick={() => onImageUpdate(index)}>Update</button>
+                  <button type="button" onClick={() => onImageRemove(index)}>Remove</button>
                 </div>
               </div>
             ))}

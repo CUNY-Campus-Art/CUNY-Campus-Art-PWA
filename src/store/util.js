@@ -387,11 +387,12 @@ Returns: api request reponse
       })
       .then((res) => {
         response = res.data
+
         if (response) {
           this.authToken = response.jwt
           this.user = response.user
           if (file) {
-            this.axiosUploadToStrapi(
+            this.axiosUploadToStrapi( this.authToken,
               file,
               response.user.id,
               'user',
@@ -515,7 +516,7 @@ Returns: api request reponse
     )
 
     this.user = returnData.data
-    localStorage.setItem('user', JSON.stringify(this.user)) // save specific fields from user
+
     return returnData
   }
 
@@ -906,12 +907,15 @@ Accepts:
   - entryFieldName -  the field name from the collection type (examples for artwork would be primary_image, other_images)
 Returns: full post response from strapi api if successfull or -1 if failed
 */
+
+              'users-permissions'
   axiosUploadToStrapi = async (
-    token,
-    file,
-    entryId,
-    entryType,
-    entryFieldName
+    token, // this.authToken
+    file, // file
+    entryId, // response.user.id
+    entryType, // 'user',
+    entryFieldName, // 'profile_picture'
+    source // 'users-permissions
   ) => {
     const sendConfig = {
       headers: {
@@ -925,6 +929,7 @@ Returns: full post response from strapi api if successfull or -1 if failed
     formData.append('ref', entryType) // optional, you need it if you want to link the image to an entry
     formData.append('refId', entryId) // optional, you need it if you want to link the image to an entry
     formData.append('field', entryFieldName) // optional, you need it if you want to link the image to an entry
+    formData.append('source', source)
     let returnedData = {}
 
     try {
