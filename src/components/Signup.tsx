@@ -101,6 +101,7 @@ const AuthForm = (props: any) => {
   // This is passed to the ImageUpload Component so that the file info can be retrieved  here
   const getImgFileInfoParent = (fileInfo: any) => {
     setImgData(fileInfo);
+    console.log(fileInfo)
   }
 
   // Code to make use of React Hook Forms, so values persist even after changing value on dropdown menu
@@ -139,7 +140,7 @@ const AuthForm = (props: any) => {
       let lastName =  nameHolder.length> 1 ? nameHolder.slice(1).join(' '): '';
       // imgData, selectedCampus:  values we still need to send to database somehow
       let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, selectedCampus, imgData)
-
+      console.log(result, "SIGNED UP FORM SUBMITTED")
       //If user sucessfully signs up, have user logged in, and redirected to Profile tab
       //Once Profile Picture Upload is resolved. Should be able to replace result with result.sucess. For now result is based on whether con.user has a value (logic set in the user store)
         if(result) {
