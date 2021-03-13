@@ -21,9 +21,9 @@ export interface User {
   campusId: any,
   scanned_artworks: [],
   total_points: number,
-  liked_artworks:[],
-  disliked_artworks:[],
-  solved_artworks:[],
+  liked_artworks: [],
+  disliked_artworks: [],
+  solved_artworks: [],
   unsolved_artworks: []
 }
 
@@ -77,8 +77,6 @@ export const formatUser = async (user: any) => {
   }
 
   formattedUser.unsolved_artworks = await getUnsolvedArtworks(formattedUser)
-
-  localStorage.setItem('user', JSON.stringify(formattedUser)) // save specific fields from user
 
   return formattedUser;
 }
@@ -172,22 +170,22 @@ export const signupError = () => ({ type: SIGNUP_ERROR })
 
 
 
-export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", campusId:string, file: any = '') => async (dispatch: any) => {
+export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", campusId: string, file: any = '') => async (dispatch: any) => {
   let status = await con.createUser(email, pw, username, firstName, lastName, campusId, file)
   console.log("status", status)
 
   // If user is successfully signed up, the con object will internally get assigned a user
-  if(con.user) {
+  if (con.user) {
     let newUser = await formatUser(con.user)
     //dispatch((newUser.unsolved_artworks))
     dispatch(getUser(newUser))
     dispatch(addUnsolvedArtworks(newUser.unsolved_artworks))
-      dispatch(getUser(newUser))
-      dispatch(fetchPastArtworks(newUser))
-      localStorage.setItem('jwt', JSON.stringify(con.authToken));
-      localStorage.setItem('user', JSON.stringify(newUser)); // save specific fields from user
-      localStorage.setItem('unsolved', JSON.stringify(newUser.unsolved_artworks));
-      console.log('You have been successfully logged in. You will be redirected in a few seconds...')
+    dispatch(getUser(newUser))
+    dispatch(fetchPastArtworks(newUser))
+    localStorage.setItem('jwt', JSON.stringify(con.authToken));
+    localStorage.setItem('user', JSON.stringify(con.user)); // save specific fields from user
+    localStorage.setItem('unsolved', JSON.stringify(newUser.unsolved_artworks));
+    console.log('You have been successfully logged in. You will be redirected in a few seconds...')
 
   }
 
