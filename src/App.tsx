@@ -104,11 +104,11 @@ const App = (props: Props) => {
             <Route path="/Home" component={Home} exact={true} />
             <Redirect from="/cuny-campus-art-:id" to="/Information/:id" />
             <Route path="/Profile" component={Profile} exact={true} />
-            <Route path="/Signup" routerDirection="back" component={Signup} exact={true} />
+            <Route path="/Signup" routerDirection="back" component={props.currentUser ? Profile : Signup} exact={true} />
             <Route path="/Gallery" component={Gallery} exact={true} />
             <Route path="/ScanQR" component={ScanQR} exact={true} />
             <Route path="/Information" component={Information} />
-            <Route path="/Information/:id" component={Information} exact={true}/>
+            <Route path="/Information/:id" component={Information} exact={true} />
             <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true} />
             <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
           </IonRouterOutlet>

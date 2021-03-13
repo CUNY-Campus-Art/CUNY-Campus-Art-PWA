@@ -517,6 +517,8 @@ Returns: api request reponse
 
     this.user = returnData.data
 
+    localStorage.setItem('user', JSON.stringify(this.user))
+
     return returnData
   }
 
