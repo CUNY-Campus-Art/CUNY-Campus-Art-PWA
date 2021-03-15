@@ -272,7 +272,13 @@ const Home = (props: Props) => {
             </IonRow>
           </IonGrid>
         </IonCard>
+        <IonCard className="alt-bkgd">
+          <div className="text-center">
+          <h3 className="About-title"> Contact Us </h3>
+          Any question or comments? Please feel free to email us at cunycampusart@gmail.com
+          </div>
 
+        </ IonCard>
 
       </IonContent>
     </IonPage>

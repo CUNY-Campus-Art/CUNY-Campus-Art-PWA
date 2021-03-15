@@ -64,14 +64,14 @@ const UserProfile = (props: Props) => {
           alt="Avatar"
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
-        <IonCardSubtitle>{campus ? campus.campus_name : ''}</IonCardSubtitle>
+        <IonCardSubtitle>{user.campusName ? user.campusName : campus.campus_name}</IonCardSubtitle>
         {/* To do: decide to keep this button to open up to form or remove this button */}
         <IonButton fill="outline" slot="end">
           Edit
         </IonButton>
       </IonCardContent>
 
-    {/* default checked segment button will be profile, conditional statement to set checked segment button */}
+      {/* default checked segment button will be profile, conditional statement to set checked segment button */}
       <IonSegment className="segmentButton" value={showProfile ? "profile" : "password"}>
         <IonSegmentButton value="profile" onClick={handleProfile}>
           <IonLabel>Profile</IonLabel>
@@ -89,7 +89,7 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
-              placeholder={user.username}
+              placeholder={user.username || user.user_name}
               className="input-xlarge"
             />
             <hr />
@@ -144,7 +144,7 @@ const UserProfile = (props: Props) => {
               </IonButton>
             </div>
           </form>
-        ) : ( <p></p>)}
+        ) : (<p></p>)}
       </div>
     </span>
   );
