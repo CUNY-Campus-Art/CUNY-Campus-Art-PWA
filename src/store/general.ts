@@ -25,16 +25,6 @@ export interface ArtDisplay {
 }
 
 
-
-export interface User {
-  user_name: string
-  first_name: string
-  last_name: string
-  email: string
-  profile_picture: Image
-  scanned_artworks: Image[]
-}
-
 export interface ArtDisplaysState {
   allArtDisplays: ArtDisplay[]
   campuses: any[]

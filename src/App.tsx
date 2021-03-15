@@ -73,7 +73,8 @@ type Props = PropsFromRedux & {
 }
 
 const App = (props: Props) => {
-  useEffect(() => { props.getAllCampuses(); }, []);
+  let getAllCampuses = props.getAllCampuses;
+  useEffect(() => { getAllCampuses(); }, []);
   return (
     <IonApp>
       <IonReactRouter>

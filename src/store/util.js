@@ -5,7 +5,7 @@ export class StrapiApiConnection {
 
   constructor(authToken, user) {
     // Checks if anything in local storage, relevant for when app initially loads or refreshes
-    if (!authToken && !user && !!localStorage.getItem('user')) {
+    if (!!localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
       this.authToken = JSON.parse(localStorage.getItem('jwt'))
       this.unsolved = JSON.parse(localStorage.getItem('unsolved'))
@@ -118,7 +118,6 @@ export class StrapiApiConnection {
     let cluedArtworks = []
     artworks.forEach((artwork, index) => {
       if (artwork.clue != null) {
-        console.log(index)
         cluedArtworks.push(artwork)
       }
     })
@@ -188,7 +187,6 @@ Returns: api request reponse
     console.log(response)
     if (response.status === 200) {
       this.user.total_points = response.data.total_points
-      console.log('this.user', this.user)
     }
     return response
   }
@@ -389,8 +387,7 @@ Returns: api request reponse
         response = res.data
 
         if (response) {
-          this.authToken = response.jwt
-          this.user = response.user
+
           if (file) {
             this.axiosUploadToStrapi( this.authToken,
               file,
@@ -400,6 +397,8 @@ Returns: api request reponse
               'users-permissions'
             )
           }
+          this.authToken = response.jwt
+          this.user = response.user
           return { success: true, response: response, error: {} }
         } else {
           return { success: false, response: {}, error: error }
@@ -443,6 +442,8 @@ Returns: api request reponse
     if (returnData.data) {
       this.user = returnData.data.user
       this.authToken = returnData.data.jwt
+      localStorage.setItem('jwt', JSON.stringify(this.authToken));
+      localStorage.setItem('user', JSON.stringify(this.user));
     }
 
     return returnData
@@ -736,7 +737,6 @@ Returns: api request reponse
     console.log(response)
     if (response.status === 200) {
       this.user.total_points = response.data.total_points
-      console.log('this.user', this.user)
     }
     return response
   }
@@ -831,15 +831,12 @@ Returns: api request reponse
     } catch (error) {
       console.log(error)
       console.log(url)
-      // console.log(data)
-      console.log(headerConfig)
     }
 
     if (returnedData.status === 200) {
       return returnedData
     } else {
       console.log('Error in axiosPostToStrapi')
-      console.log(returnedData)
       return returnedData // returns {status: -1} for failed data
     }
   }
@@ -859,7 +856,6 @@ Returns: full put response from strapi api if successfull or -1 if failed
     } catch (error) {
       console.log(error)
       console.log(url)
-      console.log(data)
       console.log(headerConfig)
     }
 
@@ -887,7 +883,7 @@ Returns: full post response from strapi api if successfull or -1 if failed
       console.log(error)
       console.log(url)
       console.log(returnedData)
-      console.log(headerConfig)
+      // console.log(headerConfig)
     }
 
     if (returnedData.status === 200) {
@@ -943,7 +939,6 @@ Returns: full post response from strapi api if successfull or -1 if failed
     } catch (error) {
       console.log(error)
       // console.log(url);
-      // console.log(data);
       // console.log(headerConfig);
     }
 
@@ -966,7 +961,6 @@ export const axoisPostToStrapi = async (url, data, headerConfig) => {
   } catch (error) {
     console.log(error)
     console.log(url)
-    console.log(data)
     console.log(headerConfig)
   }
 

@@ -30,8 +30,8 @@ import './Signup.css'
 import { signupNewUser, fetchUser } from '../store/user'
 import { fetchAllCampuses } from '../store/general'
 import { useForm } from "react-hook-form";
-//import Input, { InputProps } from './input'
-import { object, string } from 'yup';
+import Input, { InputProps } from './HelperComponents/Input'
+import * as yup from 'yup';
 
 // const providersNames = [
 //   'google'
@@ -41,59 +41,68 @@ const mapSignup = (state: RootState) => {
   return {
     name: 'signup',
     displayName: 'Sign Up',
-    fields: [
-      { name: 'username', label: 'Username', type: 'text' },
-      { name: 'fullName', label: 'Full Name', type: 'text' },
-      { name: 'email', label: 'Email', type: 'email' },
-      { name: 'password', label: 'Password', type: 'password' },
-      { name: 'password-verification', label: 'Verify Password', type: 'password' },
-    ],
     campuses: state.general.campuses
-    //error: state.user.error
   }
 }
 
 
 const mapDispatch = (dispatch: any) => {
   return {
-    signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, campusId:any, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, campusId, file)),
-    loginUser: (username:string, password:string) => dispatch(fetchUser(username, password)),
+    signupNewUser: (email: string, pw: string, username: string, firstName: string, lastName: string, campusId: any, file: any = '') => dispatch(signupNewUser(email, pw, username, firstName, lastName, campusId, file)),
+    loginUser: (username: string, password: string) => dispatch(fetchUser(username, password)),
     getAllCampuses: () => dispatch(fetchAllCampuses()),
 
   }
 }
 
 const AuthForm = (props: any) => {
-    if(!props.campuses)  props.getAllCampuses();
-    //To redirect to Profile tab using forward animation
-    const { navigate } = useContext(NavContext);
-    const redirect = useCallback(
-      () => navigate('/Profile', 'back'),
-      [navigate]
-    );
+  if (!props.campuses) props.getAllCampuses();
+  //To redirect to Profile tab using forward animation
+  const { navigate } = useContext(NavContext);
+  const redirect = useCallback(
+    () => navigate('/Profile', 'back'),
+    [navigate]
+  );
 
-  const validationSchema = object().shape({
-    email: string().required().email(),
-    fullName: string().required().min(5).max(32),
-    password: string().required().min(8),
+  const SignupSchema = yup.object().shape({
+    username: yup.string().required().min(5).max(20),
+    email: yup.string().required().email(),
+    fullName: yup.string().required().min(5).max(32),
+    password: yup.string().required().min(5),
+    "password-verification": yup.string().oneOf([yup.ref('password'), ''], 'Passwords must match')
   });
-  // const { control, handleSubmit, errors } = useForm({
-  //   validationSchema,
-  // });
+
+  const formFields: InputProps[] = [
+    { name: 'username', label: 'Username', autocapitalize: 'off', component: <IonInput type="text" /> },
+    { name: 'fullName', label: 'Full Name', autocapitalize: 'on', component: <IonInput type="text" /> },
+    { name: 'email', label: 'Email', autocapitalize: 'off', component: <IonInput type="email" /> },
+    {
+      name: 'password', label: 'Password', autocapitalize: 'off',
+      component: <IonInput type="password" clearOnEdit={false} />
+    },
+    {
+      name: 'password-verification', label: 'Verify Password', autocapitalize: 'off',
+      component: <IonInput type="password" clearOnEdit={false} />
+    },
+  ]
+
+  // Code to make use of React Hook Forms, so values persist even after changing value on dropdown menu
+  let formValues: any = {
+    email: '',
+    username: '',
+    fullName: ''
+  }
+
+  const { control, handleSubmit, errors } = useForm({
+    defaultValues: formValues,
+    validationSchema: SignupSchema,
+    mode: 'onBlur',
+    reValidateMode: 'onChange'
+  });
 
 
-  const registerUser = (data: any) => {
-    console.log("creating a new user account with: ", data);
-  };
 
-  /* When Sign up component is set up, need to come back to this and make sure user is directed to profile page if already logged in */
-  const [isLogged, setIsLogged] = useState(!!props.currentUser);
-  console.log(isLogged)
-
-
-  //const [listCampuses, setListCampuses] = useState<string[]>([]);
-
-  //This value will correspond to an id from the Database that matches up with campus
+  // This value will correspond to an id from the Database that matches up with campus
   const [selectedCampus, setSelectedCampus] = useState<string>();
 
   const [imgData, setImgData] = useState(null);
@@ -104,30 +113,11 @@ const AuthForm = (props: any) => {
     console.log(fileInfo)
   }
 
-  // Code to make use of React Hook Forms, so values persist even after changing value on dropdown menu
-  let formValues: any = {
-    email: '',
-    password: '',
-    username: '',
-    fullName: ''
-  }
-
-  const { control, register, handleSubmit, errors, formState } = useForm({
-    defaultValues: formValues,
-    validationSchema,
-    reValidateMode: 'onChange'
-  });
-
-  const [data, setData] = useState();
-
-  const onSubmit = (data: any) => {
-    alert(JSON.stringify(data, null, 2));
-    setData(data);
-  };
-
   // Form invokes handlesSubmit1, updates local form values, and sends info to database to sign up user
   const handleSubmit1 = async (evt: any) => {
     evt.preventDefault()
+    handleSubmit(evt)
+
     if (evt.target) {
 
       formValues.email = evt.target.email.value
@@ -135,125 +125,78 @@ const AuthForm = (props: any) => {
       formValues.username = evt.target.username.value
       formValues.fullName = evt.target.fullName.value
 
-      let nameHolder = formValues.fullName.split(' ')
+      // Splits up name and capitalizes first letters
+      let nameHolder = formValues.fullName.split(' ').map((name: string) => name.length > 1 ? `${name[0].toUpperCase()}${name.slice(1)}` : name.length === 1 ? `${name[0].toUpperCase()}` : '')
       let firstName = nameHolder[0];
-      let lastName =  nameHolder.length> 1 ? nameHolder.slice(1).join(' '): '';
-      // imgData, selectedCampus:  values we still need to send to database somehow
+      let lastName = nameHolder.length > 1 ? nameHolder.slice(1).join(' ') : '';
+
       let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, selectedCampus, imgData)
-      console.log(result, "SIGNED UP FORM SUBMITTED")
+
       //If user sucessfully signs up, have user logged in, and redirected to Profile tab
-      //Once Profile Picture Upload is resolved. Should be able to replace result with result.sucess. For now result is based on whether con.user has a value (logic set in the user store)
-        if(result) {
-          await props.loginUser(formValues.username, formValues.password);
-          redirect();
-        }
+      if (result) {
+        await props.loginUser(formValues.username, formValues.password);
+        redirect();
+      }
     }
   }
-    // <IonPage className="container-fluid">     </IonPage>);
 
-/* Form Validation need to modify
-    // Manually setting up validation schema and style
-    const validStyle = {
-      borderBottom: '2px solid #00FF00'
-    }
-
-    const invalidStyle = {
-      borderBottom: '2px solid #FF0000'
-    }
-
-      //checkUserName makes sure that the passwords dont' have special characters aside from the underscore. [^a-zA-z0-9_]
-
-  let checkUsernameValue:any;
-  const checkUsername = (value:any) => {
-
-    let regex = /\W+/;
-    // let userName = document.getElementById('user-name');
-      if(value && !regex.test(value))
-        checkUsernameValue = ''
-      else
-        checkUsernameValue = 'Username can only include: A-Z, 0-9, and _'
-  }
-
-  const checkPasswords= () => {
-    let password1 = document.getElementById('password-1')
-    let password2 = document.getElementById('password-2')
-    console.log('TESTING' + password1.value)
-
-    if(password1.value !== password2.value)
-      return 'Passwords Don\'t Match';
-    else
-      return '';
-  }
-*/
-
-  return ( <IonPage>
-      <IonHeader>
+  return (<IonPage>
+    <IonHeader>
       <IonToolbar></IonToolbar>
 
-        <IonToolbar>
-          <IonButtons slot="start">
+      <IonToolbar>
+        <IonButtons slot="start">
           <IonBackButton defaultHref="/Profile" />
-          </IonButtons>
-          <IonTitle className="ion-text-end">Sign Up</IonTitle>
-          </IonToolbar>
-      </IonHeader>
-      <IonContent>
+        </IonButtons>
+        <IonTitle className="ion-text-end">Sign Up</IonTitle>
+      </IonToolbar>
+    </IonHeader>
+    <IonContent>
 
-          <form onSubmit={handleSubmit1}>
+      <form onSubmit={handleSubmit1}>
 
-            {/* Upload Profile Picture - We pass the Image Upload component the getImgFileInfoParent function so that it can be invoked and Signup component can retrieve the image file */}
-            <IonItem >
-              <label className="custom-input-label" >Upload Profile Picture: </label>
-              <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
-            </IonItem>
+        {/* Upload Profile Picture - We pass the Image Upload component the getImgFileInfoParent function so Signup component can retrieve the image file */}
+        <IonItem >
+          <label className="custom-input-label" >Upload Profile Picture: </label>
+          <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
+        </IonItem>
 
 
-            {/* Maps through and lists email, username, firstName, lastName, password, and verify password */}
-            {props.fields.map((field: any, index: any) =>
-              <div key={index}>
+        {/* Maps through and lists email, username, firstName, lastName, password, and verify password */}
+        {formFields.map((field: any, index: any) =>
+          <div key={index}>
+            <Input {...field} control={control} key={index} errors={errors} />
+          </div>
+        )}
 
-                <IonItem className="custom-input">
-                  <IonLabel  position="floating" className="custom-input-label" >{field.label}</IonLabel>
-                  <IonInput
-                    id={field.name}
-                    name={field.name}
-                    type={field.type}
-                    // onIonChange={ field.name === 'username' ? e => checkUsername(e.detail.value!): ()=>{}}
-                    // style = {field.name !== 'username' ? {} : checkUsernameValue ? validStyle : invalidStyle }
-                  >
-                  </IonInput>
-                </IonItem>
-              </div>
-            )}
+        {/* Campus Drop Down Menu */}
+        <br />
+        <IonItem id="campus-menu">
+          <IonLabel>Campus</IonLabel>
+          <IonSelect
+            interfaceOptions={{ cssClass: 'my-custom-interface' }}
+            interface="popover"
+            multiple={false}
+            placeholder=""
+            onIonChange={e => setSelectedCampus(e.detail.value)}
+            value={selectedCampus}
+          >
+            {props.campuses ? props.campuses.map((campus: any, index: any) =>
+              <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
+            ) : ''}
+          </IonSelect>
+        </IonItem>
 
-          {/* Campus Drop Down Menu */}
-          <br />
-          <IonItem id="campus-menu">
-                <IonLabel>Campus</IonLabel>
-                <IonSelect
-                  interfaceOptions={{ cssClass: 'my-custom-interface' }}
-                  interface="popover"
-                  multiple={false}
-                  placeholder=""
-                  onIonChange={e => setSelectedCampus(e.detail.value)}
-                  value={selectedCampus}
-                >
-                  {props.campuses ? props.campuses.map((campus: any, index: any) =>
-                    <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
-                  ): ''}
-                </IonSelect>
-              </IonItem>
-
-            {/* Submit Button */}
-            <IonButton expand="block" type="submit" className="ion-margin-top">
-              Sign Up
+        {/* Submit Button */}
+        <IonButton expand="block" type="submit" className="ion-margin-top">
+          Sign Up
         </IonButton>
 
-          </form>
+      </form>
 
 
-      </IonContent>
-      </IonPage>)
+    </IonContent>
+  </IonPage>)
 }
 
 
