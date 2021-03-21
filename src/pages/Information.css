@@ -11,3 +11,13 @@
     --background-activated-opacity:none;
     --background-activated: none;
 }
+
+#video-playlist{
+    display: flex;
+    flex-direction:row;
+    overflow:scroll;
+}
+
+#video-playlist-list ion-item {
+    cursor: pointer;
+}

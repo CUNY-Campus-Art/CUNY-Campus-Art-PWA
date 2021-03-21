@@ -26,6 +26,7 @@ export interface ArtDisplay {
   disliked: boolean // Specific to user (locally derived)
   artwork_type_clue: string
   clue: any
+  videos: any[]
 }
 
 
@@ -525,7 +526,12 @@ const defaultCurrentArtDisplay = {
   liked: false,
   disliked: false,
   artwork_type_clue: '',
-  clue: ''
+  clue: '',
+  videos: [
+    {youtubeId: 'hZ1OgQL9_Cw', youtubeUrl: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author:'Denis Shiryaev', username: 'ccampbell'},
+    {youtubeId: 'bYUKSx_bhHM', youtubeUrl: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author:'', username: 'ccampbell'},
+    // {youtubeId: '', youtubeUrl: '', title: '', author:'', username: ''}
+  ]
 }
 
 //adding user so that it can retrieve info based on current user state
