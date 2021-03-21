@@ -2,7 +2,7 @@
  * Information.tsx - The Information component displays the details pertaining to a single artwork, the current artwork, user has either just scanned or chosen from the gallery
  */
 
-import React, { useContext, useCallback, useState, useEffect} from "react";
+import React, { useContext, useCallback, useState, useEffect } from "react";
 import { NavContext } from '@ionic/react';
 import { useParams } from "react-router-dom";
 import { connect, ConnectedProps } from 'react-redux'
@@ -27,12 +27,13 @@ import {
 } from "@ionic/react";
 import "./Information.css";
 
-import { informationCircleOutline, qrCodeSharp, heart, heartOutline } from "ionicons/icons";
+import { informationCircleOutline, qrCodeSharp, heart, heartOutline, filmOutline } from "ionicons/icons";
 
 import {
   clickLikeButton,
   fetchScannedArtDisplay
 } from '../store/artdisplay'
+import { isString } from "util";
 
 const mapState = (state: any) => ({
   user: state.user.user,
@@ -59,19 +60,27 @@ const slideOpts = {
   speed: 400,
 };
 
-
+interface Video {
+  youtubeId: string
+  youtubeUrl: string
+  title: string
+  author: string
+  username: string
+}
 const Information = (props: Props) => {
 
   const [showNotFoundToast, setNotFoundToast] = useState(false);
 
+  const [selectedVideo, setSelectedVideo] = useState({ youtubeId: '', youtubeUrl: '', title: '', author: '', username: '' });
+
   const { id }: { id: string } = useParams();
 
-  const getArtwork = async (id:string) => {
+  const getArtwork = async (id: string) => {
     let extractedId = await props.getScannedArtDisplay(`cuny-campus-art-${id}`);
-    if(!extractedId) setNotFoundToast(true)
+    if (!extractedId) setNotFoundToast(true)
   }
 
-    useEffect(() => { if (id) getArtwork(id) }, []);
+  useEffect(() => { if (id) getArtwork(id) }, []);
 
 
 
@@ -152,6 +161,35 @@ const Information = (props: Props) => {
         </IonCard>
 
         <IonCard >
+          <IonItem>
+            <IonIcon icon={filmOutline} slot="start" />
+            <IonLabel class="ion-text-center">Video Commentary</IonLabel>
+          </IonItem>
+
+          {/* If a video is not selected by a user from the list, then display preview of all videos */}
+          <IonCardContent id="video-playlist">
+            {!selectedVideo && currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) => <iframe
+              title={index}
+              src={`https://www.youtube.com/embed/${video.youtubeId}`} width={'100%'}
+              height={"300"} frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>)}
+
+            {selectedVideo && <iframe
+              title={selectedVideo.youtubeId}
+              src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`} width={'100%'}
+              height={"300"} frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>}
+          </IonCardContent>
+
+          <IonCardContent id="video-playlist-list">
+            {currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) =>
+              <IonItem onClick={()=> setSelectedVideo(video)}>
+                {video.title}
+                {video.author ? `by ${video.author}`: ''}
+              </IonItem>)} <br/>
+          </IonCardContent>
+
+        </IonCard>
+
+        <IonCard >
           <IonItem onClick={() => redirect()} >
             <IonIcon icon={qrCodeSharp} slot="start" />
             <IonLabel class="ion-text-center">Scan Another Artwork</IonLabel>
@@ -159,13 +197,13 @@ const Information = (props: Props) => {
         </IonCard>
 
         <IonToast
-        position="middle"
-        color="warning"
-        isOpen={showNotFoundToast}
-        onDidDismiss={() => setNotFoundToast(false)}
-        message="Artwork not found! This artwork is currently not in our collection. Please try another QR code."
-        duration={1500}
-      />
+          position="middle"
+          color="warning"
+          isOpen={showNotFoundToast}
+          onDidDismiss={() => setNotFoundToast(false)}
+          message="Artwork not found! This artwork is currently not in our collection. Please try another QR code."
+          duration={1500}
+        />
 
       </IonContent>
     </IonPage>
