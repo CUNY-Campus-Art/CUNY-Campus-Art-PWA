@@ -804,7 +804,7 @@ Returns: api request reponse
       [relationFeildName]: existingEntries,
     })
     console.log(
-      'axiosRequestRemoveRelationToUser' + ' ' + relationFeildName,
+      'axiosRequestRemoveRelationToUser ' + relationFeildName,
       response
     )
     console.log('axiosRequestRemoveRelationToUser', response.status)

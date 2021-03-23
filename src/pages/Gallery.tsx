@@ -5,7 +5,7 @@
  * of past artworks the user has scanned locally.
  */
 
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
@@ -84,10 +84,11 @@ const Gallery = (props: Props) => {
     redirect()
   }
 
-  const [likeartwork, setlikeartwork] = useState(false);
-  const handleLikes = () => {
-    likeartwork ? setlikeartwork(false) : setlikeartwork(true);
-  }
+  // const [likeartwork, setlikeartwork] = useState(false);
+
+  // const handleLikes = () => {
+  //   likeartwork ? setlikeartwork(false) : setlikeartwork(true);
+  // }
 
 
   return (

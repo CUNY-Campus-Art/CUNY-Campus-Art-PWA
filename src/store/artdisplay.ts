@@ -26,9 +26,16 @@ export interface ArtDisplay {
   disliked: boolean // Specific to user (locally derived)
   artwork_type_clue: string
   clue: any
-  videos: any[]
+  videos: Video[]
 }
 
+export interface Video {
+  youtubeId: string
+  youtubeUrl: string
+  title: string
+  author: string
+  username: string
+}
 
 
 
@@ -80,6 +87,8 @@ export const REMOVE_SOLVED_ARTWORK = 'REMOVE_SOLVED_ARTWORK'
 
 export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
+export const ADD_VIDEO = 'ADD_VIDEO'
+
 // ACTION CREATORS
 interface AddArtDisplayAction {
   type: typeof ADD_ART_DISPLAY,
@@ -101,8 +110,6 @@ interface GotAllCampusesAction {
   payload: any
 }
 
-
-// kept this naming to later set it up to fetch from database, updates everything something is scanned (Similar to AllArtworks but this is specific to user history)
 interface GotPastArtDisplaysAction {
   type: typeof GET_PAST_ART_DISPLAYS,
   payload: ArtDisplay[]
@@ -180,8 +187,12 @@ interface AddUnsolvedArtworksAction {
   payload: ArtDisplay[]
 }
 
+interface AddVideoAction {
+  type: typeof ADD_VIDEO,
+  payload: Video
+}
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | AddUnsolvedArtworksAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | AddUnsolvedArtworksAction | AddVideoAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: any) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -284,7 +295,12 @@ export function removeLikedArtwork(artworkIdArray: any): ArtDisplayActionTypes {
   }
 }
 
-
+export function addVideo(video: Video): ArtDisplayActionTypes {
+  return {
+    type: ADD_VIDEO,
+    payload: video
+  }
+}
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
@@ -504,7 +520,13 @@ export const addSolvedArtwork = (user: any, artworkId: any, points: any) => asyn
 
 }
 
+export const addVideoToDB = (user: any, video: Video) => async (dispatch: any) => {
 
+  //TO DO: Add DB code here
+
+  //Update state locally
+  dispatch(addVideo(video));
+}
 
 /****** SETTING UP INITIAL STATE ***********/
 
@@ -528,8 +550,8 @@ const defaultCurrentArtDisplay = {
   artwork_type_clue: '',
   clue: '',
   videos: [
-    {youtubeId: 'hZ1OgQL9_Cw', youtubeUrl: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author:'Denis Shiryaev', username: 'ccampbell'},
-    {youtubeId: 'bYUKSx_bhHM', youtubeUrl: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author:'', username: 'ccampbell'},
+    { youtubeId: 'hZ1OgQL9_Cw', youtubeUrl: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author: 'Denis Shiryaev', username: 'ccampbell' },
+    { youtubeId: 'bYUKSx_bhHM', youtubeUrl: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author: '', username: 'ccampbell' },
     // {youtubeId: '', youtubeUrl: '', title: '', author:'', username: ''}
   ]
 }
@@ -609,6 +631,16 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
       }
     case ADD_UNSOLVED_ARTWORKS:
       return { ...state, unsolvedArtDisplays: action.payload }
+    case ADD_VIDEO:
+      return {
+        ...state,
+        currentArtDisplay: { ...state.currentArtDisplay, videos: [action.payload, ...state.currentArtDisplay.videos] },
+        pastArtDisplays: state.pastArtDisplays.map(artwork => {
+          // map over all artDisplays to find corresponding artwork and update video section
+          if (artwork.id === state.currentArtDisplay.id) artwork.videos = [action.payload, ...artwork.videos]
+          return artwork
+        })
+      }
     default:
       return state
   }
