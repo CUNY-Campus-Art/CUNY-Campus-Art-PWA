@@ -15,8 +15,7 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
-  IonAlert,
-  IonText
+  IonAlert
 } from "@ionic/react";
 import {
   arrowBackCircleOutline,
@@ -24,7 +23,6 @@ import {
   colorPalette,
   medalOutline,
   bulbOutline,
-  warning
 } from "ionicons/icons";
 
 import './HuntClues.css'
@@ -125,9 +123,6 @@ const HuntClues = (props: Props) => {
      props.addScannedArtDisplayToUserDB(user, id);
     //redirect()
   };
-
-
-
 
 
   return (

@@ -26,7 +26,7 @@ import {
 import './HuntStatus.css';
 
 //import { attachProps } from "@ionic/react/dist/types/components/utils";
-import  {colorPaletteOutline, medalOutline, ribbonOutline} from "ionicons/icons";
+import  {colorPaletteOutline, ribbonOutline} from "ionicons/icons";
 
 const mapState = (state: any) => ({
     user: state.user.user,

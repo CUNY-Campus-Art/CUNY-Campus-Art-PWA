@@ -32,12 +32,13 @@ import {
 import "./Information.css";
 import { useForm } from "react-hook-form";
 
-
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline, filmOutline } from "ionicons/icons";
 
 import {
   clickLikeButton,
-  fetchScannedArtDisplay
+  fetchScannedArtDisplay,
+  addVideoToDB,
+  Video
 } from '../store/artdisplay'
 
 const mapState = (state: any) => ({
@@ -48,7 +49,8 @@ const mapState = (state: any) => ({
 
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
-  clickLikeButton: (user: any, artworkId: any, fromGallery: boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery))
+  clickLikeButton: (user: any, artworkId: any, fromGallery: boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery)),
+  addVideo: (user: any, video: Video) => dispatch(addVideoToDB(user, video))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -65,18 +67,10 @@ const slideOpts = {
   speed: 400,
 };
 
-interface Video {
-  youtubeId: string
-  youtubeUrl: string
-  title: string
-  author: string
-  username: string
-}
-
-
 
 const Information = (props: Props) => {
 
+  let user = props.user;
 
   const [showNotFoundToast, setNotFoundToast] = useState(false);
 
@@ -102,12 +96,11 @@ const Information = (props: Props) => {
 
 
   let currentArtDisplay = props.currentArtDisplay;
-  console.log("CURRENT ART DISPLAY", props.currentArtDisplay);
 
   let slidesComp = props.currentArtDisplay.other_images ? [currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images] : [currentArtDisplay.primary_image]
 
   function handleLikes() {
-    let result = props.clickLikeButton(props.user, currentArtDisplay, false);
+    let result = props.clickLikeButton(user, currentArtDisplay, false);
     //Use the result in the future to make local state update faster
   }
 
@@ -118,15 +111,38 @@ const Information = (props: Props) => {
     title: '',
     author: ''
   }
+
+  // Allow form values to persist even when modal is closed
+
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
+  const [author, setAuthor] = useState(user ? `${user.first_name} ${user.last_name}` : '')
 
   const videoFields = [
-    { name: 'youtubeUrl', label: 'Enter Youtube URL: ', type: 'text', setFunction: setYoutubeUrl },
-    { name: 'title', label: 'Enter Title: ', type: 'text', setFunction: setTitle },
-    { name: 'author', label: 'Enter Author: ', type: 'text', setFunction: setAuthor },
+    { name: youtubeUrl, label: 'Enter Youtube URL: ', type: 'text', setFunction: setYoutubeUrl },
+    { name: title, label: 'Enter Title: ', type: 'text', setFunction: setTitle },
+    { name: author, label: 'Enter Author: ', type: 'text', setFunction: setAuthor },
   ]
+
+  // When form is submitted, parse data
+
+  const extractYoutubeId = (youtubeUrl: string) => {
+
+    const helper = (link: string) => {
+      let index = youtubeUrl.indexOf(link)
+      return index !== -1 ?
+        youtubeUrl.slice(index + link.length, index + link.length + 11) : ''
+    }
+
+
+    return helper('youtube.com/embed/') || helper('youtu.be/-') || helper('youtu.be/') ||
+      helper('youtube.com/watch?v=') || ''
+
+  }
+
+
+
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   const { handleSubmit } = useForm({
     defaultValues: formValues,
@@ -137,18 +153,39 @@ const Information = (props: Props) => {
   const handleSubmit1 = async (evt: any) => {
     evt.preventDefault()
     handleSubmit(evt)
+    // https://www.youtube.com/watch?v=hZ1OgQL9_Cw&feature=emb_title
 
     if (evt.target) {
+      let newVideo = { youtubeId: '', youtubeUrl: youtubeUrl, title: title, author: author, username: user ? user.user_name : '' }
 
-      formValues.youtubeUrl = evt.target.youtubeUrl.value
-      formValues.title = evt.target.title.value
-      formValues.author = evt.target.author.value
+      newVideo.youtubeId = extractYoutubeId(youtubeUrl)
+
+      if (newVideo.youtubeId) {
+        // Add video to local state and to database
+        props.addVideo(user, newVideo)
+
+        // Close modal and show success toast
+        setShowVideoModal(false)
+        setAddVideoToast(true)
+
+        // Clear Form
+        setYoutubeUrl('')
+        setTitle('')
+        setAuthor('')
+      } else {
+        setAddVideoToastInvalid(true)
+      }
+
     }
 
   }
 
 
-  const [showVideoModal, setShowVideoModal] = useState(false);
+  // Set toast
+  const [showAddVideoToast, setAddVideoToast] = useState(false)
+
+  const [showAddVideoToastInvalid, setAddVideoToastInvalid] = useState(false)
+
 
   return (
     <IonPage>
@@ -176,7 +213,7 @@ const Information = (props: Props) => {
 
               {/* <IonIcon
                 className="heartPlacement"
-                onClick={() => props.clickLikeButton(props.user, currentArtDisplay, false)}
+                onClick={() => props.clickLikeButton(user, currentArtDisplay, false)}
                 icon={props.currentArtDisplay.liked ? heart: heartOutline}
                 size="large"
                 ></IonIcon>) */}
@@ -216,12 +253,13 @@ const Information = (props: Props) => {
 
           {/* If a video is not selected by a user from the list, then display preview of all videos */}
           <IonCardContent id="video-playlist">
-            {!selectedVideo && currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) => <iframe
-              title={index}
+            {!selectedVideo.youtubeId && currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) => <iframe
+              key={`video-playlist${index}`}
+              title={`video-playlist${index}`}
               src={`https://www.youtube.com/embed/${video.youtubeId}`} width={'100%'}
               height={"300"} frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>)}
 
-            {selectedVideo && <iframe
+            {selectedVideo.youtubeId && <iframe
               id={'selected-video'}
               title={'selected-video'}
               src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`} width={'100%'}
@@ -251,7 +289,7 @@ const Information = (props: Props) => {
 
               <IonCard>
 
-                <form>
+                <form onSubmit={handleSubmit1}>
                   <IonCardTitle>Enter Video Information</IonCardTitle>
                   {videoFields.map((field: any, index: any) =>
                     <IonItem key={`videoField${index}`}>
@@ -259,7 +297,8 @@ const Information = (props: Props) => {
                         {field.label}
                       </IonLabel>
                       <IonInput name={field.name}
-onIonChange={field.setFunction} />
+                        value={field.name}
+                        onIonChange={e => field.setFunction(e.detail.value)} />
                     </IonItem>
                   )}
 
@@ -289,6 +328,27 @@ onIonChange={field.setFunction} />
           message="Artwork not found! This artwork is currently not in our collection. Please try another QR code."
           duration={1500}
         />
+
+
+        <IonToast
+          position="middle"
+          color="success"
+          isOpen={showAddVideoToast}
+          onDidDismiss={() => setAddVideoToast(false)}
+          message="Video has been successfully added."
+          duration={1500}
+        />
+
+
+        <IonToast
+          position="middle"
+          color="danger"
+          isOpen={showAddVideoToastInvalid}
+          onDidDismiss={() => setAddVideoToastInvalid(false)}
+          message="Invalid Youtube Url entered."
+          duration={1500}
+        />
+
 
       </IonContent>
     </IonPage>
