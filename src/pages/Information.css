@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+  }
+
 .heartPlacement{
     float: right;
     color: red;
@@ -18,6 +22,44 @@
     overflow:scroll;
 }
 
-#video-playlist-list ion-item {
+#video-playlist-list > ion-item {
     cursor: pointer;
+}
+
+#video-playlist-list ion-item:hover,
+.selected-video-link{
+    color:#1D3A83;
+}
+
+.video-form-modal{
+    --max-height: 60vh;
+    --max-width: 95vw;
+    display:flex;
+    align-items: center;
+    /* overflow: scroll; */
+}
+
+.video-form-modal ion-item {
+    flex-direction:column;
+
+}
+
+.video-form-modal ion-item form{
+    width: 100vw;
+    padding: 10px;
+    margin-top:auto;
+    margin-bottom:auto;
+
+}
+
+.video-form-modal ion-card{
+    padding: 10px;
+
+
+}
+
+#video-form-buttons{
+    display: flex;
+    flex-direction:  row;
+    justify-content: space-between;
 }
