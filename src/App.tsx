@@ -12,6 +12,7 @@ import {
   IonToolbar,
   IonText,
   IonImg,
+  IonItem
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Link } from 'react-router-dom';
@@ -87,15 +88,16 @@ const App = (props: Props) => {
 
 
 
-            <Link className="top-profile-links" to="/Profile" slot="end">
+            <span className="top-profile-links" slot="end">
               {/* Greet User By Name if logged in */}
               {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
               {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
               <Link to="/ScavengerHunt"> <IonText>{props.currentUser.total_points}</IonText></Link>
-              {props.currentUser ? <IonImg style={{ height: '2em', width: '2em' }} src={props.currentUser.profile_picture ? props.currentUser.profile_picture.url : defaultProfilePicture} /> : <IonIcon color="medium" icon={person} />}
+              {props.currentUser ? <Link className="top-profile-links" to="/Profile">
+                <IonImg style={{ height: '2em', width: '2em' }} src={props.currentUser.profile_picture ? props.currentUser.profile_picture.url : defaultProfilePicture} />
+                </Link> : <Link  to="/Profile"><IonIcon color="medium" icon={person} /> </Link>}
 
-
-            </Link>
+            </span>
             {/* </IonTabs> */}
           </IonToolbar>
         </IonHeader>

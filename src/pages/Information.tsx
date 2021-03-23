@@ -3,6 +3,7 @@
  */
 
 import React, { useContext, useCallback, useState, useEffect } from "react";
+import { Link } from 'react-router-dom'
 import { NavContext } from '@ionic/react';
 import { useParams } from "react-router-dom";
 import { connect, ConnectedProps } from 'react-redux'
@@ -14,18 +15,23 @@ import {
   IonToolbar,
   IonIcon,
   IonItem,
+  IonItemDivider,
+  IonInput,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
   IonCardContent,
   IonLabel,
+  IonModal,
   IonSlide,
   IonSlides,
   IonButton,
   IonToast
 } from "@ionic/react";
 import "./Information.css";
+import { useForm } from "react-hook-form";
+
 
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline, filmOutline } from "ionicons/icons";
 
@@ -33,7 +39,6 @@ import {
   clickLikeButton,
   fetchScannedArtDisplay
 } from '../store/artdisplay'
-import { isString } from "util";
 
 const mapState = (state: any) => ({
   user: state.user.user,
@@ -67,7 +72,11 @@ interface Video {
   author: string
   username: string
 }
+
+
+
 const Information = (props: Props) => {
+
 
   const [showNotFoundToast, setNotFoundToast] = useState(false);
 
@@ -101,6 +110,45 @@ const Information = (props: Props) => {
     let result = props.clickLikeButton(props.user, currentArtDisplay, false);
     //Use the result in the future to make local state update faster
   }
+
+  // Set up Video Form
+
+  let formValues: any = {
+    youtubeUrl: '',
+    title: '',
+    author: ''
+  }
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+
+  const videoFields = [
+    { name: 'youtubeUrl', label: 'Enter Youtube URL: ', type: 'text', setFunction: setYoutubeUrl },
+    { name: 'title', label: 'Enter Title: ', type: 'text', setFunction: setTitle },
+    { name: 'author', label: 'Enter Author: ', type: 'text', setFunction: setAuthor },
+  ]
+
+  const { handleSubmit } = useForm({
+    defaultValues: formValues,
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  });
+
+  const handleSubmit1 = async (evt: any) => {
+    evt.preventDefault()
+    handleSubmit(evt)
+
+    if (evt.target) {
+
+      formValues.youtubeUrl = evt.target.youtubeUrl.value
+      formValues.title = evt.target.title.value
+      formValues.author = evt.target.author.value
+    }
+
+  }
+
+
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   return (
     <IonPage>
@@ -174,19 +222,56 @@ const Information = (props: Props) => {
               height={"300"} frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>)}
 
             {selectedVideo && <iframe
-              title={selectedVideo.youtubeId}
+              id={'selected-video'}
+              title={'selected-video'}
               src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`} width={'100%'}
-              height={"300"} frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>}
+              height={"auto"} frameBorder="0 " allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>}
           </IonCardContent>
 
           <IonCardContent id="video-playlist-list">
             {currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) =>
-              <IonItem onClick={()=> setSelectedVideo(video)}>
+              <IonItem
+                key={index}
+                className={video.youtubeId === selectedVideo.youtubeId ? 'selected-video-link' : ''} onClick={() => {
+                  setSelectedVideo(video)
+                  document.getElementById("video-playlist")?.scrollIntoView({ behavior: 'smooth' })
+                }
+                }
+              >
                 {video.title}
-                {video.author ? `by ${video.author}`: ''}
-              </IonItem>)} <br/>
-          </IonCardContent>
+                {video.author ? ` by ${video.author}` : ''}
+              </IonItem>)} <br />
 
+            <hr />
+
+
+            <IonButton color='warning'
+              onClick={() => setShowVideoModal(!showVideoModal)} >Add a Video?</IonButton>
+            <IonModal cssClass='video-form-modal' isOpen={showVideoModal}>
+
+              <IonCard>
+
+                <form>
+                  <IonCardTitle>Enter Video Information</IonCardTitle>
+                  {videoFields.map((field: any, index: any) =>
+                    <IonItem key={`videoField${index}`}>
+                      <IonLabel position="stacked">
+                        {field.label}
+                      </IonLabel>
+                      <IonInput name={field.name}
+onIonChange={field.setFunction} />
+                    </IonItem>
+                  )}
+
+                  <span id="video-form-buttons">
+                    <IonButton size='default' color="medium" fill="outline" onClick={() => setShowVideoModal(false)}>Cancel</IonButton>
+                    <IonButton size='default' type="submit"  >Submit</IonButton>
+                  </span>
+                </form>
+              </IonCard>
+            </IonModal>
+            {/* List user's videos */}
+          </IonCardContent>
         </IonCard>
 
         <IonCard >
