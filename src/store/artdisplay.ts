@@ -26,12 +26,12 @@ export interface ArtDisplay {
   disliked: boolean // Specific to user (locally derived)
   artwork_type_clue: string
   clue: any
-  videos: Video[]
+  Videos: Video[]
 }
 
 export interface Video {
-  youtubeId: string
-  youtubeUrl: string
+  youtube_id: string
+  youtube_url: string
   title: string
   author: string
   username: string
@@ -520,10 +520,10 @@ export const addSolvedArtwork = (user: any, artworkId: any, points: any) => asyn
 
 }
 
-export const addVideoToDB = (user: any, video: Video) => async (dispatch: any) => {
-
+export const addVideoToDB = (user: any, artwork: any, video: Video) => async (dispatch: any) => {
+  console.log(artwork)
   //TO DO: Add DB code here
-
+  await con.updateArtworkVideos(artwork.id, [artwork.Videos, video])
   //Update state locally
   dispatch(addVideo(video));
 }
@@ -549,10 +549,10 @@ const defaultCurrentArtDisplay = {
   disliked: false,
   artwork_type_clue: '',
   clue: '',
-  videos: [
-    { youtubeId: 'hZ1OgQL9_Cw', youtubeUrl: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author: 'Denis Shiryaev', username: 'ccampbell' },
-    { youtubeId: 'bYUKSx_bhHM', youtubeUrl: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author: '', username: 'ccampbell' },
-    // {youtubeId: '', youtubeUrl: '', title: '', author:'', username: ''}
+  Videos: [
+    { youtube_id: 'hZ1OgQL9_Cw', youtube_url: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author: 'Denis Shiryaev', username: 'ccampbell' },
+    { youtube_id: 'bYUKSx_bhHM', youtube_url: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author: '', username: 'ccampbell' },
+    // {youtube_id: '', youtube_url: '', title: '', author:'', username: ''}
   ]
 }
 
@@ -634,10 +634,10 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
     case ADD_VIDEO:
       return {
         ...state,
-        currentArtDisplay: { ...state.currentArtDisplay, videos: [action.payload, ...state.currentArtDisplay.videos] },
+        currentArtDisplay: { ...state.currentArtDisplay, videos: [action.payload, ...state.currentArtDisplay.Videos] },
         pastArtDisplays: state.pastArtDisplays.map(artwork => {
           // map over all artDisplays to find corresponding artwork and update video section
-          if (artwork.id === state.currentArtDisplay.id) artwork.videos = [action.payload, ...artwork.videos]
+          if (artwork.id === state.currentArtDisplay.id) artwork.Videos = [action.payload, ...artwork.Videos]
           return artwork
         })
       }
