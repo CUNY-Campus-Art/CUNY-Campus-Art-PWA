@@ -115,8 +115,6 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
-
-
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
 export const fetchAllArtworks = () => async (dispatch: any) => {
   const { data } = await axios.get(strapiUrl + '/artworks');

@@ -44,7 +44,8 @@ import {
 const mapState = (state: any) => ({
   user: state.user.user,
   campuses: state.general.campuses,
-  currentArtDisplay: state.artDisplay.currentArtDisplay
+  currentArtDisplay: state.artDisplay.currentArtDisplay,
+  videos: state.artDisplay.currentArtDisplay.Videos
 })
 
 const mapDispatch = (dispatch: any) => ({
@@ -74,7 +75,7 @@ const Information = (props: Props) => {
 
   const [showNotFoundToast, setNotFoundToast] = useState(false);
 
-  const [selectedVideo, setSelectedVideo] = useState({ youtube_id: '', youtube_url: '', title: '', author: '', username: '' });
+  const [selectedVideo, setSelectedVideo] = useState({ youtube_id: '', youtube_url: '', title: '', author: '', user: '' });
 
   const { id }: { id: string } = useParams();
 
@@ -96,6 +97,7 @@ const Information = (props: Props) => {
 
 
   let currentArtDisplay = props.currentArtDisplay;
+  let currentArtDisplayVideos = props.videos;
 
   let slidesComp = props.currentArtDisplay.other_images ? [currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images] : [currentArtDisplay.primary_image]
 
@@ -156,7 +158,7 @@ const Information = (props: Props) => {
     // https://www.youtube.com/watch?v=hZ1OgQL9_Cw&feature=emb_title
 
     if (evt.target) {
-      let newVideo = { youtube_id: '', youtube_url: youtube_url, title: title, author: author, username: user ? user.user_name : '' }
+      let newVideo = { youtube_id: '', youtube_url: youtube_url, title: title, author: author, user }
 
       newVideo.youtube_id = extractYoutubeId(youtube_url)
 
@@ -253,9 +255,7 @@ const Information = (props: Props) => {
 
           {/* If a video is not selected by a user from the list, then display preview all videos */}
           <IonCardContent id="video-playlist">
-            {console.log(currentArtDisplay.Videos)}
-
-            {!selectedVideo.youtube_id && currentArtDisplay.Videos && currentArtDisplay.Videos.map((video: any, index: string) => video.youtube_url && <iframe
+            {!selectedVideo.youtube_id && currentArtDisplayVideos && currentArtDisplayVideos.map((video: any, index: string) => video.youtube_url && <iframe
               key={`video-playlist${index}`}
               title={`video-playlist${index}`}
               src={`https://www.youtube.com/embed/${extractYoutubeId(video.youtube_url)}`} width={'100%'}
@@ -268,7 +268,7 @@ const Information = (props: Props) => {
           </IonCardContent>
 
           <IonCardContent id="video-playlist-list">
-            {currentArtDisplay.Videos && currentArtDisplay.Videos.map((video: any, index: string) =>
+            {currentArtDisplayVideos && currentArtDisplayVideos.map((video: any, index: string) =>
               <IonItem
                 key={index}
                 className={video.youtube_id === selectedVideo.youtube_id ? 'selected-video-link' : ''} onClick={() => {
