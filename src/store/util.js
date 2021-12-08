@@ -115,13 +115,24 @@ export class StrapiApiConnection {
   */
   getArtworkWithCluesforCampusById = async (campusId) => {
     let artworks = await this.getArtworksInCampusById(campusId)
-    let cluedArtworks = []
-    artworks.forEach((artwork, index) => {
-      if (artwork.clue != null) {
-        cluedArtworks.push(artwork)
-      }
-    })
+
+    let cluedArtworks =
+    artworks.filter(artwork => artwork.clue != null
+    )
+
     return artworks
+  }
+
+  getAllArtworksWithClues = async () => {
+    const { data } = await axios.get(this.strapiUrl + '/artworks')
+
+    let artworks = data
+
+    let cluedArtworks =
+    artworks.filter(artwork => artwork.clue != null
+    )
+
+    return cluedArtworks
   }
 
   /* createArtwork

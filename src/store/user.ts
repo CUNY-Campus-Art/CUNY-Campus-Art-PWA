@@ -47,7 +47,7 @@ export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
 const getUnsolvedArtworks = async (user: any) => {
 
-  let artworks = await con.getArtworkWithCluesforCampusById(1)
+  let artworks = await con.getAllArtworksWithClues()
 
   let solvedArtworksIds = user.solved_artworks.map((artwork: any) => artwork.id);
 
