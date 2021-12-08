@@ -34,7 +34,7 @@ export interface Video {
   youtube_url: string
   title: string
   author: string
-  username: string
+  user?: any
 }
 
 
@@ -334,7 +334,6 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
     return artwork
   })
 
-  console.log(artworks)
   dispatch(gotPastArtDisplays(artworks))
   return artworks;
 };
@@ -436,7 +435,6 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
     const data = await con.removeScannedArtworkFromUser([artwork.id]);
     await con.syncRemoteToLocalUser()
     //reload artworks
-    console.log("after", con.user)
     if (artwork.liked) removeFromLikes(artwork)
     if (artwork.disliked) removeFromDislikes(artwork)
     dispatch(fetchPastArtworks(con.user))
@@ -478,7 +476,6 @@ export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) =
 
   if (fromGallery === false) {
     dispatch(changeCurrentArtDisplay({ ...artwork, liked: artwork.liked }))
-    console.log(artwork, 'in gallery yo')
     return artwork;
   }
 
@@ -521,10 +518,9 @@ export const addSolvedArtwork = (user: any, artworkId: any, points: any) => asyn
 }
 
 export const addVideoToDB = (user: any, artwork: any, video: Video) => async (dispatch: any) => {
-  console.log(artwork)
-  //TO DO: Add DB code here
-  await con.updateArtworkVideos(artwork.id, [artwork.Videos, video])
-  //Update state locally
+
+  await con.updateArtworkVideos(artwork.id, [...artwork.Videos, video])
+
   dispatch(addVideo(video));
 }
 
@@ -550,9 +546,8 @@ const defaultCurrentArtDisplay = {
   artwork_type_clue: '',
   clue: '',
   Videos: [
-    { youtube_id: 'hZ1OgQL9_Cw', youtube_url: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author: 'Denis Shiryaev', username: 'ccampbell' },
-    { youtube_id: 'bYUKSx_bhHM', youtube_url: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author: '', username: 'ccampbell' },
-    // {youtube_id: '', youtube_url: '', title: '', author:'', username: ''}
+    { youtube_id: 'hZ1OgQL9_Cw', youtube_url: 'https://www.youtube.com/watch?v=hZ1OgQL9_Cw', title: 'A Trip Through New York City in 1911', author: 'Denis Shiryaev', user: con.user },
+    { youtube_id: 'bYUKSx_bhHM', youtube_url: 'https://www.youtube.com/watch?v=https://www.youtube.com/watch?v=bYUKSx_bhHM', title: 'Footage and History of the Five Boroughs of New York City (1946)', author: '', user: con.user },
   ]
 }
 
@@ -634,7 +629,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
     case ADD_VIDEO:
       return {
         ...state,
-        currentArtDisplay: { ...state.currentArtDisplay, videos: [action.payload, ...state.currentArtDisplay.Videos] },
+        currentArtDisplay: { ...state.currentArtDisplay, Videos: [action.payload, ...state.currentArtDisplay.Videos] },
         pastArtDisplays: state.pastArtDisplays.map(artwork => {
           // map over all artDisplays to find corresponding artwork and update video section
           if (artwork.id === state.currentArtDisplay.id) artwork.Videos = [action.payload, ...artwork.Videos]

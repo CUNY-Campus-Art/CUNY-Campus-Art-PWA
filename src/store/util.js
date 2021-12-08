@@ -58,7 +58,7 @@ export class StrapiApiConnection {
   */
   getAllCampuses = async () => {
     const { data } = await axios.get(this.strapiUrl + '/campuses')
-    console.log('getAllCampuses', data)
+    //console.log('getAllCampuses', data)
     return data
   }
 
@@ -207,6 +207,8 @@ Returns: api request reponse
       },
     }
     const sendData = JSON.stringify(dataIn)
+    console.log(sendData, 'SENDDATA')
+
     const returnData = await this.axiosPutToStrapi(
       this.strapiUrl + '/artworks/' + id,
       sendData,
@@ -216,7 +218,7 @@ Returns: api request reponse
   }
 
   updateArtworkVideos = async (id, videoData) => {
-    this.updateArtworkById(id, {Videos: videoData})
+    this.updateArtworkById(id, { Videos: videoData })
   }
 
   /*increaseLikesForArtworkById
@@ -385,15 +387,15 @@ Returns: api request reponse
         password: pw,
         first_name: firstName,
         last_name: lastName,
-        campus: campusId
+        campus: campusId,
       })
       .then((res) => {
         response = res.data
 
         if (response) {
-
           if (file) {
-            this.axiosUploadToStrapi( this.authToken,
+            this.axiosUploadToStrapi(
+              this.authToken,
               file,
               response.user.id,
               'user',
@@ -446,9 +448,8 @@ Returns: api request reponse
     if (returnData.data) {
       this.user = returnData.data.user
       this.authToken = returnData.data.jwt
-      console.log(this.user, this.authToken)
-      localStorage.setItem('jwt', JSON.stringify(this.authToken));
-      localStorage.setItem('user', JSON.stringify(this.user));
+      localStorage.setItem('jwt', JSON.stringify(this.authToken))
+      localStorage.setItem('user', JSON.stringify(this.user))
     }
 
     return returnData
@@ -550,7 +551,7 @@ Returns: api request reponse
       dataIn,
       sendConfig
     )
-    //console.log(response)
+    console.log(response)
     return response
   }
 
@@ -834,7 +835,6 @@ Returns: api request reponse
     try {
       returnedData = await axios.post(url, data, headerConfig)
     } catch (error) {
-
       console.log(error)
       console.log(url)
     }
@@ -842,8 +842,6 @@ Returns: api request reponse
     if (returnedData.status === 200) {
       return returnedData
     } else {
-      console.log(returnedData, "HELLO")
-
       console.log('Error in axiosPostToStrapi')
       return returnedData // returns {status: -1} for failed data
     }
@@ -914,7 +912,7 @@ Accepts:
 Returns: full post response from strapi api if successfull or -1 if failed
 */
 
-              'users-permissions'
+  'users-permissions'
   axiosUploadToStrapi = async (
     token, // this.authToken
     file, // file
