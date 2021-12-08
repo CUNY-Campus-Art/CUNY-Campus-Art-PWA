@@ -1,65 +1,64 @@
 html {
-    scroll-behavior: smooth;
-  }
-
-.heartPlacement{
-    float: right;
-    color: red;
+  scroll-behavior: smooth;
 }
 
-.heartPlacement:hover{
-    --background-hover:none;
+.heartPlacement {
+  float: right;
+  color: red;
 }
 
-.heartPlacement:active{
-    --background-activated-opacity:none;
-    --background-activated: none;
+.heartPlacement:hover {
+  --background-hover: none;
 }
 
-#video-playlist{
-    display: flex;
-    flex-direction:row;
-    overflow:scroll;
+.heartPlacement:active {
+  --background-activated-opacity: none;
+  --background-activated: none;
+}
+
+#video-playlist {
+  display: flex;
+  flex-direction: row;
+  overflow: scroll;
 }
 
 #video-playlist-list > ion-item {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #video-playlist-list ion-item:hover,
-.selected-video-link{
-    color:#1D3A83;
+.selected-video-link {
+  color: #1d3a83;
 }
 
-.video-form-modal{
-    --max-height: 60vh;
-    --max-width: 95vw;
-    display:flex;
-    align-items: center;
-    /* overflow: scroll; */
+.video-form-modal {
+  --max-height: 80vh;
+  --max-width: 95vw;
+  display: flex;
+  align-items: center;
+  /* overflow: scroll; */
 }
 
 .video-form-modal ion-item {
-    flex-direction:column;
-
+  flex-direction: column;
+  align-items: center;
 }
 
-.video-form-modal ion-item form{
-    width: 100vw;
-    padding: 10px;
-    margin-top:auto;
-    margin-bottom:auto;
-
+.video-form-modal ion-item form {
+  width: 100vw;
+  padding: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
-.video-form-modal ion-card{
-    padding: 10px;
-
-
+.video-form-modal ion-card {
+  padding: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
-#video-form-buttons{
-    display: flex;
-    flex-direction:  row;
-    justify-content: space-between;
+#video-form-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
