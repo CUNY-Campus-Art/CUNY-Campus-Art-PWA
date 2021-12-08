@@ -215,6 +215,10 @@ Returns: api request reponse
     return returnData
   }
 
+  updateArtworkVideos = async (id, videoData) => {
+    this.updateArtworkById(id, {Videos: videoData})
+  }
+
   /*increaseLikesForArtworkById
   Function to increase a artworks likes count by 1
   Accepts:
@@ -442,6 +446,7 @@ Returns: api request reponse
     if (returnData.data) {
       this.user = returnData.data.user
       this.authToken = returnData.data.jwt
+      console.log(this.user, this.authToken)
       localStorage.setItem('jwt', JSON.stringify(this.authToken));
       localStorage.setItem('user', JSON.stringify(this.user));
     }
@@ -545,7 +550,7 @@ Returns: api request reponse
       dataIn,
       sendConfig
     )
-    console.log(response)
+    //console.log(response)
     return response
   }
 
@@ -829,6 +834,7 @@ Returns: api request reponse
     try {
       returnedData = await axios.post(url, data, headerConfig)
     } catch (error) {
+
       console.log(error)
       console.log(url)
     }
@@ -836,6 +842,8 @@ Returns: api request reponse
     if (returnedData.status === 200) {
       return returnedData
     } else {
+      console.log(returnedData, "HELLO")
+
       console.log('Error in axiosPostToStrapi')
       return returnedData // returns {status: -1} for failed data
     }

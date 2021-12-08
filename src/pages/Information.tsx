@@ -50,7 +50,7 @@ const mapState = (state: any) => ({
 const mapDispatch = (dispatch: any) => ({
   getScannedArtDisplay: (qrCodeText: string) => dispatch(fetchScannedArtDisplay(qrCodeText)),
   clickLikeButton: (user: any, artworkId: any, fromGallery: boolean) => dispatch(clickLikeButton(user, artworkId, fromGallery)),
-  addVideo: (user: any, video: Video) => dispatch(addVideoToDB(user, video))
+  addVideo: (user: any, artwork: any, video: Video) => dispatch(addVideoToDB(user, artwork, video))
 })
 
 const connector = connect(mapState, mapDispatch)
@@ -74,7 +74,7 @@ const Information = (props: Props) => {
 
   const [showNotFoundToast, setNotFoundToast] = useState(false);
 
-  const [selectedVideo, setSelectedVideo] = useState({ youtubeId: '', youtubeUrl: '', title: '', author: '', username: '' });
+  const [selectedVideo, setSelectedVideo] = useState({ youtube_id: '', youtube_url: '', title: '', author: '', username: '' });
 
   const { id }: { id: string } = useParams();
 
@@ -107,31 +107,31 @@ const Information = (props: Props) => {
   // Set up Video Form
 
   let formValues: any = {
-    youtubeUrl: '',
+    youtube_url: '',
     title: '',
     author: ''
   }
 
   // Allow form values to persist even when modal is closed
 
-  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [youtube_url, setYoutubeUrl] = useState('');
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState(user ? `${user.first_name} ${user.last_name}` : '')
 
   const videoFields = [
-    { name: youtubeUrl, label: 'Enter Youtube URL: ', type: 'text', setFunction: setYoutubeUrl },
+    { name: youtube_url, label: 'Enter Youtube URL: ', type: 'text', setFunction: setYoutubeUrl },
     { name: title, label: 'Enter Title: ', type: 'text', setFunction: setTitle },
     { name: author, label: 'Enter Author: ', type: 'text', setFunction: setAuthor },
   ]
 
   // When form is submitted, parse data
 
-  const extractYoutubeId = (youtubeUrl: string) => {
+  const extractYoutubeId = (youtube_url: string) => {
 
     const helper = (link: string) => {
-      let index = youtubeUrl.indexOf(link)
+      let index = youtube_url.indexOf(link)
       return index !== -1 ?
-        youtubeUrl.slice(index + link.length, index + link.length + 11) : ''
+        youtube_url.slice(index + link.length, index + link.length + 11) : ''
     }
 
 
@@ -156,13 +156,13 @@ const Information = (props: Props) => {
     // https://www.youtube.com/watch?v=hZ1OgQL9_Cw&feature=emb_title
 
     if (evt.target) {
-      let newVideo = { youtubeId: '', youtubeUrl: youtubeUrl, title: title, author: author, username: user ? user.user_name : '' }
+      let newVideo = { youtube_id: '', youtube_url: youtube_url, title: title, author: author, username: user ? user.user_name : '' }
 
-      newVideo.youtubeId = extractYoutubeId(youtubeUrl)
+      newVideo.youtube_id = extractYoutubeId(youtube_url)
 
-      if (newVideo.youtubeId) {
+      if (newVideo.youtube_id) {
         // Add video to local state and to database
-        props.addVideo(user, newVideo)
+        props.addVideo(user, currentArtDisplay, newVideo)
 
         // Close modal and show success toast
         setShowVideoModal(false)
@@ -251,26 +251,27 @@ const Information = (props: Props) => {
             <IonLabel class="ion-text-center">Video Commentary</IonLabel>
           </IonItem>
 
-          {/* If a video is not selected by a user from the list, then display preview of all videos */}
+          {/* If a video is not selected by a user from the list, then display preview all videos */}
           <IonCardContent id="video-playlist">
-            {!selectedVideo.youtubeId && currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) => <iframe
+            {console.log(currentArtDisplay.Videos)}
+
+            {!selectedVideo.youtube_id && currentArtDisplay.Videos && currentArtDisplay.Videos.map((video: any, index: string) => video.youtube_url && <iframe
               key={`video-playlist${index}`}
               title={`video-playlist${index}`}
-              src={`https://www.youtube.com/embed/${video.youtubeId}`} width={'100%'}
+              src={`https://www.youtube.com/embed/${extractYoutubeId(video.youtube_url)}`} width={'100%'}
               height={"300"} frameBorder="0" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>)}
-
-            {selectedVideo.youtubeId && <iframe
+            {selectedVideo.youtube_id && <iframe
               id={'selected-video'}
               title={'selected-video'}
-              src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`} width={'100%'}
+              src={`https://www.youtube.com/embed/${selectedVideo.youtube_id}`} width={'100%'}
               height={"auto"} frameBorder="0 " allow="autoplay; fullscreen; picture-in-picture" allowFullScreen></iframe>}
           </IonCardContent>
 
           <IonCardContent id="video-playlist-list">
-            {currentArtDisplay.videos && currentArtDisplay.videos.map((video: any, index: string) =>
+            {currentArtDisplay.Videos && currentArtDisplay.Videos.map((video: any, index: string) =>
               <IonItem
                 key={index}
-                className={video.youtubeId === selectedVideo.youtubeId ? 'selected-video-link' : ''} onClick={() => {
+                className={video.youtube_id === selectedVideo.youtube_id ? 'selected-video-link' : ''} onClick={() => {
                   setSelectedVideo(video)
                   document.getElementById("video-playlist")?.scrollIntoView({ behavior: 'smooth' })
                 }
