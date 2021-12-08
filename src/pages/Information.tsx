@@ -284,8 +284,12 @@ const Information = (props: Props) => {
             <hr />
 
 
-            <IonButton color='warning'
+            {user && <IonButton color='warning'
               onClick={() => setShowVideoModal(!showVideoModal)} >Add a Video?</IonButton>
+            }
+
+            {!user && <Link to='/profile'>Sign in to Add a Video</Link>}
+
             <IonModal cssClass='video-form-modal' isOpen={showVideoModal}>
 
               <IonCard>
