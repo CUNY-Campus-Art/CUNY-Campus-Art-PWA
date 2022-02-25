@@ -391,6 +391,7 @@ Returns: api request reponse
   ) => {
     let error
     let response
+
     await axios
       .post(this.strapiUrl + '/auth/local/register', {
         username: username,
@@ -401,6 +402,7 @@ Returns: api request reponse
         campus: campusId,
       })
       .then((res) => {
+        console.log(res);
         response = res.data
 
         if (response) {
