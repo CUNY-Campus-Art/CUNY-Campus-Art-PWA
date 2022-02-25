@@ -335,6 +335,9 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
   })
 
   dispatch(gotPastArtDisplays(artworks))
+
+
+  
   return artworks;
 };
 
@@ -601,15 +604,21 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
       return {
         ...state
       }
-    case REMOVE_ART_DISPLAY:
+    case REMOVE_ART_DISPLAY: {
+      
+      //quick fix here, need to be put in a more appropriate place later
+      localStorage.setItem("pastArtDisplays", JSON.stringify(state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id)));
       //fetchPastArtworks, should update the past displays
       return {
         ...state,
         // remove this artwork from gallery history
         pastArtDisplays: state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id),
         // If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
-        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay : state.currentArtDisplay
+        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay : state.currentArtDisplay,
+       
+
       }
+    }
     case INCREASE_LIKES_FOR_ARTWORK:
       //increase number of likes at particular index locally
       // state.pastArtDisplays.forEach((artDisplay: any) => { if (artDisplay.id === action.payload) artDisplay.likes++ })
