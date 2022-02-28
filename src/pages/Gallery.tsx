@@ -5,7 +5,7 @@
  * of past artworks the user has scanned locally.
  */
 
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
@@ -62,11 +62,15 @@ type Props = PropsFromRedux & {
 }
 
 const Gallery = (props: Props) => {
+
+
+console.log(window.localStorage);
   const user = props.currentUser
+  const pastArtDisplays = props.pastArtDisplays;
+
 
   // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
-  const pastArtDisplays = props.pastArtDisplays
 
   // To redirect to Information with forward animation
   const { navigate } = useContext(NavContext)

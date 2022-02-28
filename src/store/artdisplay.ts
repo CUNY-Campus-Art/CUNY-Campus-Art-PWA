@@ -335,6 +335,9 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
   })
 
   dispatch(gotPastArtDisplays(artworks))
+
+
+
   return artworks;
 };
 
@@ -551,10 +554,41 @@ const defaultCurrentArtDisplay = {
   ]
 }
 
-//adding user so that it can retrieve info based on current user state
+// Retrieve artworks in local storage
+const pastArtDisplays = determinePastArtDisplays();
+
+// Retrieves artworks based on whether user is logged in or is an anonymous user
+function determinePastArtDisplays() {
+  console.log("determine");
+  if (con.user) {
+    // console.log("from redux and local storage for a logged in user");
+    return [...con.user.scanned_artworks, defaultCurrentArtDisplay]
+  }
+  else {
+    // Check if there are past art displays in local storage
+    let checkStoragePastArtDisplays = window.localStorage.getItem('pastArtDisplays')
+
+    if (checkStoragePastArtDisplays) {
+      console.log("from storage");
+      console.log(checkStoragePastArtDisplays)
+
+      let pastArtDisplays = JSON.parse(checkStoragePastArtDisplays || '{}')
+      console.log(pastArtDisplays)
+      return pastArtDisplays;
+    }
+  }
+  // If user is not logged in and there is no artworks in local storage, only display default
+  return [defaultCurrentArtDisplay]
+}
+
+// Use local storage to display current art display on refresh instead of default
+let storageCurrentArtDisplay = window.localStorage.getItem('currentArtDisplay') && JSON.parse(window.localStorage.getItem('currentArtDisplay') || '{}')
+
+
+// Retrieve initialState info based on current user state
 const initialState: ArtDisplaysState = {
-  currentArtDisplay: defaultCurrentArtDisplay,
-  pastArtDisplays: con.user ? [...con.user.scanned_artworks, defaultCurrentArtDisplay] : [defaultCurrentArtDisplay],
+  currentArtDisplay: storageCurrentArtDisplay || defaultCurrentArtDisplay,
+  pastArtDisplays: pastArtDisplays,
   allArtDisplays: [defaultCurrentArtDisplay],
   campuses: [],
   unsolvedArtDisplays: []
@@ -567,16 +601,22 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
     //This changes the value of the current art to be displayed
     case CHANGE_CURRENT_ART_DISPLAY:
+      window.localStorage.setItem("currentArtDisplay", JSON.stringify(action.payload))
       return { ...state, currentArtDisplay: { ...action.payload, liked: action.payload.liked } }
     //checks to see if artwork is already in history
     //duplicate items are not added
     //updates pastArtDisplay
     case GET_SCANNED_ART_DISPLAY:
+      let updatedPastArtDisplays = state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload]
+
+      window.localStorage.setItem("pastArtDisplays", JSON.stringify(updatedPastArtDisplays));
+      window.localStorage.setItem("currentArtDisplay", JSON.stringify(action.payload))
+
       return {
         ...state,
         currentArtDisplay: action.payload,
         //doesn't add duplicates to the history
-        pastArtDisplays: state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload]
+        pastArtDisplays: updatedPastArtDisplays
       }
     case GET_PAST_ART_DISPLAYS:
       return {
@@ -601,15 +641,25 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
       return {
         ...state
       }
-    case REMOVE_ART_DISPLAY:
-      //fetchPastArtworks, should update the past displays
+    case REMOVE_ART_DISPLAY: {
+      let updatedPastArtDisplays = state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id)
+
+      // Update local storage so art display shows as removed
+      window.localStorage.setItem('pastArtDisplays', JSON.stringify(updatedPastArtDisplays));
+
+      // Clear local storage for currentArtDisplay if the artwork removed is the currently displayed artwork in Information
+      if (action.payload.id === state.currentArtDisplay.id) window.localStorage.setItem('currentArtDisplay', '')
+      // fetchPastArtworks, should update the past displays
       return {
         ...state,
         // remove this artwork from gallery history
-        pastArtDisplays: state.pastArtDisplays.filter(artwork => artwork.id !== action.payload.id),
+        pastArtDisplays: updatedPastArtDisplays,
         // If the current art display is same one as the one being removed, set current art display to be the default artwork, otherwise, leave it alone
-        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay : state.currentArtDisplay
+        currentArtDisplay: state.currentArtDisplay.id === action.payload.id ? defaultCurrentArtDisplay : state.currentArtDisplay,
+
+
       }
+    }
     case INCREASE_LIKES_FOR_ARTWORK:
       //increase number of likes at particular index locally
       // state.pastArtDisplays.forEach((artDisplay: any) => { if (artDisplay.id === action.payload) artDisplay.likes++ })
