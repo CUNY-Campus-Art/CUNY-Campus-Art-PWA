@@ -5,11 +5,10 @@ export class StrapiApiConnection {
 
   constructor(authToken, user) {
     // Checks if anything in local storage, relevant for when app initially loads or refreshes
-    if (!!localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
-      this.authToken = JSON.parse(localStorage.getItem('jwt'))
-      this.unsolved = JSON.parse(localStorage.getItem('unsolved'))
-      //this.syncRemoteToLocalUser()
+    if (!!window.localStorage.getItem('user')) {
+      this.user = JSON.parse(window.localStorage.getItem('user'))
+      this.authToken = !!window.localStorage.getItem('jwt') ? JSON.parse(window.localStorage.getItem('jwt')) : ''
+      this.unsolved = !!window.localStorage.getItem('unsolved') ? JSON.parse(window.localStorage.getItem('unsolved')) : ''
       //updates local user to be up to date with the database
     } else {
       this.authToken = authToken ? authToken : ''
@@ -20,7 +19,7 @@ export class StrapiApiConnection {
 
     //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
 
-    // if(this.user) this.syncRemoteToLocalUser()
+    if(this.user) this.syncRemoteToLocalUser()
   }
 
   /* getAllArtworks
@@ -391,6 +390,7 @@ Returns: api request reponse
   ) => {
     let error
     let response
+
     await axios
       .post(this.strapiUrl + '/auth/local/register', {
         username: username,
@@ -401,6 +401,7 @@ Returns: api request reponse
         campus: campusId,
       })
       .then((res) => {
+        console.log(res);
         response = res.data
 
         if (response) {
@@ -459,8 +460,8 @@ Returns: api request reponse
     if (returnData.data) {
       this.user = returnData.data.user
       this.authToken = returnData.data.jwt
-      localStorage.setItem('jwt', JSON.stringify(this.authToken))
-      localStorage.setItem('user', JSON.stringify(this.user))
+      window.localStorage.setItem('jwt', JSON.stringify(this.authToken))
+      window.localStorage.setItem('user', JSON.stringify(this.user))
     }
 
     return returnData
@@ -535,7 +536,7 @@ Returns: api request reponse
 
     this.user = returnData.data
 
-    localStorage.setItem('user', JSON.stringify(this.user))
+    window.localStorage.setItem('user', JSON.stringify(this.user))
 
     return returnData
   }
