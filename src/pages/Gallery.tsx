@@ -63,60 +63,14 @@ type Props = PropsFromRedux & {
 
 const Gallery = (props: Props) => {
 
-  
+
 console.log(window.localStorage);
   const user = props.currentUser
-
-
-
-  useEffect(()=>{
-
-    if(user=="" && props.pastArtDisplays.length>1){
-    window.localStorage.setItem("pastArtDisplays", JSON.stringify(props.pastArtDisplays))
-    }
-
-
-  }, [props.pastArtDisplays])
-
+  const pastArtDisplays = props.pastArtDisplays;
 
 
   // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
-  //const pastArtDisplays = ( props.pastArtDisplays.length > 0 && window.localStorage.getItem("pastArtDisplays")==null ) ? props.pastArtDisplays : JSON.parse(window.localStorage.getItem("pastArtDisplays") || '{}');
-
-
-  const pastArtDisplays = determinePastArtDisplays();
-
-  function determinePastArtDisplays(){
-    console.log("determine");
-
-
-    if(user!=""){
-      return props.pastArtDisplays;
-    }
-    else{
-
-      // console.log("here")
-      // console.log(props.pastArtDisplays.length > 1);
-      // console.log(window.localStorage.getItem("pastArtDisplays")!=null)
-
-    if(props.pastArtDisplays.length > 0 && window.localStorage.getItem("pastArtDisplays")==null) {
-      console.log("from redux");
-    return props.pastArtDisplays;
-    }
-    else {
-      console.log("from storage");
-    return JSON.parse(window.localStorage.getItem("pastArtDisplays") || '{}');
-    }
-
-
-    }
-
-    return props.pastArtDisplays;
-
-
-
-  }
 
   // To redirect to Information with forward animation
   const { navigate } = useContext(NavContext)
