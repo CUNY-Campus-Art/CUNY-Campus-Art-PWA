@@ -177,7 +177,9 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
     let returnData: any = await con.loginUser(id, pw)
 
     if (returnData.status === 200) {
-
+      // Clearing local storage if user logs in
+      // TO DO: Have scanned artworks added to past art displays before clearing local storage
+      localStorage.clear()
       con.user = returnData.data.user;
       con.authToken = returnData.data.jwt;
       let user = await formatUser(con.user)
