@@ -5,11 +5,11 @@
  * of past artworks the user has scanned locally.
  */
 
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
-import {
+import artdisplay, {
   changeCurrentArtDisplay,
   fetchPastArtworks,
   ArtDisplay,
@@ -63,11 +63,12 @@ type Props = PropsFromRedux & {
 
 const Gallery = (props: Props) => {
 
-
-console.log(window.localStorage);
   const user = props.currentUser
+
   const pastArtDisplays = props.pastArtDisplays;
 
+  //a copy of pastArtDisplays in state to manipulate likes for UI purposes
+  const [likes, setLikes] = useState(pastArtDisplays);
 
   // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
@@ -87,6 +88,50 @@ console.log(window.localStorage);
 
     redirect()
   }
+
+  const addLike = async (user: any, artDisplay: any, flag: boolean, index: number) => {
+
+    //Backend calls stay the same
+    //make a deep copy at the moment of passing to function, so that it doesn't reference the artDisplay and its liked/disliked properties
+    const myArtWork = { ...artDisplay };
+    props.clickLikeButton(user, myArtWork, flag);
+
+
+    //UI changes, shows like updates immediately
+    let myLikes = likes;
+    if (myLikes[index].liked == false) {
+      myLikes[index].likes = myLikes[index].likes + 1;
+      //change to heart icon
+      myLikes[index].liked = true;
+    }
+    else if (myLikes[index].liked == true) {
+      myLikes[index].likes = myLikes[index].likes - 1;
+      //change to outline icon
+      myLikes[index].liked = false;
+    }
+    setLikes([...myLikes]);
+
+  }
+
+  const addDislike = async (user: any, artDisplay: any, index: number) => {
+
+    const myArtWork = { ...artDisplay };
+    props.clickDislikeButton(user, myArtWork);
+
+    //UI changes, shows like updates immediately
+    let myLikes = likes;
+    myLikes[index].disliked = !myLikes[index].disliked;
+    setLikes([...myLikes]);
+
+
+  }
+
+
+  //gets called when pastArtDisplays are updated
+  //acts as a check, if something went wrong when adding likes in the backend, this will reset the UI to display according to correct state as in backend
+  useEffect(() => {
+    setLikes([...pastArtDisplays])
+  }, [pastArtDisplays])
 
   // const [likeartwork, setlikeartwork] = useState(false);
 
@@ -120,47 +165,47 @@ console.log(window.localStorage);
                       onClick={() => selectAnArtwork(index)}
                       src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
                       alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
-                    {artDisplay.id !== 'default' && <IonText color="medium">{artDisplay.likes} Likes</IonText>}
+                    {artDisplay.id !== 'default' && <IonText color="medium">{likes[index].likes} Likes</IonText>}
                   </IonCol>
 
                   <IonCol >
                     <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
 
-                 <IonRow className="align-right-row">
+                    <IonRow className="align-right-row">
 
                       {user && <IonButton
                         fill="outline"
                         size="small"
                         color="danger"
-                        onClick={() => props.clickLikeButton(user, artDisplay, true)}
+                        onClick={() => addLike(user, artDisplay, true, index)}
                       // onClick={handleLikes}
                       >
-                        {artDisplay.liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
+                        {likes[index].liked ? (<IonIcon className='likeHeart' icon={heart}></IonIcon>) : (<IonIcon className='likeHeart' icon={heartOutline}></IonIcon>)}
 
                       </IonButton>}
 
                       {/* Thumbs Down Icon */}
-                     {user && <IonButton
+                      {user && <IonButton
                         fill="outline"
                         size="small"
                         color="primary"
 
-                        onClick={() => props.clickDislikeButton(user, artDisplay)}
+                        onClick={() => addDislike(user, artDisplay, index)}
                       >
-                        {artDisplay.disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
+                        {likes[index].disliked ? <IonIcon color="primary" icon={heartDislike}></IonIcon> : <IonIcon color="primary" icon={heartDislikeOutline}></IonIcon>}
                       </IonButton>}
 
 
                       {/* Trash Icon */}
-  {artDisplay.id !== 'default' && <IonButton
-                      fill="outline"
-                      size="small"
-                      color="medium"
-                      onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
-                    >
-                      <IonIcon icon={trash}></IonIcon>
-                    </IonButton>}
+                      {artDisplay.id !== 'default' && <IonButton
+                        fill="outline"
+                        size="small"
+                        color="medium"
+                        onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
+                      >
+                        <IonIcon icon={trash}></IonIcon>
+                      </IonButton>}
                     </IonRow>
                   </IonCol>
                 </IonRow>
