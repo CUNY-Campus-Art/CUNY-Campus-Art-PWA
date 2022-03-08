@@ -99,12 +99,40 @@ const Information = (props: Props) => {
   let currentArtDisplay = props.currentArtDisplay;
   let currentArtDisplayVideos = props.videos;
 
+  //a copy of currentArtDisplay for UI likes changes
+  const [artDisplayLikes, setArtDisplayLikes] = useState(currentArtDisplay);
+
+  console.log("likes state");
+  console.log(artDisplayLikes);
+
+
   let slidesComp = props.currentArtDisplay.other_images ? [currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images] : [currentArtDisplay.primary_image]
 
   function handleLikes() {
-    let result = props.clickLikeButton(user, currentArtDisplay, false);
+    let myCurrentArtDisplay = {...currentArtDisplay};
+    //UI updates to display like immediately
+    let artDisplayLikesNew = {...artDisplayLikes};
+    if(artDisplayLikesNew.liked==true){
+      console.log("is liked");
+    artDisplayLikesNew.liked = false;
+    }
+    else artDisplayLikesNew.liked = true;
+    setArtDisplayLikes(artDisplayLikesNew);
+    console.log("state changed");
+    console.log(artDisplayLikes);
+
+
+    let result = props.clickLikeButton(user, myCurrentArtDisplay, false);
     //Use the result in the future to make local state update faster
   }
+
+
+   //gets called when currentArtDisplay is updated
+  //acts as a check, if something went wrong when adding likes in the backend, this will reset the UI to display according to correct state as in backend
+  useEffect(() => {
+    console.log("art display updated");
+    setArtDisplayLikes(currentArtDisplay)
+  }, [currentArtDisplay])
 
   // Set up Video Form
 
@@ -209,7 +237,7 @@ const Information = (props: Props) => {
                 size="small"
                 onClick={handleLikes}
               >
-                {currentArtDisplay.liked ? (<IonIcon slot="icon-only" size='large' icon={heart}></IonIcon>) : (<IonIcon slot="icon-only" size='large' icon={heartOutline}></IonIcon>)}
+                {artDisplayLikes.liked ? (<IonIcon slot="icon-only" size='large' icon={heart}></IonIcon>) : (<IonIcon slot="icon-only" size='large' icon={heartOutline}></IonIcon>)}
 
               </IonButton>
 

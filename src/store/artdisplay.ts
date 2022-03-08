@@ -455,9 +455,11 @@ export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) =
 
   // If artwork is already liked, remove from likes
   if (user && artwork.liked) {
+    console.log("remove from likes");
     await removeFromLikes(artwork)
   } else {
     if (user && !artwork.liked) {
+      console.log("artwork is not liked yet")
 
       // Increase artwork's overall likes
       if (artwork.likes >= 0) {
@@ -561,7 +563,30 @@ const pastArtDisplays = determinePastArtDisplays();
 function determinePastArtDisplays() {
   console.log("determine");
   if (con.user) {
-    // console.log("from redux and local storage for a logged in user");
+    console.log("from redux and local storage for a logged in user");
+
+    //had to add this section, since on initial load of /Gallery page, pastArtworks did not include user's liked and disliked artworks
+    //is needed for correct UI in likes on initial load (outline if not liked, heart icon if liked)
+    //copy-pasted this piece of logic from other section, can later turn it into a function to avoid duplicate code
+    let artworks: any = con.user.scanned_artworks ? con.user.scanned_artworks : [];
+
+    // save ids of liked artworks
+    let likedArtworkIds = con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
+  
+    // save ids of disliked artworks
+    let dislikedArtworkIds = con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
+  
+  
+    // looks through artworks:
+    // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
+    // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
+    // 'liked' value is manually derived added here, info not directly in database
+    artworks = artworks.map((artwork: any) => {
+      likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false
+      dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false
+      return artwork
+    })
+
     return [...con.user.scanned_artworks, defaultCurrentArtDisplay]
   }
   else {
