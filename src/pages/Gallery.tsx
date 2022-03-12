@@ -63,6 +63,8 @@ type Props = PropsFromRedux & {
 
 const Gallery = (props: Props) => {
 
+  console.log("GAllery")
+
   const user = props.currentUser
 
   const pastArtDisplays = props.pastArtDisplays;
@@ -130,8 +132,18 @@ const Gallery = (props: Props) => {
   //gets called when pastArtDisplays are updated
   //acts as a check, if something went wrong when adding likes in the backend, this will reset the UI to display according to correct state as in backend
   useEffect(() => {
+    console.log("GALLERY, PAST UPDATED")
     setLikes([...pastArtDisplays])
   }, [pastArtDisplays])
+
+  useEffect(() => {
+    console.log("CURRENT UPDATED")
+    setLikes([...pastArtDisplays])
+  }, [props.currentArtDisplay])
+
+
+
+
 
   // const [likeartwork, setlikeartwork] = useState(false);
 
@@ -155,7 +167,7 @@ const Gallery = (props: Props) => {
 
 
         <IonList>
-          {pastArtDisplays.map((artDisplay: any, index: any) => (
+          {likes.map((artDisplay: any, index: any) => (
             <IonItem key={index}>
 
               <IonGrid>
@@ -165,7 +177,7 @@ const Gallery = (props: Props) => {
                       onClick={() => selectAnArtwork(index)}
                       src={artDisplay.primary_image ? artDisplay.primary_image.url : ''}
                       alt={artDisplay.primary_image ? artDisplay.primary_image.alternative : ''} />
-                    {artDisplay.id !== 'default' && <IonText color="medium">{likes[index].likes} Likes</IonText>}
+                    {artDisplay.id !== 'default' &&  <IonText color="medium">{likes[index].likes} Likes</IonText>}
                   </IonCol>
 
                   <IonCol >

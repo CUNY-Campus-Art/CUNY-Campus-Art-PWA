@@ -102,19 +102,16 @@ const Information = (props: Props) => {
   //a copy of currentArtDisplay for UI likes changes
   const [artDisplayLikes, setArtDisplayLikes] = useState(currentArtDisplay);
 
-  console.log("likes state");
-  console.log(artDisplayLikes);
-
 
   let slidesComp = props.currentArtDisplay.other_images ? [currentArtDisplay.primary_image, ...props.currentArtDisplay.other_images] : [currentArtDisplay.primary_image]
 
   function handleLikes() {
-    let myCurrentArtDisplay = {...currentArtDisplay};
+    let myCurrentArtDisplay = { ...currentArtDisplay };
     //UI updates to display like immediately
-    let artDisplayLikesNew = {...artDisplayLikes};
-    if(artDisplayLikesNew.liked==true){
+    let artDisplayLikesNew = { ...artDisplayLikes };
+    if (artDisplayLikesNew.liked == true) {
       console.log("is liked");
-    artDisplayLikesNew.liked = false;
+      artDisplayLikesNew.liked = false;
     }
     else artDisplayLikesNew.liked = true;
     setArtDisplayLikes(artDisplayLikesNew);
@@ -127,7 +124,7 @@ const Information = (props: Props) => {
   }
 
 
-   //gets called when currentArtDisplay is updated
+  //gets called when currentArtDisplay is updated
   //acts as a check, if something went wrong when adding likes in the backend, this will reset the UI to display according to correct state as in backend
   useEffect(() => {
     console.log("art display updated");

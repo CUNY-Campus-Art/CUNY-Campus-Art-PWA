@@ -455,11 +455,9 @@ export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) =
 
   // If artwork is already liked, remove from likes
   if (user && artwork.liked) {
-    console.log("remove from likes");
     await removeFromLikes(artwork)
   } else {
     if (user && !artwork.liked) {
-      console.log("artwork is not liked yet")
 
       // Increase artwork's overall likes
       if (artwork.likes >= 0) {
