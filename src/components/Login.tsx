@@ -47,7 +47,7 @@ const mapDispatch = (dispatch: any) => {
       }
     },
     logout: () => dispatch(logout()),
-    rerenderArtDisplays: (userInfo: any) => dispatch(rerenderArtDisplays(userInfo)),
+    rerenderArtDisplays: () => dispatch(rerenderArtDisplays()),
     resetArtDisplays: () => dispatch(resetArtDisplays()),
     // setErrorStatus: (status: any) =>
   }

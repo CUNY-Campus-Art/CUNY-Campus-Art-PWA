@@ -64,7 +64,7 @@ type Props = PropsFromRedux & {
 const Gallery = (props: Props) => {
 
 
-console.log(window.localStorage);
+  console.log(window.localStorage);
   const user = props.currentUser
   const pastArtDisplays = props.pastArtDisplays;
 
@@ -127,7 +127,7 @@ console.log(window.localStorage);
                     <IonRow onClick={() => selectAnArtwork(index)}><IonText className="center-text"><h3>{artDisplay.title}</h3></IonText></IonRow>
                     <IonRow onClick={() => selectAnArtwork(index)}>  <IonText className="center-text">{artDisplay.artist}</IonText> </IonRow>
 
-                 <IonRow className="align-right-row">
+                    <IonRow className="align-right-row">
 
                       {user && <IonButton
                         fill="outline"
@@ -141,7 +141,7 @@ console.log(window.localStorage);
                       </IonButton>}
 
                       {/* Thumbs Down Icon */}
-                     {user && <IonButton
+                      {user && <IonButton
                         fill="outline"
                         size="small"
                         color="primary"
@@ -153,14 +153,14 @@ console.log(window.localStorage);
 
 
                       {/* Trash Icon */}
-  {artDisplay.id !== 'default' && <IonButton
-                      fill="outline"
-                      size="small"
-                      color="medium"
-                      onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
-                    >
-                      <IonIcon icon={trash}></IonIcon>
-                    </IonButton>}
+                      {<IonButton
+                        fill="outline"
+                        size="small"
+                        color="medium"
+                        onClick={() => props.removeArtwork(props.currentUser, artDisplay)}
+                      >
+                        <IonIcon icon={trash}></IonIcon>
+                      </IonButton>}
                     </IonRow>
                   </IonCol>
                 </IonRow>

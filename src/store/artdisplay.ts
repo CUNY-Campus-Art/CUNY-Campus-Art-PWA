@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { StrapiApiConnection } from './util'
-import { getUser, formatUser, initializeUser } from './user'
+import { getUser, formatUser, initializeUser, User } from './user'
 let con: StrapiApiConnection = new StrapiApiConnection();
 
 
@@ -127,7 +127,6 @@ interface ResetArtDisplaysAction {
 
 interface RerenderArtDisplaysAction {
   type: typeof RERENDER_ART_DISPLAYS,
-  payload: any
 }
 
 //Removes from user and from local app
@@ -236,10 +235,9 @@ export function gotAllArtDisplays(artDisplays: ArtDisplay[]): ArtDisplayActionTy
   }
 }
 
-export function rerenderArtDisplays(userInfo: any): ArtDisplayActionTypes {
+export function rerenderArtDisplays(): ArtDisplayActionTypes {
   return {
-    type: RERENDER_ART_DISPLAYS,
-    payload: userInfo
+    type: RERENDER_ART_DISPLAYS
   }
 }
 
@@ -305,23 +303,24 @@ export function addVideo(video: Video): ArtDisplayActionTypes {
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
+
 /** fetchPastArtworks
  * fetches user's past artworks information and adds on like and disliked status for each artwork
  * @param userInfo
  */
 export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
-  con.user = userInfo;
+   let user = userInfo;
 
   // if(con.user) {
 
-  await con.syncRemoteToLocalUser()
-  let artworks: any = con.user.scanned_artworks ? con.user.scanned_artworks : [];
+  // await con.syncRemoteToLocalUser()
+  let artworks: any = user.scanned_artworks ? user.scanned_artworks : [];
 
   // save ids of liked artworks
-  let likedArtworkIds = con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
+  let likedArtworkIds = user.liked_artworks ? user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
 
   // save ids of disliked artworks
-  let dislikedArtworkIds = con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
+  let dislikedArtworkIds = user.disliked_artworks ? user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
 
 
   // looks through artworks:
@@ -335,8 +334,6 @@ export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
   })
 
   dispatch(gotPastArtDisplays(artworks))
-
-
 
   return artworks;
 };
@@ -400,11 +397,13 @@ export const fetchAllCampuses = () => async (dispatch: any) => {
 
 
 
-
 // Helper Function: removeFromLikes
 const removeFromLikes = async (artwork: any) => {
   // will toggle like button to neutral
-  artwork.liked = false;
+  artwork.liked = false
+  
+  // Exit early if default artwork
+  if(artwork.id === 'default') return
 
   // decrease artwork's overall likes
   if (artwork.likes > 0) {
@@ -423,20 +422,22 @@ const removeFromDislikes = async (artwork: any) => {
   // Toggle dislike button to off mode
   artwork.disliked = false
 
+  // Exit early if default artwork
+  if(artwork.id === 'default') return
+
   // will remove from user's dislikes
   await con.removeDislikedArtworkFromUser([artwork.id])
   //dispatch(removeLikedArtwork(artwork.id))
 
 }
 
-//Remove ArtDisplay from the database, as well as locally
+// Remove ArtDisplay from the database, as well as locally
 export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async (dispatch: any) => {
 
   //remove from database if user is signed in
-  if (user) {
-    con.user = user;
+  if (user && artwork.id !== 'default') {
     const data = await con.removeScannedArtworkFromUser([artwork.id]);
-    await con.syncRemoteToLocalUser()
+    await con.syncRemoteToLocalUser() // over here possibly we can just remove locally but this might cause mismatch in data
     //reload artworks
     if (artwork.liked) removeFromLikes(artwork)
     if (artwork.disliked) removeFromDislikes(artwork)
@@ -450,30 +451,34 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
 }
 
 //  Toggles Like Button on and off.  Add to user's likes and increase overall likes. And undo if clicked again.
-export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) => async (dispatch: any) => {
-  con.user = user;
+export const clickLikeButton = (user: User, artwork: ArtDisplay, fromGallery: boolean) => async (dispatch: any) => {
 
   // If artwork is already liked, remove from likes
   if (user && artwork.liked) {
     await removeFromLikes(artwork)
   } else {
     if (user && !artwork.liked) {
-
-      // Increase artwork's overall likes
-      if (artwork.likes >= 0) {
-        await con.increaseLikesForArtworkById(artwork.id)
+      if (artwork.disliked) {
+        await removeFromDislikes(artwork)
       }
 
       // Add to Likes
       artwork.liked = true;
-      await con.addLikedArtworkToUser([artwork.id])
 
-      if (artwork.disliked) {
-        await removeFromDislikes(artwork)
+      
+      if(artwork.id !== 'default') {
+        await con.addLikedArtworkToUser([artwork.id])
+
+        // Increase artwork's overall likes
+        if (artwork.likes >= 0) {
+          await con.increaseLikesForArtworkById(artwork.id)
+        }
       }
+      
     }
   }
-  dispatch(fetchPastArtworks(user))
+  dispatch(rerenderArtDisplays())
+  dispatch(changeCurrentArtDisplay(artwork)) 
 
   //If the Like Button is clicked in the Information Tab
 
@@ -485,27 +490,28 @@ export const clickLikeButton = (user: any, artwork: any, fromGallery: boolean) =
 }
 
 //  Toggles Dislike Button on and off. Add to user's dislikes. And undoes if clicked again.
-export const clickDislikeButton = (user: any, artwork: any) => async (dispatch: any) => {
-
-  con.user = user;
+export const clickDislikeButton = (user: User, artwork: ArtDisplay) => async (dispatch: any) => {
 
   // If artwork is already disliked, remove from dislikes
   if (user && artwork.disliked) {
     await removeFromDislikes(artwork)
   } else {
     if (user && !artwork.disliked) {
-      // Add to Dislikes
-      artwork.disliked = true;
-      await con.addDislikedArtworkToUser([artwork.id])
-
       if (artwork.liked) {
         await removeFromLikes(artwork)
       }
+
+      // Add to Dislikes
+      artwork.disliked = true;
+      if(artwork.id !== 'default') {
+        await con.addDislikedArtworkToUser([artwork.id])
+      }
+
     }
   }
 
-  await dispatch(fetchPastArtworks(user))
-  await dispatch(changeCurrentArtDisplay(artwork))
+  dispatch(rerenderArtDisplays())
+  dispatch(changeCurrentArtDisplay(artwork))
 
 }
 
