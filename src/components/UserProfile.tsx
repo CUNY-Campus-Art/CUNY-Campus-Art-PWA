@@ -64,7 +64,7 @@ const UserProfile = (props: Props) => {
           alt="Avatar"
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
-        <IonCardSubtitle>{user.campusName ? user.campusName : campus.campus_name}</IonCardSubtitle>
+        <IonCardSubtitle>{user.campusName}</IonCardSubtitle>
         {/* To do: decide to keep this button to open up to form or remove this button */}
         <IonButton fill="outline" slot="end">
           Edit
