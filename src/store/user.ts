@@ -43,7 +43,9 @@ export const REMOVE_POINTS = 'REMOVE_POINTS'
 export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
 // INITIAL STATE
-
+console.log(window.localStorage)
+// Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty
+let con: StrapiApiConnection = new StrapiApiConnection();
 
 const getUnsolvedArtworks = async (user: any) => {
 
@@ -60,19 +62,19 @@ const getUnsolvedArtworks = async (user: any) => {
 
 export const formatUser = async (user: any) => {
   let formattedUser = {
-    user_name: con.user.username,
-    first_name: con.user.first_name,
-    last_name: con.user.last_name,
-    email: con.user.email,
-    profile_picture: con.user.profile_picture,
-    campus: con.user.campus ? con.user.campus.campus_name : '',
-    campusId: con.user.campus ? con.user.campus.campusid : '',
-    campusName: con.user.campus ? con.user.campus.campus_name : '',
-    scanned_artworks: con.user.scanned_artworks ? con.user.scanned_artworks : [],
-    total_points: con.user.total_points,
-    liked_artworks: con.user.liked_artworks ? con.user.like_artworks : [],
-    disliked_artworks: con.user.dislike_artworks ? con.user.dislike_artworks : [],
-    solved_artworks: con.user.solved_artworks ? con.user.solved_artworks : [],
+    user_name: user.username,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email: user.email,
+    profile_picture: user.profile_picture,
+    campus: user.campus ? user.campus.campus_name : '',
+    campusId: user.campus ? user.campus.campusid : '',
+    campusName: user.campus ? user.campus.campus_name : '',
+    scanned_artworks: user.scanned_artworks ? user.scanned_artworks : [],
+    total_points: user.total_points,
+    liked_artworks: user.liked_artworks ? user.like_artworks : [],
+    disliked_artworks: user.dislike_artworks ? user.dislike_artworks : [],
+    solved_artworks: user.solved_artworks ? user.solved_artworks : [],
     unsolved_artworks: []
   }
 
@@ -85,14 +87,11 @@ export const formatUser = async (user: any) => {
 export const initializeUser = (user: any) => async (dispatch: any) => {
   await con.syncRemoteToLocalUser()
   let user = await formatUser(con.user)
-  dispatch(addUnsolvedArtworks(user.unsolved_artworks))
   dispatch(getUser(user))
   dispatch(fetchPastArtworks(user))
-
+  dispatch(addUnsolvedArtworks(user.unsolved_artworks))
 }
 
-// Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty
-let con: StrapiApiConnection = new StrapiApiConnection();
 
 let currentUser;
 
@@ -150,6 +149,8 @@ export const signupError = () => ({ type: SIGNUP_ERROR })
 
 
 export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", campusId: string, file: any = '') => async (dispatch: any) => {
+  con = new StrapiApiConnection();
+
   let status = await con.createUser(email, pw, username, firstName, lastName, campusId, file)
 
   // If user is successfully signed up, the con object will internally get assigned a user
@@ -157,11 +158,10 @@ export const signupNewUser = (email: string, pw: string, username: string, first
     let newUser = await formatUser(con.user)
     //dispatch((newUser.unsolved_artworks))
     dispatch(getUser(newUser))
-    dispatch(addUnsolvedArtworks(newUser.unsolved_artworks))
-    dispatch(getUser(newUser))
     dispatch(fetchPastArtworks(newUser))
+    dispatch(addUnsolvedArtworks(newUser.unsolved_artworks))
     // save specific fields from user
-    console.log('You have been successfully logged in. You will be redirected in a few seconds...')
+    console.log('You have been successfully signed in. You will be redirected in a few seconds...')
 
   }
 
@@ -179,13 +179,14 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
     if (returnData.status === 200) {
       // Clearing local storage if user logs in
       // TO DO: Have scanned artworks added to past art displays before clearing local storage
-      localStorage.clear()
-      con.user = returnData.data.user;
-      con.authToken = returnData.data.jwt;
-      let user = await formatUser(con.user)
-      dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+      //localStorage.clear()
+      let token = returnData.data.jwt;
+      let user = returnData.data.user
+      //con = new StrapiApiConnection(token, user);
+      user = await formatUser(con.user)
       dispatch(getUser(user))
       dispatch(fetchPastArtworks(user))
+      dispatch(addUnsolvedArtworks(user.unsolved_artworks))
 
       console.log('You have been successfully logged in. You will be redirected in a few seconds...')
 

@@ -4,22 +4,20 @@ export class StrapiApiConnection {
   //Either retrieved info will be passed to constructor or values will be set by accessing local storage. retrieved info will take precedence so new user can be logged in
 
   constructor(authToken, user) {
+    this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
+
+    if(authToken && user) {
+      this.authToken = authToken
+      this.user = user 
+    } else 
     // Checks if anything in local storage, relevant for when app initially loads or refreshes
     if (!!window.localStorage.getItem('user')) {
       this.user = JSON.parse(window.localStorage.getItem('user'))
-      this.authToken = !!window.localStorage.getItem('jwt') ? JSON.parse(window.localStorage.getItem('jwt')) : ''
+      this.authToken = JSON.parse(window.localStorage.getItem('jwt'))
       this.unsolved = !!window.localStorage.getItem('unsolved') ? JSON.parse(window.localStorage.getItem('unsolved')) : ''
       //updates local user to be up to date with the database
-    } else {
-      this.authToken = authToken ? authToken : ''
-      this.user = user ? user : ''
+      this.syncRemoteToLocalUser()
     }
-
-    this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
-
-    //this.strapiUrl = "http://localhost:1337"; //url to strapi API endpoint
-
-    if(this.user) this.syncRemoteToLocalUser()
   }
 
   /* getAllArtworks
@@ -192,7 +190,7 @@ Accepts:
 Returns: api request reponse
 */
   updatePointsForUser = async (numPoints) => {
-    //await this.syncRemoteToLocalUser();
+    await this.syncRemoteToLocalUser();
     let response = await this.updateRemoteUser({ total_points: numPoints })
     console.log(response)
     if (response.status === 200) {
@@ -523,22 +521,27 @@ Returns: api request reponse
   Returns:user object from api
   */
   syncRemoteToLocalUser = async () => {
+
     const sendConfig = {
       headers: {
         Authorization: 'Bearer ' + this.authToken,
       },
     }
+    try {
+      let returnData = await axios.get(
+        this.strapiUrl + '/users/profile',
+        sendConfig
+      )
+      console.log("SYNC", returnData)
+      this.user = returnData.data
+      window.localStorage.setItem('user', JSON.stringify(this.user))
+      return returnData
+    } catch(error) {
+      console.log("SYNC-Fail", error)
+    }
 
-    let returnData = await axios.get(
-      this.strapiUrl + '/users/profile',
-      sendConfig
-    )
 
-    this.user = returnData.data
-
-    window.localStorage.setItem('user', JSON.stringify(this.user))
-
-    return returnData
+ 
   }
 
   /* updateRemoteUser
@@ -762,18 +765,18 @@ Returns: api request reponse
   /* axiosRequestAddRelationEntryToUser
 Function that adds to users specified relation field new relations of the relation type specified by entry ids
 Accepts:
-  - relationFeildName - text value - field name for relationship to User
+  - relationFieldName - text value - field name for relationship to User
   - relatedEntriesIdArray - array of integer id's of related entries that exist
 Returns: api request reponse
 */
   axiosRequestAddRelationEntryToUser = async (
-    relationFeildName,
+    relationFieldName,
     relatedEntriesIdArray
   ) => {
     await this.syncRemoteToLocalUser()
 
     let existingEntries = []
-    this.user[relationFeildName].forEach((entry) => {
+    this.user[relationFieldName].forEach((entry) => {
       existingEntries.push(entry.id)
     })
 
@@ -781,10 +784,10 @@ Returns: api request reponse
     sendArray = [...new Set([...existingEntries, ...relatedEntriesIdArray])]
 
     let response = await this.updateRemoteUser({
-      [relationFeildName]: sendArray,
+      [relationFieldName]: sendArray,
     })
     if (response.status === 200) {
-      this.user[relationFeildName] = response.data[relationFeildName]
+      this.user[relationFieldName] = response.data[relationFieldName]
     }
     return response
   }
@@ -792,18 +795,18 @@ Returns: api request reponse
   /* axiosRequestRemoveRelationToUser
 Function that removes from users specified relation field existing relations of the relation type specified by entry ids
 Accepts:
- - relationFeildName - text value - field name for relationship to User
+ - relationFieldName - text value - field name for relationship to User
  - relatedEntriesIdArray - array of integer id's of related entries that exist
 Returns: api request reponse
 */
   axiosRequestRemoveRelationToUser = async (
-    relationFeildName,
+    relationFieldName,
     relatedEntriesIdArray
   ) => {
     await this.syncRemoteToLocalUser()
 
     let existingEntries = []
-    this.user[relationFeildName].forEach((entry) => {
+    this.user[relationFieldName].forEach((entry) => {
       existingEntries.push(entry.id)
     })
 
@@ -819,16 +822,16 @@ Returns: api request reponse
     }
 
     let response = await this.updateRemoteUser({
-      [relationFeildName]: existingEntries,
+      [relationFieldName]: existingEntries,
     })
     console.log(
-      'axiosRequestRemoveRelationToUser ' + relationFeildName,
+      'axiosRequestRemoveRelationToUser ' + relationFieldName,
       response
     )
     console.log('axiosRequestRemoveRelationToUser', response.status)
-    console.log(relationFeildName, response.data[relationFeildName])
+    console.log(relationFieldName, response.data[relationFieldName])
     if (response.status === 200) {
-      this.user[relationFeildName] = response.data[relationFeildName]
+      this.user[relationFieldName] = response.data[relationFieldName]
       console.log('this.user', this.user)
     }
     return response
