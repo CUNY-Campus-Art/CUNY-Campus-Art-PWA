@@ -5,9 +5,10 @@
 import React, { useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../store";
-import { getUser, fetchUser } from "../store/user";
+import { getUser, fetchUser, editUserThunk } from "../store/user";
 import "./UserProfile.css";
 import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
+import { IonSpinner, IonContent } from '@ionic/react';
 
 import {
   IonButton,
@@ -29,6 +30,7 @@ const mapDispatch = (dispatch: any) => ({
   fetchUser: (username: string, pw: string) =>
     dispatch(fetchUser(username, pw)),
   getUser: (user: any) => dispatch(getUser(user)),
+  editUser: (changes: any) => editUserThunk(changes, dispatch)
 });
 
 const connector = connect(mapState, mapDispatch);
@@ -53,7 +55,34 @@ const UserProfile = (props: Props) => {
   };
 
   let user = props.currentUser;
+  console.log("USER")
+  console.log(user);
   let campus = props.currentUser.campus;
+
+  const [profileEdits, setProfileEdits] = useState({
+    first_name: user.first_name,
+    last_name: user.last_name,
+    username: user.username || user.user_name,
+    email: user.email
+  })
+
+  const [loading, setLoading]= useState(false);
+
+  const editProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
+    
+    setProfileEdits({...profileEdits, [e.target.name]: e.target.value});
+
+  }
+
+
+  const saveChanges = async () =>{
+    console.log(profileEdits);
+    setLoading(true);
+    let res = await props.editUser(profileEdits);
+    console.log(res);
+    setLoading(false);
+  }
 
   return (
     <span>
@@ -89,6 +118,9 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="username"
+              value={profileEdits.username}
+              onChange={(e)=>editProfile(e)}
               placeholder={user.username || user.user_name}
               className="input-xlarge"
             />
@@ -98,6 +130,9 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="first_name"
+              value={profileEdits.first_name}
+              onChange={(e)=>editProfile(e)}
               placeholder={user.first_name}
               className="input-xlarge"
             />
@@ -107,6 +142,9 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="last_name"
+              value={profileEdits.last_name}
+              onChange={(e)=>editProfile(e)}
               placeholder={user.last_name}
               className="input-xlarge"
             />
@@ -116,15 +154,21 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="email"
+              value={profileEdits.email}
+              onChange={(e)=>editProfile(e)}
               placeholder={user.email}
               className="input-xlarge"
             />
             <hr />
 
             <div>
-              <IonButton color="success" expand="block">
+              {!loading? <IonButton color="success" expand="block" onClick={()=>saveChanges()}>
                 Update
-              </IonButton>
+              </IonButton> :
+             
+             <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+        }
             </div>
           </form>
         ) : (
