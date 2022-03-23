@@ -53,7 +53,6 @@ const UserProfile = (props: Props) => {
   };
 
   let user = props.currentUser;
-  let campus = props.currentUser.campus;
 
   return (
     <span>
@@ -64,7 +63,7 @@ const UserProfile = (props: Props) => {
           alt="Avatar"
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
-        <IonCardSubtitle>{user.campusName}</IonCardSubtitle>
+        <IonCardSubtitle>{user.campus_name}</IonCardSubtitle>
         {/* To do: decide to keep this button to open up to form or remove this button */}
         <IonButton fill="outline" slot="end">
           Edit

@@ -3,21 +3,26 @@ import axios from 'axios'
 export class StrapiApiConnection {
   //Either retrieved info will be passed to constructor or values will be set by accessing local storage. retrieved info will take precedence so new user can be logged in
 
-  constructor(authToken, user) {
+   constructor(authToken, user) {
     this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
 
     if(authToken && user) {
       this.authToken = authToken
-      this.user = user 
-    } else 
+      this.user = user
+    } else
     // Checks if anything in local storage, relevant for when app initially loads or refreshes
-    if (!!window.localStorage.getItem('user')) {
-      this.user = JSON.parse(window.localStorage.getItem('user'))
-      this.authToken = JSON.parse(window.localStorage.getItem('jwt'))
-      this.unsolved = !!window.localStorage.getItem('unsolved') ? JSON.parse(window.localStorage.getItem('unsolved')) : ''
+    if ((!!window.localStorage.getItem('user') && !!window.localStorage.getItem('jwt')) && window.localStorage.getItem('user') !== '{}') {
+      console.log(this.user)
+      this.user = JSON.parse(window.localStorage.getItem('user') || '{}')
+      this.authToken = window.localStorage.getItem('jwt')
+      this.unsolved = !!window.localStorage.getItem('unsolved') ? JSON.parse(window.localStorage.getItem('unsolved')) : []
+      this.user.unsolved_artworks = this.unsolved
       //updates local user to be up to date with the database
       this.syncRemoteToLocalUser()
     }
+
+    // Retrieves all artworks that have clues attached. Placed here so this is called only once
+   //this.allArtworksWithClues = this.getAllArtworksWithClues()
   }
 
   /* getAllArtworks
@@ -164,7 +169,7 @@ export class StrapiApiConnection {
   Returns: api request reponse
   */
   addPointsToUser = async (numPoints) => {
-    await this.syncRemoteToLocalUser()
+    //await this.syncRemoteToLocalUser()
     let newPoints = numPoints + this.user.total_points
     let response = await this.updatePointsForUser(newPoints)
     return response
@@ -414,7 +419,7 @@ Returns: api request reponse
             )
           }
           this.authToken = response.jwt
-          this.user = response.user
+          this.user = this.formatUser(response.user)
           return { success: true, response: response, error: {} }
         } else {
           return { success: false, response: {}, error: error }
@@ -456,9 +461,9 @@ Returns: api request reponse
       sendConfig
     )
     if (returnData.data) {
-      this.user = returnData.data.user
+      this.user = this.formatUser(returnData.data.user)
       this.authToken = returnData.data.jwt
-      window.localStorage.setItem('jwt', JSON.stringify(this.authToken))
+      window.localStorage.setItem('jwt', this.authToken)
       window.localStorage.setItem('user', JSON.stringify(this.user))
     }
 
@@ -492,7 +497,6 @@ Returns: api request reponse
   */
   loginAndGetUser = async (id, pw) => {
     let returnData = await this.loginUser(id, pw)
-
     if (returnData.status === 200) {
       return returnData.data.user
     } else {
@@ -516,6 +520,111 @@ Returns: api request reponse
     return this.authToken
   }
 
+  formatUser = (user) => {
+
+    let {id, username, first_name, last_name, email, profile_picture, campus, scanned_artworks, total_points, liked_artworks, disliked_artworks, solved_artworks} = user
+
+    let formattedUser = {
+      id: id,
+      username: username,
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      profile_picture: profile_picture,
+      campus: campus ? campus.campus_name : '',
+      campus_id: campus ? campus.id : '',
+      campus_name: campus ? campus.campus_name : '',
+      scanned_artworks: scanned_artworks.length ? [...scanned_artworks]  : [],
+      total_points: total_points,
+      liked_artworks: liked_artworks.length ? [...liked_artworks] : [],
+      disliked_artworks: disliked_artworks.length ? [...disliked_artworks] : [],
+      solved_artworks: solved_artworks.length ? [...solved_artworks] : [],
+      unsolved_artworks: []
+    }
+
+    // Format Each Artwork and then add values for liked and disliked artworks
+    formattedUser.scanned_artworks = formattedUser.scanned_artworks.map((artwork) => this.formatArtwork(artwork))
+
+    formattedUser.liked_artworks = formattedUser.liked_artworks.map((artwork) => this.formatArtwork(artwork))
+
+    formattedUser.disliked_artworks = formattedUser.disliked_artworks.map((artwork) => this.formatArtwork(artwork))
+
+    // adds'like' and 'dislike' property values to user's scanned_artworks
+    this.addLikedDislikedToArtworks(formattedUser)
+
+    // Moving this async call because it makes formatting the user info much longer than it needs to be.
+    //formattedUser.unsolved_artworks = await this.getUnsolvedArtworks(formattedUser)
+
+    console.log(formattedUser, "after inside formatArtwork")
+    return formattedUser
+  }
+
+  getUnsolvedArtworks = async (user) => {
+
+    let allArtworks = await this.getAllArtworksWithClues()
+    let solvedArtworksIds = user.solved_artworks.map((artwork) => artwork.id)
+
+    // Filter out solved artwords and artworks that don't have a clue attached
+    let unsolvedArtworks = allArtworks.filter((artwork) => !solvedArtworksIds.includes(artwork.id) && artwork.clue).map(artwork => this.formatArtwork(artwork))
+    user.unsolved_artworks = unsolvedArtworks
+    this.user = user
+    localStorage.setItem('unsolved', JSON.stringify(unsolvedArtworks));
+
+    return unsolvedArtworks;
+
+  }
+
+  formatArtwork = (artwork) => {
+    let currentArtwork = {
+      id: artwork.id,
+      title: artwork.title,
+      artist: artwork.artist,
+      description: artwork.description,
+      primary_image: artwork.primary_image,
+      other_images: artwork.other_images,
+      year: artwork.year,
+      qr_code: artwork.qr_image,
+      campus: artwork.campus,
+      likes: artwork.likes,//Overall likes
+      liked: false, // Specific to user (locally derived)
+      disliked: false, // Specific to user (locally derived)
+      artwork_type_clue: artwork.artwork_type_clue,
+      clue: artwork.clue,
+      Videos: artwork.Videos
+    }
+
+    return currentArtwork
+  }
+
+  //  Adds 'like' and 'dislike' values to a user's scanned_artworks
+  addLikedDislikedToArtworks = (user) => {
+    // if(con.user) {
+
+    // await con.syncRemoteToLocalUser()
+    let artworks = user.scanned_artworks ? user.scanned_artworks : [];
+
+    // save ids of liked artworks
+    let likedArtworkIds = user.liked_artworks ? user.liked_artworks.map((likedArtwork) => likedArtwork.id) : []
+
+    // save ids of disliked artworks
+    let dislikedArtworkIds = user.disliked_artworks ? user.disliked_artworks.map((dislikedArtwork) => dislikedArtwork.id) : []
+
+
+    // looks through artworks:
+    // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
+    // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
+    // 'liked' value is manually derived added here, info not directly in database
+    artworks.forEach((artwork) => {
+      likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false;
+      dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false;
+    });
+
+    window.localStorage.setItem("user", JSON.stringify(user))
+    window.localStorage.setItem("pastArtDisplays", JSON.stringify(artworks))
+
+    return artworks
+  }
+
   /* syncRemoteToLocalUser
   Function to get user profile data from api and update local user object;
   Returns:user object from api
@@ -533,15 +642,16 @@ Returns: api request reponse
         sendConfig
       )
       console.log("SYNC", returnData)
-      this.user = returnData.data
+      this.user = this.formatUser(returnData.data)
       window.localStorage.setItem('user', JSON.stringify(this.user))
+      await this.getUnsolvedArtworks()
       return returnData
     } catch(error) {
       console.log("SYNC-Fail", error)
     }
 
 
- 
+
   }
 
   /* updateRemoteUser
@@ -559,11 +669,11 @@ Returns: api request reponse
       },
     }
 
-    //const sendData = JSON.stringify(dataIn)
+    const sendData = JSON.stringify(dataIn)
 
     let response = await this.axiosPutToStrapi(
       this.strapiUrl + '/users/profile',
-      dataIn,
+      sendData,
       sendConfig
     )
     console.log(response)
@@ -577,12 +687,12 @@ Returns: api request reponse
   Returns: api request reponse
   */
   addScannedArtworkToUser = async (artworkIdArray) => {
-    await this.syncRemoteToLocalUser()
+    //await this.syncRemoteToLocalUser()
 
-    let existingArtworks = []
+    let existingArtworks = [];
     this.user.scanned_artworks.forEach((artwork) => {
       existingArtworks.push(artwork.id)
-    })
+    });
 
     let sendArray = existingArtworks.concat(artworkIdArray)
     sendArray = [...new Set([...existingArtworks, ...artworkIdArray])]
@@ -598,12 +708,12 @@ Returns: api request reponse
   Returns: api request reponse
   */
   removeScannedArtworkFromUser = async (artworkIdArray) => {
-    await this.syncRemoteToLocalUser()
+    //await this.syncRemoteToLocalUser()
 
-    let existingArtworks = []
+    let existingArtworks = [];
     this.user.scanned_artworks.forEach((artwork) => {
       existingArtworks.push(artwork.id)
-    })
+    });
 
     for (let i = 0; i < artworkIdArray.length; i++) {
       let j = 0
@@ -727,7 +837,7 @@ Accepts:
 Returns: api request reponse
 */
   addPointsToUser = async (numPoints) => {
-    await this.syncRemoteToLocalUser()
+    //await this.syncRemoteToLocalUser()
     let newPoints = numPoints + this.user.total_points
     let response = await this.updatePointsForUser(newPoints)
     return response
@@ -740,7 +850,7 @@ Accepts:
 Returns: api request reponse
 */
   removePointsFromUser = async (numPoints) => {
-    await this.syncRemoteToLocalUser()
+    //await this.syncRemoteToLocalUser()
     let newPoints = this.user.total_points - numPoints
     let response = await this.updatePointsForUser(newPoints)
     return response
@@ -774,14 +884,14 @@ Returns: api request reponse
     relatedEntriesIdArray
   ) => {
     await this.syncRemoteToLocalUser()
-
-    let existingEntries = []
+    console.log(this.user)
+    let existingEntries = [];
     this.user[relationFieldName].forEach((entry) => {
       existingEntries.push(entry.id)
-    })
+    });
 
     let sendArray = existingEntries.concat(relatedEntriesIdArray)
-    sendArray = [...new Set([...existingEntries, ...relatedEntriesIdArray])]
+    sendArray = [...new Set([...existingEntries, ...relatedEntriesIdArray])];
 
     let response = await this.updateRemoteUser({
       [relationFieldName]: sendArray,
@@ -805,10 +915,10 @@ Returns: api request reponse
   ) => {
     await this.syncRemoteToLocalUser()
 
-    let existingEntries = []
+    let existingEntries = [];
     this.user[relationFieldName].forEach((entry) => {
       existingEntries.push(entry.id)
-    })
+    });
 
     for (let i = 0; i < relatedEntriesIdArray.length; i++) {
       let j = 0

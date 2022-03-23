@@ -11,8 +11,7 @@ import {
   IonHeader,
   IonToolbar,
   IonText,
-  IonImg,
-  IonItem
+  IonImg
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Link } from 'react-router-dom';

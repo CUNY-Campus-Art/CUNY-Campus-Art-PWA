@@ -37,9 +37,8 @@ import { addScannedArtDisplayToUserDB, initializeUser } from '../store/user'
 /* use the props currentArtDisplay and allArtDisplays to access state */
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
-  allArtDisplays: state.artDisplay.allArtDisplays,
   user: state.user.user,
-  unsolved_artworks: state.artDisplay.unsolvedArtDisplays,
+  unsolvedArtDisplays: state.artDisplay.unsolvedArtDisplays,
   campuses: state.general.campuses
 })
 
@@ -62,6 +61,7 @@ type Props = PropsFromRedux & {
 
 const HuntClues = (props: Props) => {
   let user = props.user;
+  let unsolvedArtDisplays = props.unsolvedArtDisplays
 
   // To redirect to Information tab using forward animation
   const { navigate } = useContext(NavContext);

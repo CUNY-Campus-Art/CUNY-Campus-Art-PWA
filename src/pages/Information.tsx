@@ -15,7 +15,6 @@ import {
   IonToolbar,
   IonIcon,
   IonItem,
-  IonItemDivider,
   IonInput,
   IonCard,
   IonCardHeader,

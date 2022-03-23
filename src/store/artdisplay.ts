@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { StrapiApiConnection } from './util'
-import { getUser, formatUser, initializeUser, User } from './user'
-let con: StrapiApiConnection = new StrapiApiConnection();
+import { getUser, User } from './user'
 
+let con: StrapiApiConnection = new StrapiApiConnection();
 
 /************ Type Checking State ************/
 
@@ -181,7 +181,7 @@ interface RemoveSolvedArtworkAction {
   payload: ArtDisplay
 }
 
-interface AddUnsolvedArtworksAction {
+interface GotUnsolvedArtworksAction {
   type: typeof ADD_UNSOLVED_ARTWORKS,
   payload: ArtDisplay[]
 }
@@ -191,7 +191,7 @@ interface AddVideoAction {
   payload: Video
 }
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | AddUnsolvedArtworksAction | AddVideoAction
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | GotUnsolvedArtworksAction | AddVideoAction
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: any) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -220,7 +220,7 @@ export function gotPastArtDisplays
   }
 }
 
-export function addUnsolvedArtworks(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
+export function gotUnsolvedArtworks(artDisplays: ArtDisplay[]): ArtDisplayActionTypes {
   return {
     type: ADD_UNSOLVED_ARTWORKS,
     payload: artDisplays
@@ -303,40 +303,48 @@ export function addVideo(video: Video): ArtDisplayActionTypes {
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 
-
 /** fetchPastArtworks
  * fetches user's past artworks information and adds on like and disliked status for each artwork
  * @param userInfo
  */
-export const fetchPastArtworks = (userInfo: any) => async (dispatch: any) => {
-   let user = userInfo;
+export const fetchPastArtworks = (user: any) => async (dispatch: any) => {
 
-  // if(con.user) {
+  user.scanned_artworks = user.scanned_artworks.map((artwork:any) => con.formatArtwork(artwork))
 
-  // await con.syncRemoteToLocalUser()
-  let artworks: any = user.scanned_artworks ? user.scanned_artworks : [];
-
-  // save ids of liked artworks
-  let likedArtworkIds = user.liked_artworks ? user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
-
-  // save ids of disliked artworks
-  let dislikedArtworkIds = user.disliked_artworks ? user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
-
-
-  // looks through artworks:
-  // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
-  // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
-  // 'liked' value is manually derived added here, info not directly in database
-  artworks = artworks.map((artwork: any) => {
-    likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false
-    dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false
-    return artwork
-  })
-
-  dispatch(gotPastArtDisplays(artworks))
-
-  return artworks;
+ // let artworks = addLikedDislikedToArtworks(user)
+  dispatch(gotPastArtDisplays(user.scanned_artworks))
+  //dispatch(rerenderArtDisplays())
+  //return artworks;
 };
+
+// export const addLikedDislikedToArtworks = (user: any) => {
+//   // if(con.user) {
+
+//   // await con.syncRemoteToLocalUser()
+//   let artworks: any = user.scanned_artworks ? user.scanned_artworks : [];
+
+//   // save ids of liked artworks
+//   let likedArtworkIds = user.liked_artworks ? user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
+
+//   // save ids of disliked artworks
+//   let dislikedArtworkIds = user.disliked_artworks ? user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
+
+
+//   // looks through artworks:
+//   // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
+//   // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
+//   // 'liked' value is manually derived added here, info not directly in database
+//   artworks.forEach((artwork: any) => {
+//     likedArtworkIds.includes(artwork.id) ? artwork.liked = true : artwork.liked = false
+//     dislikedArtworkIds.includes(artwork.id) ? artwork.disliked = true : artwork.disliked = false
+//     return artwork
+//   })
+
+//   window.localStorage.setItem("user", JSON.stringify(user))
+//   window.localStorage.setItem("pastArtDisplays", JSON.stringify(artworks))
+
+//   return artworks
+// }
 
 //retrieves Scanned Art from database
 export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: any) => {
@@ -350,8 +358,9 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
 
   try {
 
-    const { data } = await axios.get(strapiUrl + '/artworks/' + artworkId);
+    const data = await con.getArtworkById(artworkId)
 
+    let currentArtwork = con.formatArtwork(data)
 
     // save ids of liked artworks
     let likedArtworkIds = con.user && con.user.liked_artworks ? con.user.liked_artworks.map((likedArtwork: any) => likedArtwork.id) : []
@@ -359,12 +368,11 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
     // save ids of disliked artworks
     let dislikedArtworkIds = con.user && con.user.disliked_artworks ? con.user.disliked_artworks.map((dislikedArtwork: any) => dislikedArtwork.id) : []
 
-    data.liked = likedArtworkIds.includes(data.id) ? true : false
-    data.disliked = dislikedArtworkIds.includes(data.id) ? true : false
-    //const data = await con.getArtworkById(artworkId)
+    currentArtwork.liked = likedArtworkIds.includes(currentArtwork.id) ? true : false
+    currentArtwork.disliked = dislikedArtworkIds.includes(currentArtwork.id) ? true : false
 
-    console.log("getArtworkById", data);
-    dispatch(gotScannedArtDisplay(data))
+    console.log("getArtworkById", currentArtwork);
+    dispatch(gotScannedArtDisplay(currentArtwork))
 
     return artworkId;
   }
@@ -377,10 +385,20 @@ export const fetchScannedArtDisplay = (qrCodeText: string) => async (dispatch: a
 };
 
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
+export const fetchUnsolvedArtworks = (user: User) => async (dispatch: any) => {
+  let unsolvedArtworks = await con.getUnsolvedArtworks(user)
+  console.log(unsolvedArtworks, "THIS IS UNSOLVED", con.user, "this is con.user")
+  dispatch(getUser(con.user))
+  dispatch(gotUnsolvedArtworks(unsolvedArtworks))
+}
+
+/* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
 export const fetchAllArtworks = () => async (dispatch: any) => {
   const { data } = await axios.get(strapiUrl + '/artworks');
   //filters out any empty artworks from the database
-  const artDisplays = data.filter((artwork: ArtDisplay) => artwork.title && artwork.artist);
+  const artDisplays = data
+    .filter((artwork: ArtDisplay) => artwork.title && artwork.artist)
+    .map((artwork: ArtDisplay) => con.formatArtwork(artwork));
   console.log("fetchAllArtworks", artDisplays);
   dispatch(gotAllArtDisplays(artDisplays))
   return data;
@@ -401,7 +419,7 @@ export const fetchAllCampuses = () => async (dispatch: any) => {
 const removeFromLikes = async (artwork: any) => {
   // will toggle like button to neutral
   artwork.liked = false
-  
+
   // Exit early if default artwork
   if(artwork.id === 'default') return
 
@@ -439,10 +457,11 @@ export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async
     const data = await con.removeScannedArtworkFromUser([artwork.id]);
     await con.syncRemoteToLocalUser() // over here possibly we can just remove locally but this might cause mismatch in data
     //reload artworks
-    if (artwork.liked) removeFromLikes(artwork)
-    if (artwork.disliked) removeFromDislikes(artwork)
-    dispatch(fetchPastArtworks(con.user))
 
+    if (artwork.liked === true) removeFromLikes(artwork)
+    else if (artwork.disliked === true) removeFromDislikes(artwork)
+    dispatch(fetchPastArtworks(user))
+    dispatch(fetchUnsolvedArtworks(user))
   }
 
   // remove from store locally
@@ -465,7 +484,7 @@ export const clickLikeButton = (user: User, artwork: ArtDisplay, fromGallery: bo
       // Add to Likes
       artwork.liked = true;
 
-      
+
       if(artwork.id !== 'default') {
         await con.addLikedArtworkToUser([artwork.id])
 
@@ -474,11 +493,16 @@ export const clickLikeButton = (user: User, artwork: ArtDisplay, fromGallery: bo
           await con.increaseLikesForArtworkById(artwork.id)
         }
       }
-      
+
     }
   }
+
+  let currentArtDisplay = con.formatArtwork(artwork)
+  window.localStorage.setItem('user', JSON.stringify(user))
+  window.localStorage.setItem('currentArtDisplay', JSON.stringify(currentArtDisplay))
+
   dispatch(rerenderArtDisplays())
-  dispatch(changeCurrentArtDisplay(artwork)) 
+  dispatch(changeCurrentArtDisplay(currentArtDisplay))
 
   //If the Like Button is clicked in the Information Tab
 
@@ -510,20 +534,21 @@ export const clickDislikeButton = (user: User, artwork: ArtDisplay) => async (di
     }
   }
 
+  window.localStorage.setItem("user", JSON.stringify(user))
+
   dispatch(rerenderArtDisplays())
   dispatch(changeCurrentArtDisplay(artwork))
 
 }
 
 export const addSolvedArtwork = (user: any, artworkId: any, points: any) => async (dispatch: any) => {
-  con.user = user;
+
   await con.addSolvedArtworkToUser([artworkId])
   await con.addPointsToUser(points)
   await con.syncRemoteToLocalUser()
-  user = await formatUser(con.user)
-  dispatch(addUnsolvedArtworks(user.unsolved_artworks))
+  // might need to correct this
+  dispatch(fetchUnsolvedArtworks(user))
   dispatch(getUser(user))
-
 }
 
 export const addVideoToDB = (user: any, artwork: any, video: Video) => async (dispatch: any) => {
@@ -566,8 +591,9 @@ const pastArtDisplays = determinePastArtDisplays();
 // Retrieves artworks based on whether user is logged in or is an anonymous user
 function determinePastArtDisplays() {
   console.log("determine");
-  if (con.user) {
-    // console.log("from redux and local storage for a logged in user");
+  if (con.user && JSON.stringify(con.user) !== '{}') {
+    console.log("from redux and local storage for a logged in user", con);
+    //addLikedDislikedToArtworks(con.user)
     return [...con.user.scanned_artworks, defaultCurrentArtDisplay]
   }
   else {
@@ -607,7 +633,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
   switch (action.type) {
     //This changes the value of the current art to be displayed
     case CHANGE_CURRENT_ART_DISPLAY:
-      window.localStorage.setItem("currentArtDisplay", JSON.stringify(action.payload))
+      window.localStorage.setItem('currentArtDisplay', JSON.stringify(action.payload))
       return { ...state, currentArtDisplay: { ...action.payload, liked: action.payload.liked } }
     //checks to see if artwork is already in history
     //duplicate items are not added
@@ -615,8 +641,8 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
     case GET_SCANNED_ART_DISPLAY:
       let updatedPastArtDisplays = state.pastArtDisplays.some(artwork => artwork.id === action.payload.id) ? [...state.pastArtDisplays] : [...state.pastArtDisplays, action.payload]
 
-      window.localStorage.setItem("pastArtDisplays", JSON.stringify(updatedPastArtDisplays));
-      window.localStorage.setItem("currentArtDisplay", JSON.stringify(action.payload))
+      window.localStorage.setItem('pastArtDisplays', JSON.stringify(updatedPastArtDisplays));
+      window.localStorage.setItem('currentArtDisplay', JSON.stringify(action.payload))
 
       return {
         ...state,
@@ -681,7 +707,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
         pastArtDisplays: [...state.pastArtDisplays]
       }
     case ADD_UNSOLVED_ARTWORKS:
-      return { ...state, unsolvedArtDisplays: action.payload }
+      return { ...state, unsolvedArtDisplays: [...action.payload]}
     case ADD_VIDEO:
       return {
         ...state,

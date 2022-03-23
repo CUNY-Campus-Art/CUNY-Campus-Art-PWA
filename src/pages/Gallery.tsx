@@ -68,7 +68,6 @@ const Gallery = (props: Props) => {
   const user = props.currentUser
   const pastArtDisplays = props.pastArtDisplays;
 
-
   // useEffect(() => { if (user) props.getPastArtworks(props.currentUser); }, []);
 
 
