@@ -55,33 +55,47 @@ const UserProfile = (props: Props) => {
   };
 
   let user = props.currentUser;
-  console.log("USER")
-  console.log(user);
+
   let campus = props.currentUser.campus;
 
   const [profileEdits, setProfileEdits] = useState({
     first_name: user.first_name,
     last_name: user.last_name,
-    username: user.username || user.user_name,
+    //username: user.username || user.user_name,
     email: user.email
   })
 
-  const [loading, setLoading]= useState(false);
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const editProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    
-    
-    setProfileEdits({...profileEdits, [e.target.name]: e.target.value});
-
+    setProfileEdits({ ...profileEdits, [e.target.name]: e.target.value });
   }
 
+  const changePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }
 
-  const saveChanges = async () =>{
+  const saveChanges = async () => {
     console.log(profileEdits);
     setLoading(true);
     let res = await props.editUser(profileEdits);
-    console.log(res);
     setLoading(false);
+  }
+
+  const savePassword = async () => {
+    //don't update in case user accidentally clicked updated without entering
+    if(password==""){
+      console.log("null password");
+    }
+    else {
+    setLoading(true);
+    await props.editUser({ password: password });
+    setLoading(false);
+    setPassword("");
+    }
+
   }
 
   return (
@@ -117,12 +131,14 @@ const UserProfile = (props: Props) => {
             <IonLabel>Username</IonLabel>
             <br />
             <input
+
               type="text"
               name="username"
-              value={profileEdits.username}
-              onChange={(e)=>editProfile(e)}
+              // value={profileEdits.username}
+              // onChange={(e)=>editProfile(e)}
               placeholder={user.username || user.user_name}
               className="input-xlarge"
+              readOnly
             />
             <hr />
 
@@ -132,7 +148,7 @@ const UserProfile = (props: Props) => {
               type="text"
               name="first_name"
               value={profileEdits.first_name}
-              onChange={(e)=>editProfile(e)}
+              onChange={(e) => editProfile(e)}
               placeholder={user.first_name}
               className="input-xlarge"
             />
@@ -144,7 +160,7 @@ const UserProfile = (props: Props) => {
               type="text"
               name="last_name"
               value={profileEdits.last_name}
-              onChange={(e)=>editProfile(e)}
+              onChange={(e) => editProfile(e)}
               placeholder={user.last_name}
               className="input-xlarge"
             />
@@ -156,19 +172,19 @@ const UserProfile = (props: Props) => {
               type="text"
               name="email"
               value={profileEdits.email}
-              onChange={(e)=>editProfile(e)}
+              onChange={(e) => editProfile(e)}
               placeholder={user.email}
               className="input-xlarge"
             />
             <hr />
 
             <div>
-              {!loading? <IonButton color="success" expand="block" onClick={()=>saveChanges()}>
+              {!loading ? <IonButton color="success" expand="block" onClick={() => saveChanges()}>
                 Update
               </IonButton> :
-             
-             <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
-        }
+
+                <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+              }
             </div>
           </form>
         ) : (
@@ -181,11 +197,12 @@ const UserProfile = (props: Props) => {
         {showPassword ? (
           <form id="tab2">
             <IonLabel>New Password</IonLabel> <br />
-            <input type="password" className="input-xlarge" />
+            <input type="password" className="input-xlarge" value={password} onChange={(e) => changePassword(e)} />
             <div>
-              <IonButton color="success" expand="block">
+              {!loading ? <IonButton color="success" expand="block" onClick={() => savePassword()}>
                 Update
-              </IonButton>
+              </IonButton> : <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+              }
             </div>
           </form>
         ) : (<p></p>)}

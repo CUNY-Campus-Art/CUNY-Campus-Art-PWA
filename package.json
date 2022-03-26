@@ -23,6 +23,7 @@
     "@types/redux-promise": "^0.5.29",
     "@types/yup": "^0.29.9",
     "axios": "^0.20.0",
+    "bcryptjs": "^2.4.3",
     "cordova-plugin-qrscanner": "^3.0.1",
     "i": "^0.3.6",
     "ionicons": "^5.0.0",
@@ -75,4 +76,3 @@
   },
   "description": "An Ionic project"
 }
-  

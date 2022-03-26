@@ -1,6 +1,8 @@
 import { StrapiApiConnection } from './util'
 import { fetchPastArtworks, addUnsolvedArtworks } from './artdisplay'
 import Axios from 'axios'
+
+import { hashPassword } from "./hashPassword";
 /************ Type Checking State ************/
 
 export interface Image {
@@ -136,7 +138,7 @@ export const getUser = (user: any) => ({ type: GET_USER, payload: user })
 export const removeUser = () => ({ type: REMOVE_USER })
 export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
-export const editUser = (user: any) => ({type: EDIT_USER, payload: user});
+export const editUser = (user: any) => ({ type: EDIT_USER, payload: user });
 
 // export const addUnsolvedArtworks = (artworks:any) => ({
 //   type: ADD_UNSOLVED_ARTWORKS,
@@ -247,7 +249,9 @@ export const logout = () => async (dispatch: any) => {
 }
 
 
-export const editUserThunk = async (changes: any, dispatch: any) =>{
+
+export const editUserThunk = async (changes: any, dispatch: any) => {
+
   try {
 
     const sendConfig = {
@@ -258,29 +262,34 @@ export const editUserThunk = async (changes: any, dispatch: any) =>{
     }
 
 
-  console.log(changes);
+    if (changes.password) {
+      const hashedPassword = await hashPassword(changes.password);
+      console.log(hashedPassword);
+      changes = {
+        password: hashedPassword
+      }
 
-  console.log(sendConfig);
+    }
 
-     let { data } = await Axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
-     console.log(data);
+    let { data } = await Axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
+    console.log(data);
 
-     let user = await formatUser(data);
-     localStorage.setItem('user', JSON.stringify(user));
-     dispatch(editUser(user));
+    let user = await formatUser(data);
+    localStorage.setItem('user', JSON.stringify(user));
+    dispatch(editUser(user));
 
   }
-  catch(error){
+  catch (error) {
     console.error(error);
   }
 }
 
 const defaultUser =
 {
-  user: currentUser ? currentUser: '',
+  user: currentUser ? currentUser : '',
   error: '',
-  total_points: currentUser ? currentUser.total_points: '',
-  solved_artworks: currentUser ? currentUser.solved_artworks: '',
+  total_points: currentUser ? currentUser.total_points : '',
+  solved_artworks: currentUser ? currentUser.solved_artworks : '',
   //unsolved_artworks: currentUser.unsolved_artworks
 }
 
@@ -296,7 +305,7 @@ export default function (state = defaultUser, action: any) {
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
     case EDIT_USER:
-      return { ...state, user: action.payload}
+      return { ...state, user: action.payload }
     // case ADD_UNSOLVED_ARTWORKS:
     //   return {...state, unsolved_artworks: action.payload}
     default:
