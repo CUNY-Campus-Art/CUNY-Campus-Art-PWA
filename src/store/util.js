@@ -644,7 +644,7 @@ Returns: api request reponse
       console.log("SYNC", returnData)
       this.user = this.formatUser(returnData.data)
       window.localStorage.setItem('user', JSON.stringify(this.user))
-      await this.getUnsolvedArtworks()
+      await this.getUnsolvedArtworks(this.user)
       return returnData
     } catch(error) {
       console.log("SYNC-Fail", error)

@@ -12,6 +12,19 @@
   padding: 10px;
 }
 
+.spin{
+  text-align: center;
+}
+
+.error-box {
+  padding: 1em .25em;
+  background-color: #ffe3e6;
+  border: 1px solid rgb(158, 28, 35);
+  color: rgb(158, 28, 35);
+  margin: 0 1.25em;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 0px;
+}
 
 
 /* On screens that are 992px wide or less, profile picture*/
@@ -24,11 +37,11 @@
 
 /* On screens that are 600px wide or less, the profile picture will be a smaller circle*/
 @media screen and (max-width: 600px) {
-  
+
   .profile-pic{
     border-radius: 50%;
     width: 150px;
   height: 150px;
   }
-  
+
 }
