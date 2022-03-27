@@ -19,12 +19,12 @@ export interface User {
   campus?: any,
   campus_name: string,
   campus_id: any,
-  scanned_artworks: any [],
+  scanned_artworks: any[],
   total_points: number,
-  liked_artworks: any [],
-  disliked_artworks: any [],
+  liked_artworks: any[],
+  disliked_artworks: any[],
   solved_artworks: any[],
-  unsolved_artworks?: any []
+  unsolved_artworks?: any[]
 }
 
 export interface UserState {
@@ -223,22 +223,22 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
       },
     }
 
-
     if (changes.password) {
       const hashedPassword = await hashPassword(changes.password);
       console.log(hashedPassword);
       changes = {
         password: hashedPassword
       }
-
     }
 
     let { data } = await Axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
     console.log(data);
 
+
     let user = await con.formatUser(data);
     localStorage.setItem('user', JSON.stringify(user));
     dispatch(editUser(user));
+    if(changes.password) return 'password change success'
 
   }
   catch (error) {
@@ -248,10 +248,10 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
 
 const defaultUser =
 {
-  user: currentUser ? currentUser: '',
+  user: currentUser ? currentUser : '',
   error: '',
-  total_points: currentUser ? currentUser.total_points: '',
-  solved_artworks: currentUser ? currentUser.solved_artworks: [],
+  total_points: currentUser ? currentUser.total_points : '',
+  solved_artworks: currentUser ? currentUser.solved_artworks : [],
   //unsolved_artworks: currentUser ? currentUser.unsolved_artworks : []
 }
 
@@ -267,7 +267,7 @@ export default function (state = defaultUser, action: any) {
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
     case EDIT_USER:
-        return { ...state, user: action.payload }
+      return { ...state, user: action.payload }
     // case ADD_UNSOLVED_ARTWORKS:
     //   return {...state, unsolved_artworks: action.payload}
     default:

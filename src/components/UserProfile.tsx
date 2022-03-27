@@ -14,7 +14,10 @@ import {
   IonCardContent,
   IonCardSubtitle,
   IonCardTitle,
+  IonInput,
   IonLabel,
+  IonText,
+  IonToast,
   IonSegment,
   IonSegmentButton,
   IonSpinner
@@ -45,6 +48,9 @@ const UserProfile = (props: Props) => {
   // set profile tab as default
   const [showProfile, setShowProfile] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordChangeSuccess, setShowPasswordChangeSuccess] = useState(false);
+
+
   const handleProfile = () => {
     setShowProfile(true);
     setShowPassword(false);
@@ -59,7 +65,6 @@ const UserProfile = (props: Props) => {
   const [profileEdits, setProfileEdits] = useState({
     first_name: user.first_name,
     last_name: user.last_name,
-    //username: user.username || user.user_name,
     email: user.email
   })
 
@@ -84,12 +89,13 @@ const UserProfile = (props: Props) => {
 
   const savePassword = async () => {
     //don't update in case user accidentally clicked updated without entering
-    if (password == "") {
+    if (password === "") {
       console.log("null password");
     }
     else {
       setLoading(true);
-      await props.editUser({ password: password });
+      let res = await props.editUser({ password: password });
+      if(res === 'password change success') setShowPasswordChangeSuccess(true)
       setLoading(false);
       setPassword("");
     }
@@ -106,10 +112,11 @@ const UserProfile = (props: Props) => {
         />
         <IonCardTitle>{`${user.first_name} ${user.last_name}`}</IonCardTitle>
         <IonCardSubtitle>{user.campus_name}</IonCardSubtitle>
-        {/* To do: decide to keep this button to open up to form or remove this button */}
+        {/* To do: decide to keep this button to open up to form or remove this button
         <IonButton fill="outline" slot="end">
           Edit
         </IonButton>
+         */}
       </IonCardContent>
 
       {/* default checked segment button will be profile, conditional statement to set checked segment button */}
@@ -127,14 +134,7 @@ const UserProfile = (props: Props) => {
         {showProfile ? (
           <form id="tab">
             <IonLabel>Username</IonLabel>
-            <br />
-            <input
-              type="text"
-              placeholder={user.username || user.user_name}
-              className="input-xlarge"
-              readOnly
-            />
-            <hr />
+            <IonInput value={user.username} disabled></IonInput>
 
             <IonLabel>First Name</IonLabel>
             <br />
@@ -173,10 +173,10 @@ const UserProfile = (props: Props) => {
             <hr />
 
             <div>
-              {!loading ? <IonButton color="success" expand="block" onClick={() => saveChanges()}>
+              {!loading ? <IonButton color="primary" expand="block" onClick={() => saveChanges()}>
                 Update
               </IonButton>
-                : <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+                : <div className="spin"><IonSpinner color="primary">Loading</IonSpinner></div>
               }
             </div>
           </form>
@@ -192,7 +192,7 @@ const UserProfile = (props: Props) => {
             <IonLabel>New Password</IonLabel> <br />
             <input type="password" className="input-xlarge" value={password} onChange={(e) => changePassword(e)}  />
             <div>
-              {!loading ? <IonButton color="success" expand="block"  onClick={() => savePassword()}>
+              {!loading ? <IonButton color="primary" expand="block"  onClick={() => savePassword()}>
                 Update
               </IonButton>
                 : <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
@@ -201,6 +201,16 @@ const UserProfile = (props: Props) => {
           </form>
         ) : (<p></p>)}
       </div>
+      <IonToast
+          id="valid-password-change-toast"
+          color="success"
+          isOpen={showPasswordChangeSuccess}
+          onDidDismiss={() => setShowPasswordChangeSuccess(false)}
+          message="Succesfully changed password"
+          duration={800}
+          position="middle"
+          z-index={20001}
+        />
     </span>
   );
 };
