@@ -5,7 +5,7 @@
 import React, { useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../store";
-import { getUser, fetchUser } from "../store/user";
+import { getUser, fetchUser, editUserThunk } from "../store/user";
 import "./UserProfile.css";
 import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 
@@ -17,6 +17,7 @@ import {
   IonLabel,
   IonSegment,
   IonSegmentButton,
+  IonSpinner
 } from "@ionic/react";
 
 /* Retrieves current user from the State */
@@ -29,6 +30,7 @@ const mapDispatch = (dispatch: any) => ({
   fetchUser: (username: string, pw: string) =>
     dispatch(fetchUser(username, pw)),
   getUser: (user: any) => dispatch(getUser(user)),
+  editUser: (changes: any) => editUserThunk(changes, dispatch)
 });
 
 const connector = connect(mapState, mapDispatch);
@@ -53,6 +55,46 @@ const UserProfile = (props: Props) => {
   };
 
   let user = props.currentUser;
+
+  const [profileEdits, setProfileEdits] = useState({
+    first_name: user.first_name,
+    last_name: user.last_name,
+    //username: user.username || user.user_name,
+    email: user.email
+  })
+
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  const editProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfileEdits({ ...profileEdits, [e.target.name]: e.target.value });
+  }
+
+  const changePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }
+
+  const saveChanges = async () => {
+    console.log(profileEdits);
+    setLoading(true);
+    let res = await props.editUser(profileEdits);
+    setLoading(false);
+  }
+
+  const savePassword = async () => {
+    //don't update in case user accidentally clicked updated without entering
+    if (password == "") {
+      console.log("null password");
+    }
+    else {
+      setLoading(true);
+      await props.editUser({ password: password });
+      setLoading(false);
+      setPassword("");
+    }
+
+  }
 
   return (
     <span>
@@ -90,6 +132,7 @@ const UserProfile = (props: Props) => {
               type="text"
               placeholder={user.username || user.user_name}
               className="input-xlarge"
+              readOnly
             />
             <hr />
 
@@ -97,6 +140,9 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="first_name"
+              value={profileEdits.first_name}
+              onChange={(e) => editProfile(e)}
               placeholder={user.first_name}
               className="input-xlarge"
             />
@@ -106,6 +152,9 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="last_name"
+              value={profileEdits.last_name}
+              onChange={(e) => editProfile(e)}
               placeholder={user.last_name}
               className="input-xlarge"
             />
@@ -115,15 +164,20 @@ const UserProfile = (props: Props) => {
             <br />
             <input
               type="text"
+              name="email"
+              value={profileEdits.email}
+              onChange={(e) => editProfile(e)}
               placeholder={user.email}
               className="input-xlarge"
             />
             <hr />
 
             <div>
-              <IonButton color="success" expand="block">
+              {!loading ? <IonButton color="success" expand="block" onClick={() => saveChanges()}>
                 Update
               </IonButton>
+                : <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+              }
             </div>
           </form>
         ) : (
@@ -136,11 +190,13 @@ const UserProfile = (props: Props) => {
         {showPassword ? (
           <form id="tab2">
             <IonLabel>New Password</IonLabel> <br />
-            <input type="password" className="input-xlarge" />
+            <input type="password" className="input-xlarge" value={password} onChange={(e) => changePassword(e)}  />
             <div>
-              <IonButton color="success" expand="block">
+              {!loading ? <IonButton color="success" expand="block"  onClick={() => savePassword()}>
                 Update
               </IonButton>
+                : <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+              }
             </div>
           </form>
         ) : (<p></p>)}

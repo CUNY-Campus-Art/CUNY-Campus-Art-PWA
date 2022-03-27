@@ -1,5 +1,7 @@
 import { StrapiApiConnection } from './util'
 import { fetchPastArtworks, fetchUnsolvedArtworks } from './artdisplay'
+import Axios from "axios";
+import { hashPassword } from "./hashPassword";
 /************ Type Checking State ************/
 
 export interface Image {
@@ -42,6 +44,7 @@ export const SIGNUP_ERROR = 'SIGNUP_ERROR'
 export const ADD_POINTS = 'ADD_POINTS'
 export const REMOVE_POINTS = 'REMOVE_POINTS'
 export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
+export const EDIT_USER = 'EDIT_USER'
 
 // INITIAL STATE
 console.log(window.localStorage)
@@ -92,10 +95,16 @@ interface AddPointsToUserAction {
   payload: number
 }
 
+interface EditUser {
+  type: typeof EDIT_USER,
+  payload: User
+}
+
 export const getUser = (user: any) => ({ type: GET_USER, payload: user })
 export const removeUser = () => ({ type: REMOVE_USER })
 export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
+export const editUser = (user: any) => ({ type: EDIT_USER, payload: user })
 
 // export const addUnsolvedArtworks = (artworks:any) => ({
 //   type: ADD_UNSOLVED_ARTWORKS,
@@ -203,6 +212,40 @@ export const logout = () => async (dispatch: any) => {
   }
 }
 
+export const editUserThunk = async (changes: any, dispatch: any) => {
+
+  try {
+
+    const sendConfig = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.jwt,
+        'Content-Type': 'application/json',
+      },
+    }
+
+
+    if (changes.password) {
+      const hashedPassword = await hashPassword(changes.password);
+      console.log(hashedPassword);
+      changes = {
+        password: hashedPassword
+      }
+
+    }
+
+    let { data } = await Axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
+    console.log(data);
+
+    let user = await con.formatUser(data);
+    localStorage.setItem('user', JSON.stringify(user));
+    dispatch(editUser(user));
+
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
 const defaultUser =
 {
   user: currentUser ? currentUser: '',
@@ -223,6 +266,8 @@ export default function (state = defaultUser, action: any) {
       return { user: '', authToken: '', error: '', total_points: '', solved_artworks: [] };
     case LOGIN_ERROR:
       return { ...state, error: 'Incorrect username or password' }
+    case EDIT_USER:
+        return { ...state, user: action.payload }
     // case ADD_UNSOLVED_ARTWORKS:
     //   return {...state, unsolved_artworks: action.payload}
     default:
