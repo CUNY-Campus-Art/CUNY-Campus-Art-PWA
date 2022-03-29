@@ -498,7 +498,12 @@ export const clickLikeButton = (user: User, artwork: ArtDisplay, fromGallery: bo
   }
 
   let currentArtDisplay = con.formatArtwork(artwork)
+  //user.scanned_artwork is not being updated with likes
   window.localStorage.setItem('user', JSON.stringify(user))
+  console.log("USER");
+  console.log(user);
+  console.log("USER IN CON");
+  console.log(con.user);
   window.localStorage.setItem('currentArtDisplay', JSON.stringify(currentArtDisplay))
 
   dispatch(rerenderArtDisplays())
