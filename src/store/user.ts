@@ -149,6 +149,12 @@ export const signupNewUser = (email: string, pw: string, username: string, first
 /* modified loginAndGetToken functioning most recent 12/9 */
 export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
   try {
+
+    
+    const pastArtDisplays = localStorage.pastArtDisplays ? JSON.parse(localStorage.pastArtDisplays) : [];
+    //localStorage.clear();
+  
+
     let returnData: any = await con.loginUser(id, pw)
 
     if (returnData.status === 200) {
@@ -156,11 +162,46 @@ export const fetchUser = (id: string, pw: string) => async (dispatch: any) => {
       // TO DO: Have scanned artworks added to past art displays before clearing local storage
       //localStorage.clear()
 
-      dispatch(getUser(con.user))
-      dispatch(fetchPastArtworks(con.user))
-      dispatch(fetchUnsolvedArtworks(con.user))
+
+      let user = con.user;
+
+      if (pastArtDisplays.length > 0){
+      console.log("add scanned artworks now");
+      console.log(pastArtDisplays);
+      console.log(con.user);
+
+      let sendArr = [];
+      for (let artwork of pastArtDisplays){
+        if(artwork.id=='default'){
+          continue
+        }
+        else
+        sendArr.push(artwork.id);
 
 
+      }
+      console.log(sendArr);
+      let res : any = await con.addScannedArtworkToUser(sendArr);
+      console.log("RESPONSE OF ADDING ARTWORKS");
+      console.log(res.data);
+      console.log("CON USER AFTER ADDING THE SCANNED ARTWORKS");
+      console.log(con.user);
+
+      
+
+      //pass the "latest" version of user to getUser, fetchPastArtowrks, etc
+      //con.user doesn't seem to pick up latets changes
+      user = await con.formatUser(res.data);
+    }
+  
+
+    
+    console.log(user);
+      dispatch(getUser(user))
+      dispatch(fetchPastArtworks(user))
+      dispatch(fetchUnsolvedArtworks(user))
+
+      
       console.log('You have been successfully logged in. You will be redirected in a few seconds...')
 
     }

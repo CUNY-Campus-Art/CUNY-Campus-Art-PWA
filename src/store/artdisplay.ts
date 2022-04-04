@@ -452,6 +452,7 @@ const removeFromDislikes = async (artwork: any) => {
 // Remove ArtDisplay from the database, as well as locally
 export const removeScannedArtDisplay = (user: any, artwork: ArtDisplay) => async (dispatch: any) => {
 
+  console.log(user);
   //remove from database if user is signed in
   if (user && artwork.id !== 'default') {
     const data = await con.removeScannedArtworkFromUser([artwork.id]);
@@ -594,6 +595,7 @@ function determinePastArtDisplays() {
   if (con.user && JSON.stringify(con.user) !== '{}') {
     console.log("from redux and local storage for a logged in user", con);
     //addLikedDislikedToArtworks(con.user)
+    console.log(con.user.scanned_artworks);
     return [...con.user.scanned_artworks, defaultCurrentArtDisplay]
   }
   else {
