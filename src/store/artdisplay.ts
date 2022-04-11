@@ -89,6 +89,8 @@ export const ADD_UNSOLVED_ARTWORKS = 'ADD_UNSOLVED_ARTWORKS'
 
 export const ADD_VIDEO = 'ADD_VIDEO'
 
+export const UPLOAD_ARTWORK = 'UPLOAD_ARTWORK'
+
 // ACTION CREATORS
 interface AddArtDisplayAction {
   type: typeof ADD_ART_DISPLAY,
@@ -191,7 +193,12 @@ interface AddVideoAction {
   payload: Video
 }
 
-export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | GotUnsolvedArtworksAction | AddVideoAction
+interface UploadArtwork{
+  type: typeof UPLOAD_ARTWORK,
+  payload: any // artwork object
+}
+
+export type ArtDisplayActionTypes = AddArtDisplayAction | GotScannedArtDisplayAction | GotAllArtDisplaysAction | GotPastArtDisplaysAction | ChangeCurrentArtDisplayAction | ResetArtDisplaysAction | RerenderArtDisplaysAction | RemoveArtDisplayAction | GotAllCampusesAction | AddLikedArtworkAction | RemoveLikedArtworkAction | AddDislikedArtworkAction | RemoveDislikedArtworkAction | AddSolvedArtworkAction | RemoveSolvedArtworkAction | IncreaseLikesForArtworkAction | DecreaseLikesForArtworkAction | GotUnsolvedArtworksAction | AddVideoAction | UploadArtwork
 
 //This action only changes current art display, but does not modify state otherwise
 export const changeCurrentArtDisplay = (differentArtDisplay: any) => ({ type: CHANGE_CURRENT_ART_DISPLAY, payload: differentArtDisplay })
@@ -301,6 +308,42 @@ export function addVideo(video: Video): ArtDisplayActionTypes {
 }
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
+
+export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: any) => {
+
+  console.log(artwork);
+  console.log(pic);
+
+  
+ 
+
+  try {
+
+    const sendConfig = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.jwt,
+        'Content-Type': 'application/json',
+      },
+    }
+
+
+    const formData = new FormData()
+    formData.append('files.primary_image', pic)
+  
+    formData.append('data', JSON.stringify(artwork));
+  
+  
+  
+
+    let res = await axios.post("https://dev-cms.cunycampusart.com/artworks", formData, sendConfig);
+    console.log(res);
+
+  }
+  catch (error) {
+    console.error(error);
+  }
+
+}
 
 
 /** fetchPastArtworks
