@@ -27,6 +27,8 @@ import {
     IonTitle,
     IonTextarea,
     IonIcon,
+    IonSelect,
+    IonSelectOption,
 
     IonText,
     IonToast,
@@ -38,7 +40,9 @@ import {
 /* Retrieves current user from the State */
 const mapState = (state: RootState) => ({
     currentUser: state.user.user,
-    campus: state.user.user.campus
+    campus: state.user.user.campus,
+    campuses: state.general.campuses
+
 });
 
 const mapDispatch = (dispatch: any) => ({
@@ -118,6 +122,21 @@ const UploadArtwork = (props: Props) => {
                         style={{ display: "none" }}
                         onChange={setImage}
                     />
+                    <IonItem id="campus-menu">
+          <IonLabel>Campus</IonLabel>
+          <IonSelect
+            interfaceOptions={{ cssClass: 'my-custom-interface' }}
+            //interface="popover"
+            multiple={false}
+            placeholder=""
+           // onIonChange={}
+            //value={}
+          >
+            {props.campuses ? props.campuses.map((campus: any, index: any) =>
+              <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
+            ) : ''}
+          </IonSelect>
+        </IonItem>
 
                     <IonButton onClick={openFileDialog}>
                         Upload Image

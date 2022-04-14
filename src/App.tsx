@@ -28,6 +28,7 @@ import Profile from './pages/Profile';
 import ScavengerHunt from './pages/ScavengerHunt';
 
 import UploadArtwork from './components/UploadArtwork';
+import {UploadArtworkNew} from './components/UploadArtwork1';
 
 import { images, home, person, qrCodeOutline, informationCircle, map } from 'ionicons/icons';
 import { Signup } from './components/Signup'
@@ -115,7 +116,7 @@ const App = (props: Props) => {
             <Route path="/Information/:id" component={Information} exact={true} />
             <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true} />
             <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
-            <Route path="/Upload" component={UploadArtwork} exact={true}></Route>
+            <Route path="/Upload" component={UploadArtworkNew} exact={true}></Route>
           </IonRouterOutlet>
           {/* <IonTabBar slot="top">
              <IonTabButton tab="Profile" href="/Profile">
