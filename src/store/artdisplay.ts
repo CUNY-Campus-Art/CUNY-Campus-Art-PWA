@@ -44,7 +44,8 @@ export interface ArtDisplaysState {
   pastArtDisplays: ArtDisplay[]
   unsolvedArtDisplays: ArtDisplay[]
   allArtDisplays: ArtDisplay[]
-  campuses: any[]
+  campuses: any[],
+  uploadedArtwork: {},
   // user: any
 }
 
@@ -306,6 +307,13 @@ export function addVideo(video: Video): ArtDisplayActionTypes {
     payload: video
   }
 }
+
+export function uploadArtwork(artwork: any): ArtDisplayActionTypes {
+  return {
+    type: UPLOAD_ARTWORK,
+    payload: artwork
+  }
+}
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
 const strapiUrl = "https://dev-cms.cunycampusart.com";
 
@@ -313,9 +321,6 @@ export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: a
 
   console.log(artwork);
   console.log(pic);
-
-  
- 
 
   try {
 
@@ -337,6 +342,12 @@ export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: a
 
     let res = await axios.post("https://dev-cms.cunycampusart.com/artworks", formData, sendConfig);
     console.log(res);
+    if(res.status == 200){
+    dispatch(uploadArtwork(res.data)) 
+    }
+    return res;
+  
+    
 
   }
   catch (error) {
@@ -666,7 +677,8 @@ const initialState: ArtDisplaysState = {
   pastArtDisplays: pastArtDisplays,
   allArtDisplays: [defaultCurrentArtDisplay],
   campuses: [],
-  unsolvedArtDisplays: []
+  unsolvedArtDisplays: [],
+  uploadedArtwork: {}
 }
 
 
@@ -760,6 +772,11 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
           if (artwork.id === state.currentArtDisplay.id) artwork.Videos = [action.payload, ...artwork.Videos]
           return artwork
         })
+      }
+    case UPLOAD_ARTWORK:
+      return {
+        ...state, 
+        uploadedArtwork: action.payload
       }
     default:
       return state

@@ -1,9 +1,8 @@
 /*
-Signup.tsx
-This contains the Signup component.
-Collects username, email, first name, last name, campus, and profile picture from user.
-Makes use of the React Hook Form library to have values persist even after other items on form is updated.
-To Dos: To add Form Validations. Once database values are updated, will have profile picture and campus id added to database as well.
+UploadArtwork1.tsx
+This contains the Upload Artwork component.
+Collects title, artist, description, year, campus, and primary image for the artwork to be uploaded.
+Has form validation 
 */
 
 import React, { useState, useContext, useCallback } from 'react';
@@ -21,7 +20,11 @@ import {
     IonToolbar,
     IonButtons,
     IonBackButton,
-    IonText
+    IonText,
+    IonSpinner,
+    IonGrid,
+    IonRow,
+    IonCol
 } from "@ionic/react";
 import { connect } from 'react-redux';
 import { RootState } from '../store'
@@ -34,6 +37,7 @@ import { useForm } from "react-hook-form";
 import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
 import { uploadArtworkThunk } from "../store/artdisplay";
+import { CardExamples } from './UploadedArtwork';
 
 // const providersNames = [
 //   'google'
@@ -41,7 +45,8 @@ import { uploadArtworkThunk } from "../store/artdisplay";
 
 const mapSignup = (state: RootState) => {
     return {
-        campuses: state.general.campuses
+        campuses: state.general.campuses,
+        uploadedArtwork: state.artDisplay.uploadedArtwork
     }
 }
 
@@ -53,15 +58,16 @@ const mapDispatch = (dispatch: any) => {
 }
 
 const UploadArtwork1 = (props: any) => {
+    //for campuses dropdown
     if (!props.campuses) props.getAllCampuses();
     //To redirect to Profile tab using forward animation
-    const { navigate } = useContext(NavContext);
-    const redirect = useCallback(
-        () => navigate('/Profile', 'back'),
-        [navigate]
-    );
+    // const { navigate } = useContext(NavContext);
+    // const redirect = useCallback(
+    //     () => navigate('/Profile', 'back'),
+    //     [navigate]
+    // );
 
-    const SignupSchema = yup.object().shape({
+    const ArtworkSchema = yup.object().shape({
         title: yup.string().required("Title can not be empty").min(1).max(100),
         artist: yup.string().required("Artist can not be empty").min(1).max(100),
         description: yup.string().required("Description is required"),
@@ -84,7 +90,7 @@ const UploadArtwork1 = (props: any) => {
 
     const { control, handleSubmit, errors } = useForm({
         //defaultValues: formValues,
-        validationSchema: SignupSchema,
+        validationSchema: ArtworkSchema,
         mode: 'onBlur',
         reValidateMode: 'onChange'
     });
@@ -98,34 +104,48 @@ const UploadArtwork1 = (props: any) => {
 
     const [imgData, setImgData] = useState(null);
 
+    const [loading, setLoading] = useState(false);
+
+    const [success, setSuccess] = useState(false);
+
     // This is passed to the ImageUpload Component so that the file info can be retrieved  here
     const getImgFileInfoParent = (fileInfo: any) => {
         setImgData(fileInfo);
         console.log(fileInfo)
     }
 
-    const changeCampus = (e: any ) =>{
+    const changeCampus = (e: any) => {
         setSelectedCampus(e.detail.value);
         setCampusSelected(true);
 
     }
 
-    // Form invokes handlesSubmit1, updates local form values, and sends info to database to sign up user
+    const uploadNewArtwork = () => {
+        setSuccess(false);
+    }
+
+    // Form invokes handlesSubmit1, updates local form values, and sends info to database to add new artwork
     const handleSubmit1 = async (evt: any) => {
         console.log(evt);
         console.log(imgData);
         console.log(selectedCampus)
-        if(selectedCampus==undefined){
+        //field validation for campus
+        if (selectedCampus == undefined) {
             setCampusSelected(false);
-            
+
         }
-        else{
-            let obj = {...evt}
+        else {
+            setLoading(true);
+            let obj = { ...evt }
             obj.campus = selectedCampus;
-            props.uploadArtwork(obj, imgData);
+            let res = await props.uploadArtwork(obj, imgData);
+            setLoading(false);
+            if (res.status == 200) {
+                setSuccess(true);
+            }
         }
 
-        
+
         //evt.preventDefault()
         //handleSubmit(evt)
 
@@ -151,74 +171,129 @@ const UploadArtwork1 = (props: any) => {
         // }
     }
 
-    return (<IonPage>
-        <IonHeader>
-            <IonToolbar></IonToolbar>
+    return (
+        <div>
+            <IonPage>
+                <IonHeader>
+                    <IonToolbar></IonToolbar>
 
-            <IonToolbar>
-                <IonButtons slot="start">
-                    <IonBackButton defaultHref="/Profile" />
-                </IonButtons>
-                <IonTitle className="ion-text-end">Upload New Artwork</IonTitle>
-            </IonToolbar>
-        </IonHeader>
-        <IonContent>
+                    <IonToolbar>
+                        <IonButtons slot="start">
+                            <IonBackButton defaultHref="/Profile" />
+                        </IonButtons>
+                        <IonTitle className="ion-text-end">Upload New Artwork</IonTitle>
+                    </IonToolbar>
+                </IonHeader>
 
-            <form onSubmit={handleSubmit(handleSubmit1)}>
+                {!success ?
+                    <IonContent>
 
-                {/* Upload Profile Picture - We pass the Image Upload component the getImgFileInfoParent function so Signup component can retrieve the image file */}
-                <IonItem >
-                    <label className="custom-input-label" >Upload Primary Image: </label>
-                    <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
-                </IonItem>
+                        <form onSubmit={handleSubmit(handleSubmit1)}>
 
-
-                {/* Maps through and lists email, username, firstName, lastName, password, and verify password */}
-                {formFields.map((field: any, index: any) =>
-                    <div key={index}>
-                        <Input {...field} control={control} key={index} errors={errors} />
-                    </div>
-                )}
-
-                {/* Campus Drop Down Menu */}
-                <br />
-                <IonItem id="campus-menu">
-                    {/* TO-DO: improve validation */}
-                    <IonLabel>Campus (Required)</IonLabel>
-                    <IonSelect
-                        interfaceOptions={{ cssClass: 'my-custom-interface' }}
-                        //interface="popover"
-                        multiple={false}
-                        placeholder=""
-                        onIonChange={e => changeCampus(e)}
-                        value={selectedCampus}
-                    >
-                        {props.campuses ? props.campuses.map((campus: any, index: any) =>
-                            <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
-                        ) : ''}
-                    </IonSelect>
-                </IonItem>
-                {campusSelected ? <></> :
-                <IonText color="danger" className="ion-padding-start"> 
-                <small>
-                    <span role="alert">
-                        Please select your campus
-                    </span>
-                </small>
-               </IonText>}
-            
+                            {/* Upload Primary Artwork Image */}
+                            <IonItem >
+                                <label className="custom-input-label" >Upload Primary Image: </label>
+                                <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
+                            </IonItem>
 
 
-                {/* Submit Button */}
-                <IonButton expand="block" type="submit" className="ion-margin-top">
-                    UPLOAD
-                </IonButton>
+                            {/* Maps through and lists title, description, year, artist*/}
+                            {formFields.map((field: any, index: any) =>
+                                <div key={index}>
+                                    <Input {...field} control={control} key={index} errors={errors} />
+                                </div>
+                            )}
 
-            </form>
+                            {/* Campus Drop Down Menu */}
+                            <br />
+                            <IonItem id="campus-menu">
+                                {/* TO-DO: improve validation */}
+                                <IonLabel>Campus (Required)</IonLabel>
+                                <IonSelect
+                                    interfaceOptions={{ cssClass: 'my-custom-interface' }}
+                                    //interface="popover"
+                                    multiple={false}
+                                    placeholder=""
+                                    onIonChange={e => changeCampus(e)}
+                                    value={selectedCampus}
+                                >
+                                    {props.campuses ? props.campuses.map((campus: any, index: any) =>
+                                        <IonSelectOption key={index} value={campus.id}>{campus.campus_name}</IonSelectOption>
+                                    ) : ''}
+                                </IonSelect>
+                            </IonItem>
+                            {campusSelected ? <></> :
+                                <IonText color="danger" className="ion-padding-start">
+                                    <small>
+                                        <span role="alert">
+                                            Please select your campus
+                                        </span>
+                                    </small>
+                                </IonText>}
 
 
-        </IonContent>
-    </IonPage>)
+                            {!loading ?
+
+                                <IonButton expand="block" type="submit" className="ion-margin-top">
+                                    UPLOAD
+                                </IonButton>
+                                :
+
+                                <div className="spin"><IonSpinner color="success">Loading</IonSpinner></div>
+
+                            }
+
+                        </form>
+
+
+
+
+                    </IonContent> :
+
+                    <IonContent>
+
+                    <IonGrid>
+                        <IonRow>
+
+
+                            <IonCol style={{ "text-align": "center" }}>
+
+                                Artwork Uploaded Successfully!
+
+                            </IonCol>
+
+
+
+
+                        </IonRow>
+                        <IonRow>
+                            <IonCol>
+                                <CardExamples artwork={props.uploadedArtwork}>
+                                </CardExamples>
+
+                            </IonCol>
+                        </IonRow>
+                        <IonRow>
+                            <IonCol style={{ "text-align": "center" }}>
+                                <IonButton onClick={() => uploadNewArtwork()}>Upload Another Artwork</IonButton>
+
+
+                            </IonCol>
+                        </IonRow>
+
+
+
+
+
+                    </IonGrid>
+                    </IonContent>
+
+                }
+
+
+
+            </IonPage>
+        </div>)
 }
 
 
