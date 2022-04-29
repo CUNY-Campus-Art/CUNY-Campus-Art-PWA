@@ -6,7 +6,7 @@
 import React, {useState, useContext, useCallback}  from "react";
 import { IonImg, NavContext } from '@ionic/react';
 import { getUser, fetchUser } from '../store/user'
-import { changeCurrentArtDisplay } from '../store/artdisplay'
+import { changeCurrentArtDisplay } from '../store/artdisplay/artdisplayActions'
 import { connect, ConnectedProps } from 'react-redux'
 import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 import {
