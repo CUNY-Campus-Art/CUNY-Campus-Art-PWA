@@ -24,7 +24,8 @@ export interface User {
   liked_artworks: any[],
   disliked_artworks: any[],
   solved_artworks: any[],
-  unsolved_artworks?: any[]
+  unsolved_artworks?: any[],
+  uploaded_artworks: any[]
 }
 
 export interface UserState {

@@ -55,6 +55,7 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
+import  ManageArtworks from './components/ManageArtworks';
 
 /* Redux store - load essential variables when app initially loads, like user status, general store info, like all campuses, etc */
 const mapState = (state: RootState) => ({
@@ -117,6 +118,7 @@ const App = (props: Props) => {
             <Route path="/ScavengerHunt" component={ScavengerHunt} exact={true} />
             <Route path="/" render={() => <Redirect to="/ScanQR" />} exact={true} />
             <Route path="/Upload" component={UploadArtworkNew} exact={true}></Route>
+            <Route path="/Manage" component={ManageArtworks}></Route>
           </IonRouterOutlet>
           {/* <IonTabBar slot="top">
              <IonTabButton tab="Profile" href="/Profile">
