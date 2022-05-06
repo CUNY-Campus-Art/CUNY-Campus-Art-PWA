@@ -9,14 +9,16 @@ import React, { useCallback, useContext, useEffect } from "react";
 import { connect, ConnectedProps } from 'react-redux'
 import { IonItem, IonList, IonText, NavContext } from '@ionic/react';
 import "./Gallery.css";
+
+import type { ArtDisplay } from '../store/models'
 import {
   changeCurrentArtDisplay,
   fetchPastArtworks,
-  ArtDisplay,
   removeScannedArtDisplay,
   clickLikeButton,
   clickDislikeButton
 } from '../store/artdisplay'
+
 
 import { heart, heartOutline, heartDislike, heartDislikeOutline } from "ionicons/icons";
 

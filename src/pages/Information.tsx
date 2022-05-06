@@ -33,11 +33,12 @@ import { useForm } from "react-hook-form";
 
 import { informationCircleOutline, qrCodeSharp, heart, heartOutline, filmOutline } from "ionicons/icons";
 
+import type { Video } from '../store/models'
+
 import {
   clickLikeButton,
   fetchScannedArtDisplay,
   addVideoToDB,
-  Video
 } from '../store/artdisplay'
 
 const mapState = (state: any) => ({
