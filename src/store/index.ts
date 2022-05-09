@@ -9,7 +9,6 @@ import general from './general'
 import user from './user'
 import artDisplay from './artdisplay'
 
-
 const rootReducer = combineReducers({
   general,
   user,
@@ -25,5 +24,6 @@ const middleware = composeWithDevTools(applyMiddleware(
 ))
 
 const store = createStore(rootReducer, middleware)
+
 
 export default store
