@@ -22,12 +22,11 @@ import QRScanner from "../components/QRScanner";
 import { RootState } from "../store";
 import { fetchScannedArtDisplay } from "../store/artdisplay";
 import { addScannedArtDisplayToUserDB } from "../store/user";
-/* use the props currentArtDisplay and allArtDisplays to access state */
+
 const mapState = (state: RootState) => ({
   currentArtDisplay: state.artDisplay.currentArtDisplay,
-  allArtDisplays: state.artDisplay.allArtDisplays,
-  user: state.user.user,
   campuses: state.general.campuses,
+  user: state.user.user,
 });
 
 const mapDispatch = (dispatch: any) => ({

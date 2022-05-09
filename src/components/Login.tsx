@@ -45,6 +45,7 @@ const mapDispatch = (dispatch: any) => {
         let status = await dispatch(fetchUser(email, password))
         return status //if -1, login didn't go through
       }
+      evt.preventDefault()
     },
     logout: () => dispatch(logout()),
     rerenderArtDisplays: () => dispatch(rerenderArtDisplays()),

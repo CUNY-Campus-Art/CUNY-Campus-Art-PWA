@@ -60,9 +60,10 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import "./App.css";
 
+
 /* Redux store - load essential variables when app initially loads, like user status, general store info, like all campuses, etc */
 const mapState = (state: RootState) => ({
-  currentUser: state.user.user, // if user is logged in will have a value
+  user: state.user.user, // if user is logged in will have a value
   campuses: state.general.campuses,
   //error: state.user.error
 });
@@ -84,6 +85,7 @@ const App = (props: Props) => {
   useEffect(() => {
     getAllCampuses();
   }, []);
+  let user = props.user;
   return (
     <IonApp>
       <IonReactRouter>
@@ -117,15 +119,15 @@ const App = (props: Props) => {
               {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
               <Link to="/ScavengerHunt">
                 {" "}
-                <IonText>{props.currentUser.total_points}</IonText>
+                <IonText>{user && user.total_points}</IonText>
               </Link>
-              {props.currentUser ? (
+              {user ? (
                 <Link className="top-profile-links" to="/Profile">
                   <IonImg
                     style={{ height: "2em", width: "2em" }}
                     src={
-                      props.currentUser.profile_picture
-                        ? props.currentUser.profile_picture.url
+                      user.profile_picture
+                        ? user.profile_picture.url
                         : defaultProfilePicture
                     }
                   />
@@ -153,7 +155,7 @@ const App = (props: Props) => {
             <Route
               path="/Signup"
               routerDirection="back"
-              component={props.currentUser ? Profile : Signup}
+              component={user ? Profile : Signup}
               exact={true}
             />
             <Route path="/Gallery" component={Gallery} exact={true} />

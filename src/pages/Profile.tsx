@@ -72,7 +72,7 @@ const Profile = (props: Props) => {
       <IonContent>
         {/*Made edit here to not show logoutbutton in ioncontent
           (show UserProfile) else show login container*/}
-        {user ? (<UserProfile />) : (<Login />)}
+        {props.currentUser ? (<UserProfile />) : (<Login />)}
 
       </IonContent>
     </IonPage>

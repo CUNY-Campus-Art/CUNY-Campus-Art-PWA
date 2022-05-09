@@ -264,21 +264,27 @@ Accepts:
 Returns: api request reponse
 */
   updateLikeForArtworkById = async (id, typeOfUpdate) => {
+    // 3 instances of con seems to diverge. So retrieving jwt from local storage can prevent  unauthorized access and an undefined token
+    this.authToken = localStorage.getItem('jwt')
+
     const sendConfig = {
       headers: {
         Authorization: "Bearer " + this.authToken,
         "Content-Type": "application/json",
       },
     };
-
-    const sendData = JSON.stringify({ id: id, type: typeOfUpdate });
-    let response = await this.axiosPutToStrapi(
-      this.strapiUrl + "/user/likeartwork",
-      sendData,
-      sendConfig
-    );
-    console.log(response);
-    return response;
+    try {
+      const sendData = JSON.stringify({ id: id, type: typeOfUpdate });
+      let response = await this.axiosPutToStrapi(
+        this.strapiUrl + "/user/likeartwork",
+        sendData,
+        sendConfig
+      );
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   /* deleteArtworkById
@@ -484,7 +490,12 @@ Returns: api request reponse
     let returnData = await this.loginUser(id, pw);
 
     if (returnData.status === 200) {
+      this.user = this.formatUser(returnData.data.user);
+      this.authToken = returnData.data.jwt;
+      window.localStorage.setItem("jwt", this.authToken);
+      window.localStorage.setItem("user", JSON.stringify(this.user));
       return returnData.data.jwt;
+      
     } else {
       return -1;
     }
@@ -618,6 +629,7 @@ Returns: api request reponse
     return currentArtwork;
   };
 
+  // More accurrate name would be 'addLikedDislikedStatusToPastArtworks'
   //  Adds 'like' and 'dislike' values to a user's scanned_artworks
   addLikedDislikedToArtworks = (user) => {
     // if(con.user) {
@@ -639,13 +651,14 @@ Returns: api request reponse
     // if artwork is present in liked_artworks, artwork is tagged with a liked value of true
     // if artwork is present in disliked_artworks, artwork is tagged with a disliked value of true
     // 'liked' value is manually derived added here, info not directly in database
-    artworks.forEach((artwork) => {
+    artworks = artworks.map((artwork) => {
       likedArtworkIds.includes(artwork.id)
         ? (artwork.liked = true)
         : (artwork.liked = false);
       dislikedArtworkIds.includes(artwork.id)
         ? (artwork.disliked = true)
         : (artwork.disliked = false);
+      return artwork;
     });
 
     window.localStorage.setItem("user", JSON.stringify(user));
@@ -764,11 +777,16 @@ Returns: api request reponse
   Returns: api request reponse
   */
   addLikedArtworkToUser = async (artworkIdArray) => {
-    let response = await this.axiosRequestAddRelationEntryToUser(
-      "liked_artworks",
-      artworkIdArray
-    );
-    return response;
+    try {
+      let response = await this.axiosRequestAddRelationEntryToUser(
+        "liked_artworks",
+        artworkIdArray
+      );
+      console.log("THIS IS HTE RESPONSE for LIKESD");
+    } catch (error) {
+      console.log(error);
+      return { status: 400 };
+    }
   };
 
   /* addDislikedArtworkToUser

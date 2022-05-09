@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { IonPage } from "@ionic/react";
 import pageNotFoundImage from "../assets/images/404-image.jpeg";
+
 interface ContainerProps {
   name: string;
 }

@@ -17,7 +17,7 @@ export interface ArtDisplay {
   year: string;
   qr_code: string;
   campus: string;
-  likes: Number; //Overall likes
+  likes: number; //Overall likes
   liked: boolean; // Specific to user (locally derived)
   disliked: boolean; // Specific to user (locally derived)
   artwork_type_clue: string;
@@ -83,8 +83,8 @@ export interface ArtDisplaysState {
   currentArtDisplay: ArtDisplay;
   pastArtDisplays: ArtDisplay[];
   unsolvedArtDisplays: ArtDisplay[];
-  allArtDisplays: ArtDisplay[];
-  campuses: any[];
+  liked_artworks: ArtDisplay[];
+  disliked_artworks: ArtDisplay[];
   // user: any
 }
 
