@@ -58,6 +58,15 @@ const mapDispatch = (dispatch: any) => {
 }
 
 const UploadArtwork1 = (props: any) => {
+    console.log(props);
+
+    const artwork = (props.location.state && props.location.state.artwork) ? props.location.state.artwork : null;
+    console.log(artwork)
+
+
+    //to do
+    const [edit, setEdit] = useState((artwork!=null) ? true: false);
+
     //for campuses dropdown
     if (!props.campuses) props.getAllCampuses();
     //To redirect to Profile tab using forward animation
@@ -85,11 +94,15 @@ const UploadArtwork1 = (props: any) => {
 
     // Code to make use of React Hook Forms, so values persist even after changing value on dropdown menu
     let formValues: any = {
+        title: props.location.state && props.location.state.artwork ? props.location.state.artwork.title : '',
+        artist: props.location.state && props.location.state.artwork ? props.location.state.artwork.artist : '',
+        description: props.location.state && props.location.state.artwork ? props.location.state.artwork.description : '',
+        year: props.location.state && props.location.state.artwork ? props.location.state.artwork.year : ''
 
     }
 
     const { control, handleSubmit, errors } = useForm({
-        //defaultValues: formValues,
+        defaultValues: formValues,
         validationSchema: ArtworkSchema,
         mode: 'onBlur',
         reValidateMode: 'onChange'
@@ -98,9 +111,9 @@ const UploadArtwork1 = (props: any) => {
 
 
     // This value will correspond to an id from the Database that matches up with campus
-    const [selectedCampus, setSelectedCampus] = useState<string>();
+    const [selectedCampus, setSelectedCampus] = useState<string>(artwork!=null ? artwork.campus : '');
 
-    const [campusSelected, setCampusSelected] = useState(true);
+    const [campusSelected, setCampusSelected] = useState(artwork!=null ? true : false);
 
     const [imgData, setImgData] = useState(null);
 
@@ -181,7 +194,8 @@ const UploadArtwork1 = (props: any) => {
                         <IonButtons slot="start">
                             <IonBackButton defaultHref="/Profile" />
                         </IonButtons>
-                        <IonTitle className="ion-text-end">Upload New Artwork</IonTitle>
+                        <IonTitle className="ion-text-end">
+                            {edit? "Edit Your Artwork" : "Upload New Artwork"}</IonTitle>
                     </IonToolbar>
                 </IonHeader>
 
