@@ -315,7 +315,7 @@ export function uploadArtwork(artwork: any): ArtDisplayActionTypes {
   }
 }
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "https://dev-cms.cunycampusart.com";
+const strapiUrl = "https://campus-art-backend.herokuapp.com";
 
 export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: any) => {
 
@@ -340,11 +340,13 @@ export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: a
   
   
 
-    let res = await axios.post("https://dev-cms.cunycampusart.com/artworks", formData, sendConfig);
+    //use this backend url since new backend doesn't generate qr-codes for some reason
+    let res = await axios.post("https://campus-art-backend.herokuapp.com/artworks", formData, sendConfig);
     console.log(res);
     if(res.status == 200){
+    await con.addUploadedArtworkToUser([res.data.id])
     dispatch(uploadArtwork(res.data)) 
-    }
+     }
     return res;
   
     

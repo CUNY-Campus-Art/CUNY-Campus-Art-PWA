@@ -232,7 +232,7 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
       }
     }
 
-    let { data } = await Axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
+    let { data } = await Axios.put("https://campus-art-backend.herokuapp.com/users/profile", changes, sendConfig);
     console.log(data);
 
 

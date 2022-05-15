@@ -1,6 +1,6 @@
 
 
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { IonTextarea, NavContext } from '@ionic/react';
 import {
     IonInput,
@@ -21,7 +21,7 @@ import {
     IonRow,
     IonCol
 } from "@ionic/react";
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store'
 
 import ImageUpload from './HelperComponents/ImageUpload'
@@ -33,6 +33,7 @@ import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
 import { uploadArtworkThunk } from "../store/artdisplay";
 import { CardExamples } from './UploadedArtwork';
+
 
 
 
@@ -63,7 +64,9 @@ const items = [
 const mapState = (state: RootState) => {
     return {
         campuses: state.general.campuses,
-        uploadedArtwork: state.artDisplay.uploadedArtwork
+        uploadedArtwork: state.artDisplay.uploadedArtwork,
+        currentUser: state.user.user,
+
     }
 }
 
@@ -74,7 +77,33 @@ const mapDispatch = (dispatch: any) => {
     }
 }
 
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux & {
+  // backgroundColor: string
+};
+
 const ManageArtworks = (props: any) => {
+    const user = props.currentUser;
+    console.log(user);
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+
+        if (props.currentUser && props.currentUser.uploaded_artworks) {
+            setLoading(false);
+            console.log(props.currentUser.uploaded_artworks)
+        }
+
+        console.log("effect")
+
+
+
+    }, [props.currentUser])
+
     //for campuses dropdown
     // if (!props.campuses) props.getAllCampuses();
     //To redirect to Profile tab using forward animation
@@ -112,64 +141,74 @@ const ManageArtworks = (props: any) => {
     // }
 
 
-return (
-    <div>
-        <IonPage>
-            <IonHeader>
-                <IonToolbar></IonToolbar>
+    return (
+        <div>
+            <IonPage>
+                <IonHeader>
+                    <IonToolbar></IonToolbar>
 
-                <IonToolbar>
-                    <IonButtons slot="start">
-                        <IonBackButton defaultHref="/Profile" />
-                    </IonButtons>
-                    <IonTitle className="ion-text-end">Manage Your Artworks</IonTitle>
-                </IonToolbar>
-            </IonHeader>
-
-
-
-
-            <IonContent>
-
-                <IonGrid>
-                    <IonRow>
+                    <IonToolbar>
+                        <IonButtons slot="start">
+                            <IonBackButton defaultHref="/Profile" />
+                        </IonButtons>
+                        <IonTitle className="ion-text-end">Manage Your Artworks</IonTitle>
+                    </IonToolbar>
+                </IonHeader>
 
 
 
 
+                <IonContent>
 
-                    </IonRow>
-                    <IonRow>
-                        <IonCol>
-
-                            {items.map((item) => (
-                                <CardExamples artwork={item}>
-                                </CardExamples>
-                            ))}
-
-
-                        </IonCol>
-                    </IonRow>
-                    <IonRow>
-
-                    </IonRow>
+                    <IonGrid>
+                        <IonRow>
 
 
 
 
 
-                </IonGrid>
-            </IonContent>
+                        </IonRow>
+                        <IonRow>
+                            <IonCol>
+                             
+
+                              
+
+
+                                    {(props.currentUser && props.currentUser.uploaded_artworks) ? 
+                                    props.currentUser.uploaded_artworks.map((item: any) => (
+                                        <CardExamples artwork={item}>
+                                        </CardExamples> )) : <></>}
+ 
+
+
+
+
+                             
+
+
+                            </IonCol>
+                        </IonRow>
+                        <IonRow>
+
+                        </IonRow>
 
 
 
 
 
-        </IonPage>
-    </div>)
+                    </IonGrid>
+                </IonContent>
+
+
+
+
+
+            </IonPage>
+        </div>)
 }
 
-export default connect(mapDispatch)(ManageArtworks)
+export default connector(ManageArtworks)
 
 
 

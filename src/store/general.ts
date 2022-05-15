@@ -112,7 +112,7 @@ export function gotAllCampuses(campuses: any): ArtDisplayActionTypes {
 
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "https://dev-cms.cunycampusart.com";
+const strapiUrl = "https://campus-art-backend.herokuapp.com";
 
 
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */

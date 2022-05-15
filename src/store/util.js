@@ -4,7 +4,9 @@ export class StrapiApiConnection {
   //Either retrieved info will be passed to constructor or values will be set by accessing local storage. retrieved info will take precedence so new user can be logged in
 
    constructor(authToken, user) {
-    this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
+    // this.strapiUrl = 'https://dev-cms.cunycampusart.com' //url to strapi API endpoint
+    //just testing new deployment on heroku, seems a bit faster
+    this.strapiUrl = 'https://campus-art-backend.herokuapp.com'
 
     if(authToken && user) {
       this.authToken = authToken
@@ -522,7 +524,7 @@ Returns: api request reponse
 
   formatUser = (user) => {
 
-    let {id, username, first_name, last_name, email, profile_picture, campus, scanned_artworks, total_points, liked_artworks, disliked_artworks, solved_artworks} = user
+    let {id, username, first_name, last_name, email, profile_picture, campus, scanned_artworks, total_points, liked_artworks, disliked_artworks, solved_artworks, uploaded_artworks} = user
 
     let formattedUser = {
       id: id,
@@ -539,7 +541,8 @@ Returns: api request reponse
       liked_artworks: liked_artworks.length ? [...liked_artworks] : [],
       disliked_artworks: disliked_artworks.length ? [...disliked_artworks] : [],
       solved_artworks: solved_artworks.length ? [...solved_artworks] : [],
-      unsolved_artworks: []
+      unsolved_artworks: [],
+      uploaded_artworks: uploaded_artworks.length? [...uploaded_artworks] : []
     }
 
     // Format Each Artwork and then add values for liked and disliked artworks
@@ -664,7 +667,7 @@ Returns: api request reponse
   updateRemoteUser = async (dataIn) => {
     const sendConfig = {
       headers: {
-        Authorization: 'Bearer ' + this.authToken,
+        Authorization: 'Bearer ' + localStorage.jwt,
         'Content-Type': 'application/json',
       },
     }
@@ -729,6 +732,20 @@ Returns: api request reponse
     let response = await this.updateRemoteUser({
       scanned_artworks: existingArtworks,
     })
+    return response
+  }
+
+   /* addUploadedArtworkToUser
+  Function that adds to users liked artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  addUploadedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestAddRelationEntryToUser(
+      'uploaded_artworks',
+      artworkIdArray
+    )
     return response
   }
 
