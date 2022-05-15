@@ -604,7 +604,9 @@ const initialState: ArtDisplaysState = {
   liked_artworks: currentUser ? currentUser.liked_artworks : [],
   disliked_artworks: currentUser ? currentUser.disliked_artworks : [],
   unsolvedArtDisplays: [],
-  uploaded_artworks: []
+  uploaded_artworks: [],
+  //this gets updated once artwork is uploaded by user, set to default to avoid error
+  uploaded_artwork: defaultCurrentArtDisplay
 };
 
 /*********** TYPE CHECKING REDUCERS **********/
@@ -759,7 +761,7 @@ export default function (state = initialState, action: ArtDisplayActionTypes) {
     case UPLOAD_ARTWORK:
       return {
         ...state,
-        uploadedArtwork: action.payload
+        uploaded_artwork: action.payload
       }
     default:
       return state;

@@ -37,16 +37,16 @@ import { useForm } from "react-hook-form";
 import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
 import { uploadArtworkThunk } from "../store/artdisplay";
-import { CardExamples } from './UploadedArtwork';
+import { ArtworkCard } from './UploadedArtworkCard';
 
 // const providersNames = [
 //   'google'
 // ];
 
-const mapSignup = (state: RootState) => {
+const mapState = (state: RootState) => {
     return {
         campuses: state.general.campuses,
-        uploadedArtwork: state.artDisplay.uploadedArtwork
+        uploadedArtwork: state.artDisplay.uploaded_artwork
     }
 }
 
@@ -268,8 +268,8 @@ const UploadArtwork1 = (props: any) => {
                         </IonRow>
                         <IonRow>
                             <IonCol>
-                                <CardExamples artwork={props.uploadedArtwork}>
-                                </CardExamples>
+                                <ArtworkCard artwork={props.uploadedArtwork}>
+                                </ArtworkCard>
 
                             </IonCol>
                         </IonRow>
@@ -297,7 +297,7 @@ const UploadArtwork1 = (props: any) => {
 }
 
 
-export const UploadArtworkNew = connect(mapSignup, mapDispatch)(UploadArtwork1)
+export const UploadArtworkNew = connect(mapState, mapDispatch)(UploadArtwork1)
 
 
 export interface AuthForm {

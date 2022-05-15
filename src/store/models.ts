@@ -86,6 +86,7 @@ export interface ArtDisplaysState {
   liked_artworks: ArtDisplay[];
   disliked_artworks: ArtDisplay[];
   uploaded_artworks: ArtDisplay[];
+  uploaded_artwork: ArtDisplay;
   // user: any
 }
 

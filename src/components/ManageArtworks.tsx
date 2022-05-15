@@ -32,7 +32,7 @@ import { useForm } from "react-hook-form";
 import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
 import { uploadArtworkThunk } from "../store/artdisplay";
-import { CardExamples } from './UploadedArtwork';
+import { ArtworkCard } from './UploadedArtworkCard';
 
 
 
@@ -64,7 +64,7 @@ const items = [
 const mapState = (state: RootState) => {
     return {
         campuses: state.general.campuses,
-        uploadedArtwork: state.artDisplay.uploadedArtwork,
+        uploadedArtwork: state.artDisplay.uploaded_artworks,
         currentUser: state.user.user,
 
     }
@@ -177,8 +177,8 @@ const ManageArtworks = (props: any) => {
 
                                     {(props.currentUser && props.currentUser.uploaded_artworks) ? 
                                     props.currentUser.uploaded_artworks.map((item: any) => (
-                                        <CardExamples artwork={item}>
-                                        </CardExamples> )) : <></>}
+                                        <ArtworkCard artwork={item}>
+                                        </ArtworkCard> )) : <></>}
  
 
 

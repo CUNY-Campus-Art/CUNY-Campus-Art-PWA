@@ -1,3 +1,6 @@
+//NOTE
+//since user objects returned from this.strapiUrl lack uploaded_artworks field, I had to replace the url to this.strapiUrlNew in some user calls 
+//we need to update the backend running on aws to have users reflect uploaded_artworks
 import axios from "axios";
 
 export class StrapiApiConnection {
@@ -5,6 +8,8 @@ export class StrapiApiConnection {
 
   constructor(authToken, user) {
     this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
+    //new backend, here user object have uploaded_artworks relation
+    this.strapiUrlNew = "https://campus-art-backend.herokuapp.com";
 
     if (authToken && user) {
       this.authToken = authToken;
@@ -464,10 +469,11 @@ Returns: api request reponse
     });
 
     const returnData = await this.axiosPostToStrapi(
-      this.strapiUrl + "/auth/local",
+      this.strapiUrlNew + "/auth/local",
       sendData,
       sendConfig
     );
+    console.log("AFTER LOGIN",returnData);
     if (returnData.data) {
       this.user = this.formatUser(returnData.data.user);
       this.authToken = returnData.data.jwt;
@@ -681,7 +687,7 @@ Returns: api request reponse
     };
     try {
       let returnData = await axios.get(
-        this.strapiUrl + "/users/profile",
+        this.strapiUrlNew + "/users/profile",
         sendConfig
       );
       console.log("SYNC", returnData);
@@ -712,7 +718,7 @@ Returns: api request reponse
     const sendData = JSON.stringify(dataIn);
 
     let response = await this.axiosPutToStrapi(
-      this.strapiUrl + "/users/profile",
+      this.strapiUrlNew + "/users/profile",
       sendData,
       sendConfig
     );
@@ -773,7 +779,7 @@ Returns: api request reponse
   };
 
    /* addUploadedArtworkToUser
-  Function that adds to users liked artworks by artwork id
+  Function that adds to users uploaded artworks by artwork id
   Accepts:
    - artworkIdArray - array of integer id's of artwork that exist
   Returns: api request reponse
