@@ -1,45 +1,16 @@
-import { StrapiApiConnection } from './util'
+import axios from "axios";
+import type { User, UserState } from './models'
 import { fetchPastArtworks, fetchUnsolvedArtworks } from './artdisplay'
-import Axios from "axios";
 import { hashPassword } from "./hashPassword";
-/************ Type Checking State ************/
+import { StrapiApiConnection } from "./util";
 
-export interface Image {
-  url: string,
-  alternativeText: string
-}
-
-export interface User {
-  id?: number,
-  username: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  profile_picture: any,
-  campus?: any,
-  campus_name: string,
-  campus_id: any,
-  scanned_artworks: any[],
-  total_points: number,
-  liked_artworks: any[],
-  disliked_artworks: any[],
-  solved_artworks: any[],
-  unsolved_artworks?: any[],
-  uploaded_artworks: any[]
-}
-
-export interface UserState {
-  user: User,
-  campus: any,
-  authToken: string
-}
+let con: StrapiApiConnection = new StrapiApiConnection()
 
 /******* TYPE CHECKING ACTIONS AND ACTION CREATORS ******/
 
 // ACTION TYPES
 export const GET_USER = 'GET_USER'
 export const REMOVE_USER = 'REMOVE_USER'
-export const GET_ALL_CAMPUSES = 'GET_ALL_CAMPUSES'
 export const LOGIN_ERROR = 'LOGIN_ERROR'
 export const SIGNUP_ERROR = 'SIGNUP_ERROR'
 export const ADD_POINTS = 'ADD_POINTS'
@@ -50,7 +21,6 @@ export const EDIT_USER = 'EDIT_USER'
 // INITIAL STATE
 console.log(window.localStorage)
 // Checks local storage to see if user was previously logged in. If so, retrieves, user info based on local storage. Otherwise, the default user is set to empty
-let con: StrapiApiConnection = new StrapiApiConnection();
 
 
 export const initializeUser = (user: any) => async (dispatch: any) => {
@@ -107,6 +77,8 @@ export const loginError = () => ({ type: LOGIN_ERROR })
 export const signupError = () => ({ type: SIGNUP_ERROR })
 export const editUser = (user: any) => ({ type: EDIT_USER, payload: user })
 
+
+export type UserActionTypes = getUserAction | removeUserAction | LoginErrorAction | SignupErrorAction | AddPointsToUserAction | EditUser
 // export const addUnsolvedArtworks = (artworks:any) => ({
 //   type: ADD_UNSOLVED_ARTWORKS,
 //   payload: artworks
@@ -126,7 +98,6 @@ export const editUser = (user: any) => ({ type: EDIT_USER, payload: user })
 
 
 export const signupNewUser = (email: string, pw: string, username: string, firstName: string = "", lastName: string = "", campusId: string, file: any = '') => async (dispatch: any) => {
-  con = new StrapiApiConnection();
 
   let status = await con.createUser(email, pw, username, firstName, lastName, campusId, file)
 
@@ -226,7 +197,6 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
 
     if (changes.password) {
       const hashedPassword = await hashPassword(changes.password);
-      console.log(hashedPassword);
       changes = {
         password: hashedPassword
       }
@@ -262,6 +232,7 @@ const defaultUser =
 export default function (state = defaultUser, action: any) {
   switch (action.type) {
     case GET_USER:
+      localStorage.setItem('user', JSON.stringify(action.payload))
       return { ...state, user: action.payload, error: '' }
     case REMOVE_USER:
       return { user: '', authToken: '', error: '', total_points: '', solved_artworks: [] };
