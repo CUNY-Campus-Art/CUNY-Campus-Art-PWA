@@ -36,7 +36,7 @@ import { fetchAllCampuses } from '../store/general'
 import { useForm } from "react-hook-form";
 import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
-import { uploadArtworkThunk } from "../store/artdisplay";
+import { editUploadedArtworkThunk, uploadArtworkThunk } from "../store/artdisplay";
 import { ArtworkCard } from './UploadedArtworkCard';
 
 // const providersNames = [
@@ -53,7 +53,8 @@ const mapState = (state: RootState) => {
 
 const mapDispatch = (dispatch: any) => {
     return {
-        uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic))
+        uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic)),
+        editArtwork: (artwork: any, pic: any, artworkId: any)=>dispatch(editUploadedArtworkThunk(artwork, pic, artworkId))
     }
 }
 
@@ -64,7 +65,7 @@ const UploadArtwork1 = (props: any) => {
     console.log(artwork)
 
 
-    //to do
+
     const [edit, setEdit] = useState((artwork!=null) ? true: false);
 
     //for campuses dropdown
@@ -115,7 +116,10 @@ const UploadArtwork1 = (props: any) => {
 
     const [campusSelected, setCampusSelected] = useState(artwork!=null ? true : false);
 
-    const [imgData, setImgData] = useState(null);
+    const [imgData, setImgData] = useState(artwork!=null ? artwork.primary_image : null);
+
+    
+    
 
     const [loading, setLoading] = useState(false);
 
@@ -151,7 +155,14 @@ const UploadArtwork1 = (props: any) => {
             setLoading(true);
             let obj = { ...evt }
             obj.campus = selectedCampus;
-            let res = await props.uploadArtwork(obj, imgData);
+            let res;
+            if(edit==true && artwork.id){
+                console.log("EDIT");
+                res = await props.editArtwork(obj, imgData, artwork.id)
+            }
+            else {            
+                res = await props.uploadArtwork(obj, imgData);
+            }
             setLoading(false);
             if (res.status == 200) {
                 setSuccess(true);
@@ -192,7 +203,7 @@ const UploadArtwork1 = (props: any) => {
 
                     <IonToolbar>
                         <IonButtons slot="start">
-                            <IonBackButton defaultHref="/Profile" />
+                            <IonBackButton defaultHref="/ScanQR" />
                         </IonButtons>
                         <IonTitle className="ion-text-end">
                             {edit? "Edit Your Artwork" : "Upload New Artwork"}</IonTitle>
@@ -272,7 +283,7 @@ const UploadArtwork1 = (props: any) => {
 
                             <IonCol style={{ "text-align": "center" }}>
 
-                                Artwork Uploaded Successfully!
+                                {edit? "Artwork Edit Success!" : "Artwork Uploaded Successfully!"}
 
                             </IonCol>
 

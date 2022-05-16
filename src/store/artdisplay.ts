@@ -3,7 +3,7 @@ import { StrapiApiConnection } from "./util";
 
 import type { ArtDisplay, Video, ArtDisplaysState, User } from "./models";
 import { defaultCurrentArtDisplay } from "./models";
-import { getUser } from "./user";
+import { getUser, getUserThunk } from "./user";
 
 let con: StrapiApiConnection = new StrapiApiConnection();
 
@@ -288,12 +288,57 @@ export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: a
 
 
 
-    //use this backend url since new backend doesn't generate qr-codes for some reason
     let res = await axios.post("https://campus-art-backend.herokuapp.com/artworks", formData, sendConfig);
     console.log(res);
     if (res.status == 200) {
       await con.addUploadedArtworkToUser([res.data.id])
       dispatch(uploadArtwork(res.data))
+      await getUserThunk(dispatch)
+
+    }
+    return res;
+
+
+
+  }
+  catch (error) {
+    console.error(error);
+  }
+
+}
+
+/*
+edit uploaded artwork
+does not support image editting yet
+*/
+export const editUploadedArtworkThunk = (artwork: any, pic: any, artworkId: any) => async (dispatch: any) => {
+
+  console.log(artwork);
+  console.log(pic);
+
+  try {
+
+    const sendConfig = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.jwt,
+        'Content-Type': 'application/json',
+      },
+    }
+
+
+    const formData = new FormData()
+    // formData.append('files.primary_image', pic)
+
+    formData.append('data', JSON.stringify(artwork));
+
+
+
+
+    let res = await axios.put(`https://campus-art-backend.herokuapp.com/artworks/${artworkId}`, formData, sendConfig);
+    console.log(res);
+    if (res.status == 200) {
+      dispatch(uploadArtwork(res.data))
+      await getUserThunk(dispatch)
     }
     return res;
 

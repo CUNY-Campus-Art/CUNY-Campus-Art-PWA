@@ -33,7 +33,7 @@ import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
 import { uploadArtworkThunk } from "../store/artdisplay";
 import { ArtworkCard } from './UploadedArtworkCard';
-
+import { getUserThunk } from '../store/user';
 
 
 
@@ -73,7 +73,8 @@ const mapState = (state: RootState) => {
 
 const mapDispatch = (dispatch: any) => {
     return {
-        uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic))
+        uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic)),
+        
     }
 }
 
@@ -86,6 +87,8 @@ type Props = PropsFromRedux & {
 };
 
 const ManageArtworks = (props: any) => {
+    // props.getUser();
+
     const user = props.currentUser;
     console.log(user);
 
