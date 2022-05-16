@@ -1,5 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
-import { NavContext } from "@ionic/react";
+import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import "./GalleryTile.css";
 
@@ -71,7 +70,7 @@ const GalleryTile = (props: Props) => {
   let isDisliked = artDisplay.disliked
 
 
-//   const [isLiked, toggleIsLiked] = useState(artDisplay.liked);
+//   const [isLiked, setIsLiked] = useState(artDisplay.liked);
 //   const [isDisliked, toggleIsDisliked] = useState(artDisplay.disliked);
 
   return (
@@ -115,11 +114,8 @@ const GalleryTile = (props: Props) => {
                   size="small"
                   color="danger"
                   onClick={() => {
-                    // toggleLikedStatus(likedStatus => !likedStatus)
-                    // toggleDislikedStatus(dislikedStatus => !dislikedStatus)
                      props.clickLikeButton(user, artDisplay, true)
                     }}
-                  // onClick={handleLikes}
                 >
                   {isLiked? (
                     <IonIcon className="likeHeart" icon={heart}></IonIcon>
@@ -139,8 +135,6 @@ const GalleryTile = (props: Props) => {
                   size="small"
                   color="primary"
                   onClick={() => {
-                    // toggleDislikedStatus(dislikedStatus => !dislikedStatus)
-                    // toggleLikedStatus(likedStatus => !likedStatus)
                     props.clickDislikeButton(user, artDisplay)
                       
                     }}

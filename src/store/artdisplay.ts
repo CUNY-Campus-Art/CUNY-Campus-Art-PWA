@@ -1,4 +1,3 @@
-import axios from "axios";
 import { StrapiApiConnection } from "./util";
 
 import type { ArtDisplay, Video, ArtDisplaysState, User } from "./models";
@@ -246,7 +245,6 @@ export function addVideo(video: Video): ArtDisplayActionTypes {
   };
 }
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 /** fetchPastArtworks
  * fetches user's past artworks information and adds on like and disliked status for each artwork
@@ -257,7 +255,8 @@ export const fetchPastArtworks = (user: any) => async (dispatch: any) => {
     con.formatArtwork(artwork)
   );
 
-  // let artworks = addLikedDislikedToArtworks(user)
+  // Add on liked and disliked status for each artwork
+  con.addLikedDislikedToArtworks(user)
   dispatch(gotPastArtDisplays(user.scanned_artworks));
   //return artworks;
 };
@@ -405,11 +404,10 @@ export const clickLikeButton =
     }
 
     // If artwork is already liked, remove from likes
-    if (user && artwork.liked === true) {
+    if (user && artwork.liked) {
       await removeFromLikes(dispatch, artwork);
-      await con.decreaseLikesForArtworkById(artwork.id);
     } else {
-      if (user && artwork.liked === false) {
+      if (user && !artwork.liked) {
         // Add to Likes
         artwork.liked = true;
 
@@ -459,10 +457,10 @@ export const clickDislikeButton =
       return;
     }
     // If artwork is already disliked, remove from dislikes
-    if (user && artwork.disliked === true) {
+    if (user && artwork.disliked) {
       await removeFromDislikes(artwork);
     } else {
-      if (user && artwork.disliked === false) {
+      if (user && !artwork.disliked) {
         // Add to Dislikes
         artwork.disliked = true;
 
