@@ -5,9 +5,9 @@
  * of past artworks the user has scanned locally.
  */
 
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { connect, ConnectedProps } from "react-redux";
-import { IonItem, IonList, IonText, NavContext } from "@ionic/react";
+import { IonList, NavContext } from "@ionic/react";
 import "./Gallery.css";
 import GalleryTile from '../components/GalleryTile'
 import type { ArtDisplay } from "../store/models";

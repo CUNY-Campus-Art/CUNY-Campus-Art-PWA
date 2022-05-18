@@ -44,7 +44,7 @@ type Props = PropsFromRedux & {
 
 const ScavengerHunt = (props: Props) => {
 
-  // Loads clues
+  // Loads clues when component initially mounts
   useEffect(() => { if (user) props.initializeUser(props.currentUser); }, []);
 
   let user = props.currentUser;
