@@ -173,8 +173,9 @@ const App = (props: Props) => {
               exact={true}
             />
             <Route component={PageNotFound} />
-            <Route path="/Upload" component={UploadArtworkNew} exact={true}></Route>
+            <Route path="/Upload" component={UploadArtworkNew}></Route>
             <Route path="/Manage" component={ManageArtworks}></Route>
+            <Route path="/Edit" component={UploadArtworkNew}></Route>
           </IonRouterOutlet>
           {/* <IonTabBar slot="top">
              <IonTabButton tab="Profile" href="/Profile">

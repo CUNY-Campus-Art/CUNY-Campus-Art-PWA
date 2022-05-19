@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { IonContent, IonRow, IonCol, IonHeader, IonImg, IonPage, IonButtons, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonItem, IonIcon, IonLabel, IonButton } from '@ionic/react';
 import { pin, wifi, wine, warning, walk } from 'ionicons/icons';
 import axios from "axios";
@@ -6,6 +6,7 @@ import { Redirect } from "react-router-dom";
 
 interface Props {
     artwork: any
+ 
 }
 
 export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
@@ -15,7 +16,7 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
 
     const [edit, setEdit] = useState(false);
 
-    const redirectToEdit = () =>{
+    const redirectToEdit = () => {
         console.log("edit");
         return <Redirect to={{
             pathname: '/upload',
@@ -190,12 +191,14 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
                         <IonButton target="_blank" download="" href={artwork.qr_image.url}>View/Print Qr Code</IonButton>
 
 
-                        <IonButton onClick={()=>setEdit(true)
+                        <IonButton onClick={() => {
+                            setEdit(true)
+                        }
                         }>Edit</IonButton>
-                        {edit? <Redirect to={{
-            pathname: '/upload',
-            state: { artwork: artwork }
-        }} /> : <></>}
+                        {edit ? <Redirect to={{
+                            pathname: '/edit',
+                            state: { artwork: artwork }
+                        }} /> : <></>}
 
 
 

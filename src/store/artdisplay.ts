@@ -327,7 +327,7 @@ export const editUploadedArtworkThunk = (artwork: any, pic: any, artworkId: any)
 
 
     const formData = new FormData()
-    // formData.append('files.primary_image', pic)
+    formData.append('files.primary_image', pic)
 
     formData.append('data', JSON.stringify(artwork));
 

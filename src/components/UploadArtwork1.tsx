@@ -38,6 +38,7 @@ import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
 import { editUploadedArtworkThunk, uploadArtworkThunk } from "../store/artdisplay";
 import { ArtworkCard } from './UploadedArtworkCard';
+import { setConstantValue } from 'typescript';
 
 // const providersNames = [
 //   'google'
@@ -195,6 +196,11 @@ const UploadArtwork1 = (props: any) => {
         // }
     }
 
+    const startEdit = () =>{
+        setEdit(true);
+        setSuccess(false);
+    }
+
     return (
         <div>
             <IonPage>
@@ -217,7 +223,8 @@ const UploadArtwork1 = (props: any) => {
 
                             {/* Upload Primary Artwork Image */}
                             <IonItem >
-                                <label className="custom-input-label" >Upload Primary Image: </label>
+                                {edit && artwork.primary_image.url ? <img width="50px" src={artwork.primary_image.url}></img> : <></>}
+                                <label className="custom-input-label" > {edit ? "Change Primary Image: " : "Upload Primary Image: "} </label>
                                 <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
                             </IonItem>
 

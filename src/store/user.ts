@@ -218,6 +218,7 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
 
 }
 
+//this acts similar to con.syncRemoteToLocalUser, except it syncs user in redux state
 export const getUserThunk =  async(dispatch: any)=>{
   console.log("GET USER THUNK")
   try{

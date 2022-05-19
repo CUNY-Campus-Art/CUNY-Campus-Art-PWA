@@ -1,6 +1,3 @@
-/**
- * UserProfile.tsx - UserProfile display component displays the specific user's information if they are logged in.
- */
 
 import React, { useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
