@@ -18,7 +18,7 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
     const artwork = props.artwork;
 
     const [edit, setEdit] = useState(false);
-    const [deleted, setDeleted] = useState(false);
+    const [deleted, setDeleted] = useState(true);
 
     const [present] = useIonAlert();
 
@@ -163,8 +163,9 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
 
         <div>
 
-            {deleted ? <IonItem>
-                Artwork deleted successfully</IonItem> :
+            {deleted ? 
+                <p style={{textAlign: "center", color: "red"}}>Artwork Deleted</p>
+                 :
                 <IonCard>
                     <IonRow>
                         <IonCol>
