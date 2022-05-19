@@ -6,8 +6,10 @@ import { Redirect } from "react-router-dom";
 
 interface Props {
     artwork: any,
-    deleteArtwork: any
- 
+    deleteArtwork: any,
+    //flag indicating whether it's the sucess view after editting or uploading or from manage artworks view
+    isFromSuccessView: any
+
 }
 
 export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
@@ -16,6 +18,7 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
     const artwork = props.artwork;
 
     const [edit, setEdit] = useState(false);
+    const [deleted, setDeleted] = useState(false);
 
     const [present] = useIonAlert();
 
@@ -27,10 +30,14 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
         }} />
     }
 
-    const deleteArtwork = (id: any) =>{
+    const deleteArtwork = async (id: any) => {
         console.log("delete happens")
         console.log(id)
-        props.deleteArtwork(id);
+        let res = await props.deleteArtwork(id);
+        console.log("DELETed", res)
+        if (res.status == 200) {
+            setDeleted(true);
+        }
     }
     // const artwork = {
     //     "id": 261,
@@ -156,81 +163,79 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
 
         <div>
 
+            {deleted ? <IonItem>
+                Artwork deleted successfully</IonItem> :
+                <IonCard>
+                    <IonRow>
+                        <IonCol>
+                            <IonCardHeader>
+                                <IonCardSubtitle>{artwork.artist}</IonCardSubtitle>
+                                <IonCardTitle>{artwork.title}</IonCardTitle>
+                                <IonCardSubtitle>{artwork.year}</IonCardSubtitle>
 
-            <IonCard>
-                <IonRow>
-                    <IonCol>
-                        <IonCardHeader>
-                            <IonCardSubtitle>{artwork.artist}</IonCardSubtitle>
-                            <IonCardTitle>{artwork.title}</IonCardTitle>
-                            <IonCardSubtitle>{artwork.year}</IonCardSubtitle>
-
-                        </IonCardHeader>
-
-
-                        <IonCardContent>
-
-                            {artwork.description}
+                            </IonCardHeader>
 
 
-                        </IonCardContent>
+                            <IonCardContent>
 
-                    </IonCol>
-
-
-                    <IonCol style={{ "display": "flex", "alignItems": "center" }} size="6">
-                        <IonImg src={artwork.primary_image.url}></IonImg>
-
-                    </IonCol>
-
-                </IonRow>
+                                {artwork.description}
 
 
-                <IonRow>
-                    <IonCol>
+                            </IonCardContent>
 
-                    </IonCol>
-
-                    <IonCol >
+                        </IonCol>
 
 
-                    </IonCol>
+                        <IonCol style={{ "display": "flex", "alignItems": "center" }} size="6">
+                            <IonImg src={artwork.primary_image.url}></IonImg>
 
-                    <IonCol>
-                        <IonButton target="_blank" download="" href={artwork.qr_image.url}>View/Print Qr Code</IonButton>
+                        </IonCol>
 
-
-                        <IonButton onClick={() => {
-                            setEdit(true)
-                        }
-                        }>Edit</IonButton>
-                        {edit ? <Redirect to={{
-                            pathname: '/edit',
-                            state: { artwork: artwork }
-                        }} /> : <></>}
+                    </IonRow>
 
 
+                    <IonRow>
+                        <IonCol>
 
-                        <IonButton
-                        color="danger"
-                         onClick={() =>
-                            present({
-                              cssClass: 'my-css',
-                              header: 'Warning',
-                              message: 'Deleting the artwork will permanently remove it from our collection. Are you sure you want to proceed?',
-                              buttons: [
-                                'Cancel',
-                                { text: 'Yes, delete', handler: (id: any) => deleteArtwork(artwork.id) },
-                              ],
-                              onDidDismiss: (e: any) => console.log('did dismiss'),
-                            })
-                          }  
-                    >Delete</IonButton>
-                    </IonCol>
-                </IonRow>
+                        </IonCol>
+
+                        <IonCol >
+
+
+                        </IonCol>
+
+                        <IonCol>
+                            <IonButton target="_blank" download="" href={artwork.qr_image.url}>View/Print Qr Code</IonButton>
+
+
+                            <IonButton onClick={() => {
+                                setEdit(true)
+                            }
+                            }>Edit</IonButton>
+                            {edit ? <Redirect to={{
+                                pathname: '/edit',
+                                state: { artwork: artwork }
+                            }} /> : <></>}
 
 
 
+                            <IonButton
+                                color="danger"
+                                onClick={() =>
+                                    present({
+                                        cssClass: 'my-css',
+                                        header: 'Warning',
+                                        message: 'Deleting the artwork will permanently remove it from our collection. Are you sure you want to proceed?',
+                                        buttons: [
+                                            'Cancel',
+                                            { text: 'Yes, delete', handler: (id: any) => deleteArtwork(artwork.id) },
+                                        ],
+                                        onDidDismiss: (e: any) => console.log('did dismiss'),
+                                    })
+                                }
+                            >Delete</IonButton>
+                        </IonCol>
+                    </IonRow>
 
 
 
@@ -238,7 +243,11 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
 
 
 
-            </IonCard>
+
+
+
+                </IonCard>
+            }
 
 
 

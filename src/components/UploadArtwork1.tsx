@@ -301,7 +301,7 @@ const UploadArtwork1 = (props: any) => {
                         </IonRow>
                         <IonRow>
                             <IonCol>
-                                <ArtworkCard deleteArtwork={props.deleteArtwork} artwork={props.uploadedArtwork}>
+                                <ArtworkCard isFromSuccessView={true} deleteArtwork={props.deleteArtwork} artwork={props.uploadedArtwork}>
                                 </ArtworkCard>
 
                             </IonCol>

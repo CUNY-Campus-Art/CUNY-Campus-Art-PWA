@@ -181,7 +181,7 @@ const ManageArtworks = (props: any) => {
 
                                     {(props.currentUser && props.currentUser.uploaded_artworks) ? 
                                     props.currentUser.uploaded_artworks.map((item: any) => (
-                                        <ArtworkCard artwork={item} deleteArtwork={props.deleteArtwork}>
+                                        <ArtworkCard isFromSuccessView={false} artwork={item} deleteArtwork={props.deleteArtwork}>
                                         </ArtworkCard> )) : <></>}
  
 
