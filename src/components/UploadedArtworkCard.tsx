@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { IonContent, IonRow, IonCol, IonHeader, IonImg, IonPage, IonButtons, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonItem, IonIcon, IonLabel, IonButton } from '@ionic/react';
+import { IonContent, IonRow, IonCol, IonHeader, IonImg, IonPage, IonButtons, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonItem, IonIcon, IonLabel, IonButton, useIonAlert } from '@ionic/react';
 import { pin, wifi, wine, warning, walk } from 'ionicons/icons';
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
 interface Props {
-    artwork: any
+    artwork: any,
+    deleteArtwork: any
  
 }
 
@@ -16,12 +17,20 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
 
     const [edit, setEdit] = useState(false);
 
+    const [present] = useIonAlert();
+
     const redirectToEdit = () => {
         console.log("edit");
         return <Redirect to={{
             pathname: '/upload',
             state: { artwork: artwork }
         }} />
+    }
+
+    const deleteArtwork = (id: any) =>{
+        console.log("delete happens")
+        console.log(id)
+        props.deleteArtwork(id);
     }
     // const artwork = {
     //     "id": 261,
@@ -202,7 +211,21 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
 
 
 
-                        <IonButton>Delete</IonButton>
+                        <IonButton
+                        color="danger"
+                         onClick={() =>
+                            present({
+                              cssClass: 'my-css',
+                              header: 'Warning',
+                              message: 'Deleting the artwork will permanently remove it from our collection. Are you sure you want to proceed?',
+                              buttons: [
+                                'Cancel',
+                                { text: 'Yes, delete', handler: (id: any) => deleteArtwork(artwork.id) },
+                              ],
+                              onDidDismiss: (e: any) => console.log('did dismiss'),
+                            })
+                          }  
+                    >Delete</IonButton>
                     </IonCol>
                 </IonRow>
 

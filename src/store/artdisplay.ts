@@ -351,6 +351,43 @@ export const editUploadedArtworkThunk = (artwork: any, pic: any, artworkId: any)
 
 }
 
+/*
+delete uploaded artwork
+*/
+export const deleteUploadedArtworkThunk = (artworkId: any) => async (dispatch: any) => {
+
+ 
+
+  try {
+
+    const sendConfig = {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.jwt,
+        'Content-Type': 'application/json',
+      },
+    }
+
+
+  
+
+
+    let res = await axios.delete(`https://campus-art-backend.herokuapp.com/artworks/${artworkId}`, sendConfig);
+    console.log(res);
+    if (res.status == 200) {
+      await con.removeUploadedArtworkToUser([res.data.id])
+      await getUserThunk(dispatch)
+    }
+    return res;
+
+
+
+  }
+  catch (error) {
+    console.error(error);
+  }
+
+}
+
 /** fetchPastArtworks
  * fetches user's past artworks information and adds on like and disliked status for each artwork
  * @param userInfo

@@ -839,6 +839,20 @@ Returns: api request reponse
     return response;
   };
 
+    /* removeUploadedArtworkToUser
+  Function that removes from users uploaded artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  removeUploadedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestRemoveRelationToUser(
+      'uploaded_artworks',
+      artworkIdArray
+    )
+    return response
+  }
+
   /* removeScannedArtworkFromUser
 Function that removes from users scanned artworks by artwork id
 Accepts:

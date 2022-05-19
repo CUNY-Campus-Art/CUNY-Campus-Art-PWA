@@ -36,7 +36,7 @@ import { fetchAllCampuses } from '../store/general'
 import { useForm } from "react-hook-form";
 import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
-import { editUploadedArtworkThunk, uploadArtworkThunk } from "../store/artdisplay";
+import { deleteUploadedArtworkThunk, editUploadedArtworkThunk, uploadArtworkThunk } from "../store/artdisplay";
 import { ArtworkCard } from './UploadedArtworkCard';
 import { setConstantValue } from 'typescript';
 
@@ -55,7 +55,8 @@ const mapState = (state: RootState) => {
 const mapDispatch = (dispatch: any) => {
     return {
         uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic)),
-        editArtwork: (artwork: any, pic: any, artworkId: any)=>dispatch(editUploadedArtworkThunk(artwork, pic, artworkId))
+        editArtwork: (artwork: any, pic: any, artworkId: any)=>dispatch(editUploadedArtworkThunk(artwork, pic, artworkId)),
+        deleteArtwork: (artworkId: any)=>dispatch(deleteUploadedArtworkThunk(artworkId))
     }
 }
 
@@ -223,7 +224,7 @@ const UploadArtwork1 = (props: any) => {
 
                             {/* Upload Primary Artwork Image */}
                             <IonItem >
-                                {edit && artwork.primary_image.url ? <img width="50px" src={artwork.primary_image.url}></img> : <></>}
+                                {edit && artwork && artwork.primary_image.url ? <img width="50px" src={artwork.primary_image.url}></img> : <></>}
                                 <label className="custom-input-label" > {edit ? "Change Primary Image: " : "Upload Primary Image: "} </label>
                                 <ImageUpload getImgFileInfoParent={getImgFileInfoParent} />
                             </IonItem>
@@ -300,7 +301,7 @@ const UploadArtwork1 = (props: any) => {
                         </IonRow>
                         <IonRow>
                             <IonCol>
-                                <ArtworkCard artwork={props.uploadedArtwork}>
+                                <ArtworkCard deleteArtwork={props.deleteArtwork} artwork={props.uploadedArtwork}>
                                 </ArtworkCard>
 
                             </IonCol>

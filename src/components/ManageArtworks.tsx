@@ -31,7 +31,7 @@ import { fetchAllCampuses } from '../store/general'
 import { useForm } from "react-hook-form";
 import Input, { InputProps } from './HelperComponents/Input'
 import * as yup from 'yup';
-import { uploadArtworkThunk } from "../store/artdisplay";
+import { deleteUploadedArtworkThunk, uploadArtworkThunk } from "../store/artdisplay";
 import { ArtworkCard } from './UploadedArtworkCard';
 import { getUserThunk } from '../store/user';
 
@@ -74,6 +74,7 @@ const mapState = (state: RootState) => {
 const mapDispatch = (dispatch: any) => {
     return {
         uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic)),
+        deleteArtwork: (artworkId: any)=>dispatch(deleteUploadedArtworkThunk(artworkId))
         
     }
 }
@@ -180,7 +181,7 @@ const ManageArtworks = (props: any) => {
 
                                     {(props.currentUser && props.currentUser.uploaded_artworks) ? 
                                     props.currentUser.uploaded_artworks.map((item: any) => (
-                                        <ArtworkCard artwork={item}>
+                                        <ArtworkCard artwork={item} deleteArtwork={props.deleteArtwork}>
                                         </ArtworkCard> )) : <></>}
  
 
