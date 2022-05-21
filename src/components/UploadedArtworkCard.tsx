@@ -18,7 +18,7 @@ export const ArtworkCard: React.FC<Props> = (props): JSX.Element => {
     const artwork = props.artwork;
 
     const [edit, setEdit] = useState(false);
-    const [deleted, setDeleted] = useState(true);
+    const [deleted, setDeleted] = useState(false);
 
     const [present] = useIonAlert();
 
