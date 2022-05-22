@@ -594,7 +594,6 @@ Returns: api request reponse
     // Moving this async call because it makes formatting the user info much longer than it needs to be.
     //formattedUser.unsolved_artworks = await this.getUnsolvedArtworks(formattedUser)
 
-    console.log(formattedUser, "after inside formatArtwork");
     return formattedUser;
   };
 
@@ -804,7 +803,6 @@ Returns: api request reponse
         "liked_artworks",
         artworkIdArray
       );
-      console.log("THIS IS HTE RESPONSE for LIKESD");
     } catch (error) {
       console.log(error);
       return { status: 400 };

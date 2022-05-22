@@ -1,9 +1,9 @@
-import axios from "axios";
 import { StrapiApiConnection } from "./util";
 
 import type { ArtDisplay, Video, ArtDisplaysState, User } from "./models";
 import { defaultCurrentArtDisplay } from "./models";
 import { getUser, getUserThunk } from "./user";
+import axios from "axios";
 
 let con: StrapiApiConnection = new StrapiApiConnection();
 
@@ -397,7 +397,8 @@ export const fetchPastArtworks = (user: any) => async (dispatch: any) => {
     con.formatArtwork(artwork)
   );
 
-  // let artworks = addLikedDislikedToArtworks(user)
+  // Add on liked and disliked status for each artwork
+  con.addLikedDislikedToArtworks(user)
   dispatch(gotPastArtDisplays(user.scanned_artworks));
   //return artworks;
 };
@@ -542,16 +543,16 @@ export const clickLikeButton =
         }
 
         return;
+
       }
 
-      // If artwork is already liked, remove from likes
-      if (user && artwork.liked === true) {
-        await removeFromLikes(dispatch, artwork);
-        await con.decreaseLikesForArtworkById(artwork.id);
-      } else {
-        if (user && artwork.liked === false) {
-          // Add to Likes
-          artwork.liked = true;
+    // If artwork is already liked, remove from likes
+    if (user && artwork.liked) {
+      await removeFromLikes(dispatch, artwork);
+    } else {
+      if (user && !artwork.liked) {
+        // Add to Likes
+        artwork.liked = true;
 
           if (artwork.disliked) {
             await removeFromDislikes(artwork);
@@ -560,7 +561,7 @@ export const clickLikeButton =
           await con.addLikedArtworkToUser([artwork.id]);
           //dispatch(addLikedArtwork(artwork));
           // Increase artwork's overall likes
-          if (artwork.likes >= 0) {
+          if (artwork.likes >= 0) { 
             dispatch(increaseLikesForArtwork(artwork.id));
             await con.increaseLikesForArtworkById(artwork.id);
           }
@@ -599,10 +600,10 @@ export const clickDislikeButton =
       return;
     }
     // If artwork is already disliked, remove from dislikes
-    if (user && artwork.disliked === true) {
+    if (user && artwork.disliked) {
       await removeFromDislikes(artwork);
     } else {
-      if (user && artwork.disliked === false) {
+      if (user && !artwork.disliked) {
         // Add to Dislikes
         artwork.disliked = true;
 

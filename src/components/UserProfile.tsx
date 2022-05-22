@@ -16,7 +16,6 @@ import {
   IonCardTitle,
   IonInput,
   IonLabel,
-  IonText,
   IonToast,
   IonSegment,
   IonSegmentButton,
@@ -83,7 +82,7 @@ const UserProfile = (props: Props) => {
   const saveChanges = async () => {
     console.log(profileEdits);
     setLoading(true);
-    let res = await props.editUser(profileEdits);
+    await props.editUser(profileEdits);
     setLoading(false);
   }
 

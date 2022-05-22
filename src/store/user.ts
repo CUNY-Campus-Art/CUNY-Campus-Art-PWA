@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { User, UserState } from './models'
+import type { User } from './models'
 import { fetchPastArtworks, fetchUnsolvedArtworks } from './artdisplay'
 import { hashPassword } from "./hashPassword";
 import { StrapiApiConnection } from "./util";
@@ -255,7 +255,7 @@ const defaultUser =
 
 /*********** TYPE CHECKING REDUCERS **********/
 
-export default function (state = defaultUser, action: any) {
+export default function (state = defaultUser, action: UserActionTypes) {
   switch (action.type) {
     case GET_USER:
       localStorage.setItem('user', JSON.stringify(action.payload))

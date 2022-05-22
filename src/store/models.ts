@@ -26,7 +26,7 @@ export interface ArtDisplay {
 }
 
 // for initial state
-export const defaultCurrentArtDisplay = {
+export let defaultCurrentArtDisplay = {
   id: "default",
   title: "New York City",
   artist: "Frédéric Thery",

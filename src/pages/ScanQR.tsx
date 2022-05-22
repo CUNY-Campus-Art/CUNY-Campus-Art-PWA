@@ -61,7 +61,7 @@ const ScanQR = (props: Props) => {
 
   let [scanResult, setScanResult] = useState("");
 
-  //This will cover cases where outdated QR Codes (i.e. artworks that don't exist anymore) are scanned
+  //This will cover cases where invalid or outdated QR Codes (i.e. artworks that don't exist anymore) are scanned
   const [showNotFoundToast, setNotFoundToast] = useState(false);
 
   let scanResultParent = async (qrCodeText: string) => {
@@ -82,7 +82,7 @@ const ScanQR = (props: Props) => {
   };
 
   // Causes camera button to toggle on and off based on whether scan is open. When scan is open, camera button is replaced by a stop button, goes back to normal otherwise.
-  //Also causes div with blackground to fillup screen for better aesthetic during scan mode
+  // Also causes div with background to fillup screen for better aesthetic during scan mode
   // Checks whether scan state in child QRScanner component is active
   let [scanState, setScanState] = useState(0);
 
