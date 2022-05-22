@@ -1,8 +1,20 @@
 import React from "react";
 import ImageUploading from "react-images-uploading";
+import axios from "axios";
 
 
 function ImageUpload (props) {
+  //TO-DO, figure out how to set images
+  // const [images, setImages] = React.useState(props.image ? (fetch(props.image.url).then((e) => {
+  //   console.log(e);
+  //   return e.blob()
+  // })
+  // .then((blob) => {
+  //   let b = blob
+  //   b.lastModifiedDate = new Date()
+  //   b.name = ''
+  //   return b}))
+  //  : []);
   const [images, setImages] = React.useState([]);
   const maxNumber = 69;
   const onChange = (imageList, addUpdateIndex) => {
@@ -13,6 +25,8 @@ function ImageUpload (props) {
     // This sends file info to the parent (Signup Component) so file can be processed and sent to the database
     if(imageList[0]) props.getImgFileInfoParent(imageList[0].file)
   };
+
+  console.log(images)
 
   return (
     <div className="App">

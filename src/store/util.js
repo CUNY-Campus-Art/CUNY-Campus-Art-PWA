@@ -6,6 +6,7 @@ export class StrapiApiConnection {
   constructor(authToken, user) {
     this.strapiUrl = "https://dev-cms.cunycampusart.com"; //url to strapi API endpoint
 
+
     if (authToken && user) {
       this.authToken = authToken;
       this.user = user;
@@ -468,6 +469,7 @@ Returns: api request reponse
       sendData,
       sendConfig
     );
+    console.log("AFTER LOGIN",returnData);
     if (returnData.data) {
       this.user = this.formatUser(returnData.data.user);
       this.authToken = returnData.data.jwt;
@@ -547,6 +549,7 @@ Returns: api request reponse
       liked_artworks,
       disliked_artworks,
       solved_artworks,
+      uploaded_artworks
     } = user;
 
     let formattedUser = {
@@ -565,7 +568,8 @@ Returns: api request reponse
       disliked_artworks: disliked_artworks.length ? [...disliked_artworks] : [],
       solved_artworks: solved_artworks.length ? [...solved_artworks] : [],
       unsolved_artworks: [],
-    };
+      uploaded_artworks: uploaded_artworks.length? [...uploaded_artworks] : []
+    }
 
     // Format Each Artwork and then add values for liked and disliked artworks
     formattedUser.scanned_artworks = formattedUser.scanned_artworks.map(
@@ -769,6 +773,20 @@ Returns: api request reponse
     return response;
   };
 
+   /* addUploadedArtworkToUser
+  Function that adds to users uploaded artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  addUploadedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestAddRelationEntryToUser(
+      'uploaded_artworks',
+      artworkIdArray
+    )
+    return response
+  }
+
   /* addLikedArtworkToUser
   Function that adds to users liked artworks by artwork id
   Accepts:
@@ -814,6 +832,20 @@ Returns: api request reponse
     );
     return response;
   };
+
+    /* removeUploadedArtworkToUser
+  Function that removes from users uploaded artworks by artwork id
+  Accepts:
+   - artworkIdArray - array of integer id's of artwork that exist
+  Returns: api request reponse
+  */
+  removeUploadedArtworkToUser = async (artworkIdArray) => {
+    let response = await this.axiosRequestRemoveRelationToUser(
+      'uploaded_artworks',
+      artworkIdArray
+    )
+    return response
+  }
 
   /* removeScannedArtworkFromUser
 Function that removes from users scanned artworks by artwork id

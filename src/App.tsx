@@ -27,6 +27,7 @@ import Information from "./pages/Information";
 import Profile from "./pages/Profile";
 import ScavengerHunt from "./pages/ScavengerHunt";
 import PageNotFound from "./components/PageNotFound";
+import {UploadArtworkNew} from './components/UploadArtwork1';
 
 import {
   images,
@@ -57,9 +58,9 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 
 /* Theme variables */
-import "./theme/variables.css";
-import "./App.css";
-
+import './theme/variables.css';
+import './App.css';
+import  ManageArtworks from './components/ManageArtworks';
 
 /* Redux store - load essential variables when app initially loads, like user status, general store info, like all campuses, etc */
 const mapState = (state: RootState) => ({
@@ -172,6 +173,9 @@ const App = (props: Props) => {
               exact={true}
             />
             <Route component={PageNotFound} />
+            <Route path="/Upload" component={UploadArtworkNew}></Route>
+            <Route path="/Manage" component={ManageArtworks}></Route>
+            <Route path="/Edit" component={UploadArtworkNew}></Route>
           </IonRouterOutlet>
           {/* <IonTabBar slot="top">
              <IonTabButton tab="Profile" href="/Profile">

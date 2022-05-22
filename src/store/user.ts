@@ -203,6 +203,8 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
     }
 
     let { data } = await axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
+    console.log(data);
+
 
     let user = await con.formatUser(data);
     localStorage.setItem('user', JSON.stringify(user));
@@ -213,6 +215,32 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
   catch (error) {
     console.error(error);
   }
+
+}
+
+//this acts similar to con.syncRemoteToLocalUser, except it syncs user in redux state
+export const getUserThunk =  async(dispatch: any)=>{
+  console.log("GET USER THUNK")
+  try{
+  const sendConfig = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.jwt,
+      'Content-Type': 'application/json',
+    },
+  }
+
+  let { data } = await axios.get("https://dev-cms.cunycampusart.com/users/profile", sendConfig);
+  console.log(data);
+  let user = await con.formatUser(data);
+  localStorage.setItem('user', JSON.stringify(user));
+  dispatch(getUser(user));
+}
+catch (error){
+  console.log(error);
+}
+
+
+
 }
 
 const defaultUser =
