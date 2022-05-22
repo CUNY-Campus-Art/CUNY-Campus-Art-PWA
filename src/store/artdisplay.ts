@@ -263,7 +263,6 @@ export function uploadArtwork(artwork: any): ArtDisplayActionTypes {
   }
 }
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "https://campus-art-backend.herokuapp.com";
 
 export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: any) => {
 
@@ -288,7 +287,7 @@ export const uploadArtworkThunk = (artwork: any, pic: any) => async (dispatch: a
 
 
 
-    let res = await axios.post("https://campus-art-backend.herokuapp.com/artworks", formData, sendConfig);
+    let res = await axios.post("https://dev-cms.cunycampusart.com/artworks", formData, sendConfig);
     console.log(res);
     if (res.status == 200) {
       await con.addUploadedArtworkToUser([res.data.id])
@@ -334,7 +333,7 @@ export const editUploadedArtworkThunk = (artwork: any, pic: any, artworkId: any)
 
 
 
-    let res = await axios.put(`https://campus-art-backend.herokuapp.com/artworks/${artworkId}`, formData, sendConfig);
+    let res = await axios.put(`https://dev-cms.cunycampusart.com/artworks/${artworkId}`, formData, sendConfig);
     console.log(res);
     if (res.status == 200) {
       dispatch(uploadArtwork(res.data))
@@ -371,7 +370,7 @@ export const deleteUploadedArtworkThunk = (artworkId: any) => async (dispatch: a
   
 
 
-    let res = await axios.delete(`https://campus-art-backend.herokuapp.com/artworks/${artworkId}`, sendConfig);
+    let res = await axios.delete(`https://dev-cms.cunycampusart.com/artworks/${artworkId}`, sendConfig);
     console.log(res);
     if (res.status == 200) {
       await con.removeUploadedArtworkToUser([res.data.id])

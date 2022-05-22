@@ -59,7 +59,7 @@ export function gotAllCampuses(campuses: any): GeneralActionTypes {
 }
 
 /*** THUNK CREATORS TO FETCH INFO FROM DATABASE ****/
-const strapiUrl = "https://campus-art-backend.herokuapp.com";
+const strapiUrl = "https://dev-cms.cunycampusart.com";
 
 /* fetchAllArtworks, in the Strapi API, this is named getAllArtworks */
 export const fetchAllArtworks = () => async (dispatch: any) => {

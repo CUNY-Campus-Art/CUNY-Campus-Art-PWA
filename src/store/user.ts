@@ -202,7 +202,7 @@ export const editUserThunk = async (changes: any, dispatch: any) => {
       }
     }
 
-    let { data } = await axios.put("https://campus-art-backend.herokuapp.com/users/profile", changes, sendConfig);
+    let { data } = await axios.put("https://dev-cms.cunycampusart.com/users/profile", changes, sendConfig);
     console.log(data);
 
 
@@ -229,7 +229,7 @@ export const getUserThunk =  async(dispatch: any)=>{
     },
   }
 
-  let { data } = await axios.get("https://campus-art-backend.herokuapp.com/users/profile", sendConfig);
+  let { data } = await axios.get("https://dev-cms.cunycampusart.com/users/profile", sendConfig);
   console.log(data);
   let user = await con.formatUser(data);
   localStorage.setItem('user', JSON.stringify(user));
