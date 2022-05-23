@@ -9,9 +9,6 @@ import defaultProfilePicture from "../assets/images/default-profile-pic-2.png"
 
 import {
     IonButton,
-    IonCardContent,
-    IonCardSubtitle,
-    IonCardTitle,
     IonInput,
     IonLabel,
     IonItem,
@@ -20,18 +17,10 @@ import {
     IonToolbar,
     IonContent,
     IonList,
-    IonItemDivider,
     IonTitle,
     IonTextarea,
-    IonIcon,
     IonSelect,
     IonSelectOption,
-
-    IonText,
-    IonToast,
-    IonSegment,
-    IonSegmentButton,
-    IonSpinner
 } from "@ionic/react";
 
 /* Retrieves current user from the State */
@@ -58,7 +47,7 @@ type Props = PropsFromRedux & {
 
 const UploadArtwork = (props: Props) => {
 
-
+    const [mode, setMode] = useState('uploader');
     const [artwork, setArtwork] = useState<any>({
         title: '',
         artist: '',

@@ -1,83 +1,140 @@
-
-
-import React, { useState, useContext, useCallback, useEffect } from 'react';
-import { IonTextarea, NavContext } from '@ionic/react';
+import React, { useState, useContext, useCallback, useEffect } from "react";
+import { IonTextarea, NavContext } from "@ionic/react";
 import {
-    IonInput,
-    IonButton,
-    IonItem,
-    IonLabel,
-    IonSelect,
-    IonSelectOption,
-    IonTitle, IonContent,
-    IonHeader,
-    IonPage,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
-    IonText,
-    IonSpinner,
-    IonGrid,
-    IonRow,
-    IonCol
+  IonInput,
+  IonButton,
+  IonItem,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonTitle,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonText,
+  IonSpinner,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from "@ionic/react";
-import { connect, ConnectedProps } from 'react-redux';
-import { RootState } from '../store'
+import { connect, ConnectedProps } from "react-redux";
+import { RootState } from "../store";
 
-import ImageUpload from './HelperComponents/ImageUpload'
-import './Signup.css'
-import { signupNewUser, fetchUser } from '../store/user'
-import { fetchAllCampuses } from '../store/general'
+import ImageUpload from "./HelperComponents/ImageUpload";
+import "./Signup.css";
+import { signupNewUser, fetchUser } from "../store/user";
+import { fetchAllCampuses } from "../store/general";
 import { useForm } from "react-hook-form";
-import Input, { InputProps } from './HelperComponents/Input'
-import * as yup from 'yup';
-import { deleteUploadedArtworkThunk, uploadArtworkThunk } from "../store/artdisplay";
-import { ArtworkCard } from './UploadedArtworkCard';
-import { getUserThunk } from '../store/user';
+import Input, { InputProps } from "./HelperComponents/Input";
+import * as yup from "yup";
+import {
+  deleteUploadedArtworkThunk,
+  uploadArtworkThunk,
+} from "../store/artdisplay";
+import { ArtworkCard } from "./UploadedArtworkCard";
+import { getUserThunk } from "../store/user";
 
-
-
-
-const createItems = (title: any, year: any, artist: any, description: any, primary_image: any, qr_image: any) => {
-    return {
-        title,
-        year,
-        artist,
-        description,
-        primary_image,
-        qr_image
-    }
-}
+const createItems = (
+  title: any,
+  year: any,
+  artist: any,
+  description: any,
+  primary_image: any,
+  qr_image: any
+) => {
+  return {
+    title,
+    year,
+    artist,
+    description,
+    primary_image,
+    qr_image,
+  };
+};
 
 const items = [
-    createItems("The Scream", "1893", "Edvard Munch", "this is a description of an artwork", { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png" }, { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png" }),
-    createItems("The Scream", "1893", "Edvard Munch", "this is a description of an artwork", { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png" }, { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png" }),
-    createItems("The Scream", "1893", "Edvard Munch", "this is a description of an artwork", { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png" }, { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png" }),
-    createItems("The Scream", "1893", "Edvard Munch", "this is a description of an artwork", { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png" }, { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png" }),
-    createItems("The Scream", "1893", "Edvard Munch", "this is a description of an artwork", { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png" }, { url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png" }),
-
-
-
-]
-
-
-const mapState = (state: RootState) => {
-    return {
-        campuses: state.general.campuses,
-        uploadedArtwork: state.artDisplay.uploaded_artworks,
-        currentUser: state.user.user,
-
+  createItems(
+    "The Scream",
+    "1893",
+    "Edvard Munch",
+    "this is a description of an artwork",
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png",
+    },
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png",
     }
-}
+  ),
+  createItems(
+    "The Scream",
+    "1893",
+    "Edvard Munch",
+    "this is a description of an artwork",
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png",
+    },
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png",
+    }
+  ),
+  createItems(
+    "The Scream",
+    "1893",
+    "Edvard Munch",
+    "this is a description of an artwork",
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png",
+    },
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png",
+    }
+  ),
+  createItems(
+    "The Scream",
+    "1893",
+    "Edvard Munch",
+    "this is a description of an artwork",
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png",
+    },
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png",
+    }
+  ),
+  createItems(
+    "The Scream",
+    "1893",
+    "Edvard Munch",
+    "this is a description of an artwork",
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/Screen_Shot_2022_04_25_at_9_47_19_AM_619a4f4ecd.png",
+    },
+    {
+      url: "https://cuny-campus-art-bucket.s3.amazonaws.com/cuny_campus_art_265_0167b84248.png",
+    }
+  ),
+];
 
+const mapState = (state: RootState, ownProps: any) => {
+  return {
+    ...ownProps,
+    campuses: state.general.campuses,
+    uploadedArtwork: state.artDisplay.uploaded_artworks,
+    currentUser: state.user.user,
+  };
+};
 
 const mapDispatch = (dispatch: any) => {
-    return {
-        uploadArtwork: (artwork: any, pic: any) => dispatch(uploadArtworkThunk(artwork, pic)),
-        deleteArtwork: (artworkId: any)=>dispatch(deleteUploadedArtworkThunk(artworkId))
-        
-    }
-}
+  return {
+    uploadArtwork: (artwork: any, pic: any) =>
+      dispatch(uploadArtworkThunk(artwork, pic)),
+    deleteArtwork: (artworkId: any) =>
+      dispatch(deleteUploadedArtworkThunk(artworkId)),
+  };
+};
 
 const connector = connect(mapState, mapDispatch);
 
@@ -88,138 +145,92 @@ type Props = PropsFromRedux & {
 };
 
 const ManageArtworks = (props: any) => {
-    // props.getUser();
+  // props.getUser();
 
-    const user = props.currentUser;
-    console.log(user);
+  const user = props.currentUser;
+  console.log(user);
 
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (props.currentUser && props.currentUser.uploaded_artworks) {
+      setLoading(false);
+      console.log(props.currentUser.uploaded_artworks);
+    }
 
-        if (props.currentUser && props.currentUser.uploaded_artworks) {
-            setLoading(false);
-            console.log(props.currentUser.uploaded_artworks)
-        }
+    console.log("effect");
+  }, [props.currentUser]);
 
-        console.log("effect")
+  //for campuses dropdown
+  // if (!props.campuses) props.getAllCampuses();
+  //To redirect to Profile tab using forward animation
+  // const { navigate } = useContext(NavContext);
+  // const redirect = useCallback(
+  //     () => navigate('/Profile', 'back'),
+  //     [navigate]
+  // );
 
+  //evt.preventDefault()
+  //handleSubmit(evt)
 
+  // if (evt.target) {
 
-    }, [props.currentUser])
+  //   formValues.email = evt.target.email.value
+  //   formValues.password = evt.target.password.value
+  //   formValues.username = evt.target.username.value
+  //   formValues.fullName = evt.target.fullName.value
 
-    //for campuses dropdown
-    // if (!props.campuses) props.getAllCampuses();
-    //To redirect to Profile tab using forward animation
-    // const { navigate } = useContext(NavContext);
-    // const redirect = useCallback(
-    //     () => navigate('/Profile', 'back'),
-    //     [navigate]
-    // );
+  //   // Splits up name and capitalizes first letters
+  //   let nameHolder = formValues.fullName.split(' ').map((name: string) => name.length > 1 ? `${name[0].toUpperCase()}${name.slice(1)}` : name.length === 1 ? `${name[0].toUpperCase()}` : '')
+  //   let firstName = nameHolder[0];
+  //   let lastName = nameHolder.length > 1 ? nameHolder.slice(1).join(' ') : '';
 
+  //   let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, selectedCampus, imgData)
 
+  //   //If user sucessfully signs up, have user logged in, and redirected to Profile tab
+  //   if (result) {
+  //     await props.loginUser(formValues.username, formValues.password);
+  //     redirect();
+  //   }
+  // }
 
+  return (
+    <React.Fragment>
+      <IonContent>
+        <IonGrid>
+          <IonRow></IonRow>
+          <IonRow>
+            <IonCol>
+              {props.currentUser && props.currentUser.uploaded_artworks ? (
+                props.currentUser.uploaded_artworks.map(
+                  (item: any, index: number) => (
+                    <ArtworkCard
+                      key={index}
+                      {...props}
+                      isFromSuccessView={false}
+                      artwork={item}
+                      deleteArtwork={props.deleteArtwork}
+                      setArtworkFromManager={props.setArtworkFromManager}
+                    ></ArtworkCard>
+                  )
+                )
+              ) : (
+                <></>
+              )}
+            </IonCol>
+          </IonRow>
+          <IonRow></IonRow>
+        </IonGrid>
+      </IonContent>
+    </React.Fragment>
+  );
+};
 
-    //evt.preventDefault()
-    //handleSubmit(evt)
-
-    // if (evt.target) {
-
-    //   formValues.email = evt.target.email.value
-    //   formValues.password = evt.target.password.value
-    //   formValues.username = evt.target.username.value
-    //   formValues.fullName = evt.target.fullName.value
-
-    //   // Splits up name and capitalizes first letters
-    //   let nameHolder = formValues.fullName.split(' ').map((name: string) => name.length > 1 ? `${name[0].toUpperCase()}${name.slice(1)}` : name.length === 1 ? `${name[0].toUpperCase()}` : '')
-    //   let firstName = nameHolder[0];
-    //   let lastName = nameHolder.length > 1 ? nameHolder.slice(1).join(' ') : '';
-
-    //   let result = await props.signupNewUser(formValues.email, formValues.password, formValues.username, firstName, lastName, selectedCampus, imgData)
-
-    //   //If user sucessfully signs up, have user logged in, and redirected to Profile tab
-    //   if (result) {
-    //     await props.loginUser(formValues.username, formValues.password);
-    //     redirect();
-    //   }
-    // }
-
-
-    return (
-        <div>
-            <IonPage>
-                <IonHeader>
-                    <IonToolbar></IonToolbar>
-
-                    <IonToolbar>
-                        <IonButtons slot="start">
-                            <IonBackButton defaultHref="/Profile" />
-                        </IonButtons>
-                        <IonTitle className="ion-text-end">Manage Your Artworks</IonTitle>
-                    </IonToolbar>
-                </IonHeader>
-
-
-
-
-                <IonContent>
-
-                    <IonGrid>
-                        <IonRow>
-
-
-
-
-
-                        </IonRow>
-                        <IonRow>
-                            <IonCol>
-                             
-
-                              
-
-
-                                    {(props.currentUser && props.currentUser.uploaded_artworks) ? 
-                                    props.currentUser.uploaded_artworks.map((item: any) => (
-                                        <ArtworkCard isFromSuccessView={false} artwork={item} deleteArtwork={props.deleteArtwork}>
-                                        </ArtworkCard> )) : <></>}
- 
-
-
-
-
-                             
-
-
-                            </IonCol>
-                        </IonRow>
-                        <IonRow>
-
-                        </IonRow>
-
-
-
-
-
-                    </IonGrid>
-                </IonContent>
-
-
-
-
-
-            </IonPage>
-        </div>)
-}
-
-export default connector(ManageArtworks)
-
-
-
+export default connector(ManageArtworks);
 
 export interface AuthForm {
-    name: string
-    displayName: string
-    handleSubmit: () => void
-    error: Error
+  name: string;
+  displayName: string;
+  handleSubmit: () => void;
+  error: Error;
 }

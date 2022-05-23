@@ -27,15 +27,17 @@ import Information from "./pages/Information";
 import Profile from "./pages/Profile";
 import ScavengerHunt from "./pages/ScavengerHunt";
 import PageNotFound from "./components/PageNotFound";
-import {UploadArtworkNew} from './components/UploadArtwork1';
+import { UploadArtworkNew } from './components/UploadArtwork1';
 
 import {
-  images,
+  cloudUploadOutline,
+  cloudUploadSharp,
   home,
-  person,
-  qrCodeOutline,
+  images,
   informationCircle,
   map,
+  person,
+  qrCodeOutline,  
 } from "ionicons/icons";
 import { Signup } from "./components/Signup";
 import defaultProfilePicture from "./assets/images/default-profile-pic-2.png";
@@ -61,6 +63,8 @@ import "@ionic/react/css/display.css";
 import './theme/variables.css';
 import './App.css';
 import  ManageArtworks from './components/ManageArtworks';
+import {UploadAndManageArtworks} from "./components/UploadAndManageArtworks";
+
 
 /* Redux store - load essential variables when app initially loads, like user status, general store info, like all campuses, etc */
 const mapState = (state: RootState) => ({
@@ -73,6 +77,7 @@ const mapDispatch = (dispatch: any) => ({
   getAllCampuses: () => dispatch(fetchAllCampuses()),
 });
 
+
 const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -82,7 +87,8 @@ type Props = PropsFromRedux & {
 };
 
 const App = (props: Props) => {
-  let getAllCampuses = props.getAllCampuses;
+
+  let getAllCampuses = props.getAllCampuses; 
   useEffect(() => {
     getAllCampuses();
   }, []);
@@ -116,8 +122,12 @@ const App = (props: Props) => {
 
             <span className="top-profile-links" slot="end">
               {/* Greet User By Name if logged in */}
-              {/* <IonText className="ion-text-end">Hi {props.currentUser.first_name}!</IonText> */}
+              {/* {user && <IonText className="ion-text-end">Hi {user.first_name}!</IonText>} */}
               {/* If user is logged in and has a profile picture set up, display profile picture as Profile Icon */}
+              <Link className="top-profile-links" to="/Upload">
+                <IonIcon color="medium" icon={cloudUploadOutline}/> 
+                 {" "}
+              </Link>
               <Link to="/ScavengerHunt">
                 {" "}
                 <IonText>{user && user.total_points}</IonText>
@@ -134,7 +144,7 @@ const App = (props: Props) => {
                   />
                 </Link>
               ) : (
-                <Link to="/Profile">
+                <Link className="top-profile-links" to="/Profile">
                   <IonIcon color="medium" icon={person} />{" "}
                 </Link>
               )}
@@ -172,10 +182,11 @@ const App = (props: Props) => {
               component={ScavengerHunt}
               exact={true}
             />
+            <Route path="/Upload" exact={true} render={()=><UploadAndManageArtworks mode="upload"/>}  ></Route>
+            <Route path="/Manage" exact={true} render={()=><UploadAndManageArtworks mode="manage"/>}></Route>
+            <Route path="/Edit" exact={true} render={()=><UploadAndManageArtworks mode="edit"/>}></Route>
             <Route component={PageNotFound} />
-            <Route path="/Upload" component={UploadArtworkNew}></Route>
-            <Route path="/Manage" component={ManageArtworks}></Route>
-            <Route path="/Edit" component={UploadArtworkNew}></Route>
+
           </IonRouterOutlet>
           {/* <IonTabBar slot="top">
              <IonTabButton tab="Profile" href="/Profile">
